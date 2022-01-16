@@ -12,9 +12,9 @@ jobs:
             - uses: actions/checkout@v2
 
             - name: Setup .NET
-                uses: actions/setup-dotnet@v1
-                with:
-                dotnet-version: 6.0.101
+              uses: actions/setup-dotnet@v1
+              with:
+                  dotnet-version: 6.0.101
 
             - name: Use Node.js 16.x
               uses: actions/setup-node@v2
