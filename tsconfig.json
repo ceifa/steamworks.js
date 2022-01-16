@@ -2,6 +2,7 @@
     "compilerOptions": {
         "incremental": false,
         "moduleResolution": "node",
+        "module": "commonjs",
         "inlineSources": false,
         "removeComments": true,
         "sourceMap": false,
