@@ -1,5 +1,4 @@
 using Airmiss.Processor;
-using Steamworks;
 
 [ProcessorHub("client")]
 public class SteamClient
@@ -29,12 +28,12 @@ public class SteamClient
     [Processor("level", Verb.Get)]
     public int GetSteamLevel()
     {
-        return SteamUser.SteamLevel;
+        return Steamworks.SteamUser.SteamLevel;
     }
     
     [Processor("ipcountry", Verb.Get)]
     public string GetIpCountry()
     {
-        return SteamUtils.IpCountry;
+        return Steamworks.SteamUtils.IpCountry;
     }
 }
