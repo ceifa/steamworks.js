@@ -12,4 +12,6 @@ execFileSync('dotnet', [
     '-p:EnableCompressionInSingleFile=true',
     '--self-contained', 'true',
     './server/Steamworks.js.csproj'
-])
+], {
+    stdio: 'inherit'
+})
