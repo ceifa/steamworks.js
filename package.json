@@ -1,11 +1,12 @@
 {
   "name": "steamworks.js",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A not production-ready JS steamworks implementation",
   "main": "index.js",
   "type": "module",
   "scripts": {
     "build": "tsc -p tsconfig.json",
+    "test": "npm i && npm run build && node test/index.js",
     "postinstall": "node ./scripts/postinstall.js"
   },
   "repository": {

@@ -3,8 +3,11 @@ import { spawn } from 'node:child_process'
 import * as path from 'node:path'
 
 export enum Verb {
-    GET,
-    POST,
+    Get,
+    Post,
+    Put,
+    Delete,
+    Patch,
 }
 
 export type Message = {
