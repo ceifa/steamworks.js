@@ -1,0 +1,34 @@
+{
+    "compilerOptions": {
+        "incremental": false,
+        "moduleResolution": "node",
+        "inlineSources": false,
+        "removeComments": true,
+        "sourceMap": false,
+        "target": "ES2018",
+        "skipLibCheck": true,
+        "lib": [
+            "ESNEXT",
+            "DOM"
+        ],
+        "forceConsistentCasingInFileNames": true,
+        "noImplicitReturns": true,
+        "noImplicitThis": true,
+        "noImplicitAny": true,
+        "noUnusedParameters": true,
+        "noUnusedLocals": true,
+        "importHelpers": true,
+        "strict": true,
+        "outDir": "./dist",
+    },
+    "include": [
+        "client/**/*",
+        "test/**/*"
+    ],
+    "exclude": [
+        "node_modules"
+    ],
+    "files": [
+        "client/index.ts"
+    ],
+}

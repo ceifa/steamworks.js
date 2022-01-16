@@ -1,0 +1,31 @@
+{
+  "name": "steamworks.js",
+  "version": "0.0.1",
+  "description": "A not production-ready JS steamworks implementation",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ceifa/steamworks.js.git"
+  },
+  "keywords": [
+    "steamworks",
+    "steam",
+    "electron"
+  ],
+  "author": "ceifa",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ceifa/steamworks.js/issues"
+  },
+  "homepage": "https://github.com/ceifa/steamworks.js#readme",
+  "devDependencies": {
+    "@types/node": "^17.0.8"
+  },
+  "dependencies": {
+    "typescript": "^4.5.4"
+  }
+}

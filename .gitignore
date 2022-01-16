@@ -1,0 +1,5 @@
+server/obj
+server/bin
+node_modules
+dist
+.vs
