@@ -1,4 +1,3 @@
-using Airmiss.Messaging;
 using Airmiss.Processor;
 
 [ProcessorHub("client")]

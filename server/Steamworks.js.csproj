@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Airmiss" Version="1.0.4" />
     <PackageReference Include="Airmiss.Protocol.Tcp" Version="1.0.4" />
   </ItemGroup>
 

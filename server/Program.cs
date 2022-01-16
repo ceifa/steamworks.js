@@ -8,5 +8,5 @@ var runner = new AirmissConfiguration()
 
 await runner.StartAsync();
 
-Console.WriteLine("Steamworks.js server started.");
-Console.ReadKey();
+Console.Write("Steamworks.js server started.");
+Console.Read();
