@@ -3,7 +3,9 @@ import { spawn } from 'node:child_process'
 import * as path from 'node:path'
 
 // Windows
-import WindowsSteamworksExecutable from '../dist/Steamworks.js.exe'
+import WindowsSteamworksExecutable from '../dist/SteamworksServer.exe'
+// Posix
+import PosixSteamworksExecutable from '../dist/SteamworksServer'
 
 export const enum Verb {
     Get,
@@ -26,7 +28,9 @@ export class Api {
 
     public static async initialize(): Promise<void> {
         const initializeClient = new Promise<void>((resolve) => {
-            const steamworks = spawn(path.resolve(__dirname, WindowsSteamworksExecutable))
+            const steamworks = spawn(
+                path.resolve(__dirname, process.platform === 'win32' ? WindowsSteamworksExecutable : PosixSteamworksExecutable),
+            )
 
             steamworks.stdout.on('data', (data) => {
                 data = data.toString().trim()

@@ -11,8 +11,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="Facepunch.Steamworks.Win64">
+    <Reference Include="Facepunch.Steamworks.Win64" Condition="'$(OS)' == 'win64'">
       <HintPath>deps\Facepunch.Steamworks.Win64.dll</HintPath>
+    </Reference>
+    <Reference Include="Facepunch.Steamworks.Posix" Condition="'$(OS)' == 'posix'">
+      <HintPath>deps\Facepunch.Steamworks.Posix.dll</HintPath>
     </Reference>
   </ItemGroup>
 
