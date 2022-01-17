@@ -1,5 +1,6 @@
 import { connect, Socket } from 'node:net'
 import { spawn } from 'node:child_process'
+import * as path from 'node:path'
 
 // Windows
 import WindowsSteamworksExecutable from '../dist/Steamworks.js.exe'
@@ -25,7 +26,7 @@ export class Api {
 
     public static async initialize(): Promise<void> {
         const initializeClient = new Promise<void>((resolve) => {
-            const steamworks = spawn(WindowsSteamworksExecutable)
+            const steamworks = spawn(path.resolve(__dirname, WindowsSteamworksExecutable))
 
             steamworks.stdout.on('data', (data) => {
                 data = data.toString().trim()
