@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="Facepunch.Steamworks.Win64" Condition=" '$(OS)' == 'Windows_NT' ">
+    <Reference Include="Facepunch.Steamworks.Win64">
       <HintPath>deps\Facepunch.Steamworks.Win64.dll</HintPath>
     </Reference>
   </ItemGroup>

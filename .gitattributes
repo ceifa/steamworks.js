@@ -1,0 +1,6 @@
+# CHECKOUT ALL FILES WITH LF LINE ENDINGS
+* text eol=lf
+*.png binary
+*.webp binary
+*.dll binary
+*.pdb binary

@@ -1,13 +1,13 @@
 {
   "name": "steamworks.js",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "A not production-ready JS steamworks implementation",
   "main": "dist/index.js",
   "type": "commonjs",
   "scripts": {
     "build": "rollup -c && tsc -d --emitDeclarationOnly --declarationDir dist",
-    "test": "npm i && npm run build && node test/index.js",
-    "postinstall": "node ./scripts/postinstall.js"
+    "test": "npm i && npm run build && node test/index.mjs",
+    "postinstall": "node ./scripts/postinstall.mjs"
   },
   "repository": {
     "type": "git",

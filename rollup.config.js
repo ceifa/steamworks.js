@@ -17,6 +17,7 @@ export default {
         url({
             include: '**/*.exe',
             fileName: '[name][extname]',
+            emitFiles: false
         }),
         externals(),
         typescript({
