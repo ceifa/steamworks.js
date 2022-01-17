@@ -1,8 +1,10 @@
 import { connect, Socket } from 'node:net'
 import { spawn } from 'node:child_process'
-import * as path from 'node:path'
 
-export enum Verb {
+// Windows
+import WindowsSteamworksExecutable from '../dist/Steamworks.js.exe'
+
+export const enum Verb {
     Get,
     Post,
     Put,
@@ -23,7 +25,7 @@ export class Api {
 
     public static async initialize(): Promise<void> {
         const initializeClient = new Promise<void>((resolve) => {
-            const steamworks = spawn(path.resolve('./dist/steamworks.js.exe'))
+            const steamworks = spawn(WindowsSteamworksExecutable)
 
             steamworks.stdout.on('data', (data) => {
                 data = data.toString().trim()

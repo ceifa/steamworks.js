@@ -2,7 +2,7 @@
     "compilerOptions": {
         "incremental": false,
         "moduleResolution": "node",
-        "module": "commonjs",
+        "module": "esnext",
         "inlineSources": false,
         "removeComments": true,
         "sourceMap": false,
