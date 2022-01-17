@@ -23,6 +23,6 @@ export class SteamClient {
     }
 
     public static async getIpCountry(): Promise<string> {
-        return await Api.send(`/client/ipcontry`, Verb.Get)
+        return await Api.send(`/client/ipcountry`, Verb.Get)
     }
 }
