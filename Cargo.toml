@@ -1,0 +1,15 @@
+[package]
+name = "steamworksjs"
+version = "0.0.1"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+napi = "2.1.0"
+napi-derive = "2.1.0"
+steamworks = "0.8.0"
+
+[build-dependencies]
+napi-build = "1.2.1"
