@@ -5,3 +5,4 @@
 
 export function init(appId: number): void
 export function runCallbacks(): void
+export function activateAchievement(achievement: string): boolean
