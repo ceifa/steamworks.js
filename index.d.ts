@@ -6,3 +6,6 @@
 export function init(appId: number): void
 export function runCallbacks(): void
 export function activateAchievement(achievement: string): boolean
+export function isCloudEnabledForAccount(): boolean
+export function isCloudEnabledForApp(): boolean
+export function readFile(name: string): string

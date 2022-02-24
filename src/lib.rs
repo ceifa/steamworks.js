@@ -23,3 +23,4 @@ fn run_callbacks() {
 
 // other apis
 pub mod achievement;
+pub mod cloud;
