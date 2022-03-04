@@ -330,8 +330,7 @@ checksum = "43b2853a4d09f215c24cc5489c992ce46052d359b5109343cbafbf26bc62f8a3"
 [[package]]
 name = "steamworks"
 version = "0.8.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7229ef73322efc50e2a9c87bba2c884abc8d5e57ac079d00141cc22561c0690e"
+source = "git+https://github.com/ceifa/steamworks-rs.git#c49561ce91a277d5fed97819467e51be7ae9913f"
 dependencies = [
  "bitflags",
  "lazy_static",
@@ -342,8 +341,7 @@ dependencies = [
 [[package]]
 name = "steamworks-sys"
 version = "0.8.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "19f2c7e8b93c397b5ad5fe1d7e8e16efc96d2b9aacac6aeaaddf65f7ad9d4165"
+source = "git+https://github.com/ceifa/steamworks-rs.git#c49561ce91a277d5fed97819467e51be7ae9913f"
 dependencies = [
  "bindgen",
 ]

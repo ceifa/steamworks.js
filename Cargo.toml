@@ -9,7 +9,7 @@ crate-type = ["cdylib"]
 [dependencies]
 napi = "2.1.0"
 napi-derive = "2.1.0"
-steamworks = "0.8.0"
+steamworks = { git = "https://github.com/ceifa/steamworks-rs.git" }
 
 [build-dependencies]
 napi-build = "1.2.1"

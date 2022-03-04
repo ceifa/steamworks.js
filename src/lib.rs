@@ -2,7 +2,7 @@ use steamworks::Client;
 pub mod client;
 
 #[napi_derive::napi]
-fn init(app_id: u32) {
+pub fn init(app_id: u32) {
     let (client, single) = Client::init_app(app_id).unwrap();
     
     unsafe {
@@ -12,7 +12,7 @@ fn init(app_id: u32) {
 }    
 
 #[napi_derive::napi]
-fn run_callbacks() {
+pub fn run_callbacks() {
     unsafe {
         match &client::STEAM_SINGLE {
             Some(single) => single.run_callbacks(),
@@ -24,3 +24,4 @@ fn run_callbacks() {
 // other apis
 pub mod achievement;
 pub mod cloud;
+pub mod stats;
