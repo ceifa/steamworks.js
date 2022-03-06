@@ -22,6 +22,7 @@ pub fn run_callbacks() {
 }
 
 // other apis
+pub mod localplayer;
 pub mod achievement;
 pub mod cloud;
 pub mod stats;

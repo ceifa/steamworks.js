@@ -1,5 +1,6 @@
 use napi::bindgen_prelude::*;
 use std::io::Read;
+use std::io::Write;
 
 #[path = "client.rs"]
 pub mod client;
@@ -26,4 +27,21 @@ pub fn read_file(name: String) -> Result<String> {
         Ok(_) => Ok(buf),
         Err(e) => Err(Error::new(Status::GenericFailure, format!("Failed to read file: {}", e))),
     }
+}
+
+#[napi_derive::napi]
+pub fn write_file(name: String, content: String) -> bool {
+    let client = client::get_client();
+    let file = client.remote_storage().file(&name);
+    
+    let mut buf = content.as_bytes();
+    file.write().write_all(&mut buf).is_ok()
+}
+
+#[napi_derive::napi]
+pub fn delete_file(name: String) -> bool {
+    let client = client::get_client();
+    let file = client.remote_storage().file(&name);
+
+    file.delete()
 }
