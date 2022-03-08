@@ -236,7 +236,18 @@ if (!nativeBinding) {
   throw new Error(`Failed to load native binding`)
 }
 
-const { init, runCallbacks } = nativeBinding
+const { init, runCallbacks, LocalSteamId, getSteamId, getName, getLevel, activateAchievement, isCloudEnabledForAccount, isCloudEnabledForApp, readFile, writeFile, deleteFile, getStatI32 } = nativeBinding
 
 module.exports.init = init
 module.exports.runCallbacks = runCallbacks
+module.exports.LocalSteamId = LocalSteamId
+module.exports.getSteamId = getSteamId
+module.exports.getName = getName
+module.exports.getLevel = getLevel
+module.exports.activateAchievement = activateAchievement
+module.exports.isCloudEnabledForAccount = isCloudEnabledForAccount
+module.exports.isCloudEnabledForApp = isCloudEnabledForApp
+module.exports.readFile = readFile
+module.exports.writeFile = writeFile
+module.exports.deleteFile = deleteFile
+module.exports.getStatI32 = getStatI32

@@ -1,11 +1,17 @@
 {
     "name": "steamworks.js",
-    "version": "0.0.0",
+    "version": "0.0.7",
     "main": "index.js",
     "types": "index.d.ts",
     "napi": {
         "name": "steamworksjs"
     },
+    "files": [
+        "dist",
+        "index.js",
+        "index.d.ts",
+        "README.md"
+    ],
     "license": "MIT",
     "devDependencies": {
         "@napi-rs/cli": "2.4.4"
@@ -15,8 +21,10 @@
     },
     "scripts": {
         "artifacts": "napi artifacts",
-        "build": "napi build --platform --release",
-        "build:debug": "napi build",
+        "build": "napi build --platform --release dist",
+        "build:debug": "napi build dist",
+        "dist": "node dist",
+        "prune": "rm -rf dist target",
         "prepublishOnly": "napi prepublish -t npm"
     }
 }
