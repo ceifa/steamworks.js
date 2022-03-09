@@ -9,7 +9,11 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
+        arch: [ia32, x64]
         os: [windows-2022, ubuntu-20.04, macos-11]
+        exclude:
+          - os: macos-latest
+            arch: ia32
 
     steps:
     - uses: actions/checkout@v2
@@ -25,8 +29,13 @@ jobs:
         toolchain: stable
         override: true
 
-    - run: npm i
-    - run: npm run build
+    - name: Build
+      env:
+        STEAM_SDK_LOCATION: sdk
+      run: |
+        npm i
+        node tools/unzip-sdk ${{ secrets.SDK_PASSWORD }}
+        npm run build
 
     - name: Upload artifact
       uses: actions/upload-artifact@v2
