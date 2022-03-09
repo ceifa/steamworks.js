@@ -1,5 +1,4 @@
-#[path = "client.rs"]
-pub mod client;
+use super::*;
 
 #[napi_derive::napi]
 pub struct LocalSteamId {

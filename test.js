@@ -1,4 +1,4 @@
-const { init, runCallbacks } = require('./index.js')
+const { init } = require('./index.js')
 
-init(480)
-setInterval(runCallbacks, 50)
+const client = init(480)
+console.log(client.getName())

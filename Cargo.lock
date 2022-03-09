@@ -350,6 +350,7 @@ dependencies = [
 name = "steamworksjs"
 version = "0.0.1"
 dependencies = [
+ "lazy_static",
  "napi",
  "napi-build",
  "napi-derive",

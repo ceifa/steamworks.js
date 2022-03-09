@@ -1,24 +1,26 @@
 use steamworks::Client;
+use napi::bindgen_prelude::*;
 pub mod client;
 
+#[macro_use]
+extern crate lazy_static;
+
 #[napi_derive::napi]
-pub fn init(app_id: u32) {
-    let (client, single) = Client::init_app(app_id).unwrap();
-    
-    unsafe {
-        client::STEAM_CLIENT = Some(client);
-        client::STEAM_SINGLE = Some(single);
-    }    
-}    
+pub fn init(app_id: u32) -> Result<()> {
+    let result = Client::init_app(app_id);
+    match result {
+        Ok((client, single)) => {
+            client::set_client(client);
+            client::set_single(single);
+            Ok(())
+        }
+        Err(e) => Err(Error::new(Status::GenericFailure, e.to_string()))
+    }
+}
 
 #[napi_derive::napi]
 pub fn run_callbacks() {
-    unsafe {
-        match &client::STEAM_SINGLE {
-            Some(single) => single.run_callbacks(),
-            None => panic!("Steam client not initialized")
-        }
-    }
+    client::get_single().run_callbacks();
 }
 
 // other apis

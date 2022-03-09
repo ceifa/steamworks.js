@@ -1,9 +1,6 @@
-use napi::bindgen_prelude::*;
+use super::*;
 use std::io::Read;
 use std::io::Write;
-
-#[path = "client.rs"]
-pub mod client;
 
 #[napi_derive::napi]
 pub fn is_cloud_enabled_for_account() -> bool {

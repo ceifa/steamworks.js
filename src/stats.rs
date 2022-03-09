@@ -1,5 +1,4 @@
-#[path = "client.rs"]
-pub mod client;
+use super::*;
 
 #[napi_derive::napi]
 pub fn get_stat_int(name: String) -> i32 {

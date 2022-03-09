@@ -2,14 +2,13 @@
     "name": "steamworks.js",
     "version": "0.0.7",
     "main": "index.js",
-    "types": "index.d.ts",
     "napi": {
         "name": "steamworksjs"
     },
     "files": [
         "dist/*",
         "index.js",
-        "index.d.ts",
+        "client.d.ts",
         "README.md"
     ],
     "license": "MIT",
@@ -22,10 +21,9 @@
       "node": ">= 16"
     },
     "scripts": {
-        "artifacts": "napi artifacts",
-        "build": "napi build --platform --release --js index.js --dts ../index.d.ts dist",
-        "build:debug": "napi build --platform --js index.js --dts ../index.d.ts dist",
+        "build": "napi build --platform --release --js false --dts ../client.d.ts dist",
+        "build:debug": "napi build --platform --js false --dts ../client.d.ts dist",
         "dist": "node dist",
-        "prune": "rm -rf dist target"
+        "prune": "rm -rf dist target client.d.ts"
     }
 }

@@ -9,6 +9,7 @@ crate-type = ["cdylib"]
 [dependencies]
 napi = "2.1.0"
 napi-derive = "2.1.0"
+lazy_static = "1.4.0"
 steamworks = { git = "https://github.com/ceifa/steamworks-rs.git" }
 
 [build-dependencies]
