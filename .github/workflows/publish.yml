@@ -3,17 +3,14 @@ name: Publish
 on:
   push:
     branches: [ main ]
+  pull_request:
 
 jobs:
   build:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        arch: [ia32, x64]
         os: [windows-2022, ubuntu-20.04, macos-11]
-        exclude:
-          - os: macos-latest
-            arch: ia32
 
     steps:
     - uses: actions/checkout@v2
@@ -40,9 +37,13 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-artifact@v2
       with:
+        name: OS specific binaries
         path: dist
 
   deploy:
+    # prevents this action from running on forks or pull requests
+    if: ${{ github.repository == 'ceifa/steamworks.js' && github.event_name == 'push' }}
+
     runs-on: ubuntu-20.04
     needs: build
 
@@ -52,9 +53,15 @@ jobs:
     - name: Download build
       uses: actions/download-artifact@v2
       with:
+        name: OS specific binaries
         path: dist
 
     - name: Log files
       run: |
-        echo "Root directory:" && ls
-        echo "Dist directory:" && ls dist
+        echo "- Root directory:" && ls
+        echo "- Dist directory:" && ls -R dist
+
+    - name: Publish to npm
+      uses: JS-DevTools/npm-publish@v1
+      with:
+          token: ${{ secrets.NPM_TOKEN }}
