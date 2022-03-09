@@ -31,7 +31,7 @@ jobs:
 
     - name: Build
       env:
-        STEAM_SDK_LOCATION: ./sdk
+        STEAM_SDK_LOCATION: ${{ github.workspace }}/sdk
       run: |
         npm i
         node tools/unzip-sdk ${{ secrets.SDK_PASSWORD }}
