@@ -24,7 +24,7 @@
     "scripts": {
         "artifacts": "napi artifacts",
         "build": "napi build --platform --release --js index.js --dts ../index.d.ts dist",
-        "build:debug": "napi build --js index.js --dts ../index.d.ts dist",
+        "build:debug": "napi build --platform --js index.js --dts ../index.d.ts dist",
         "dist": "node dist",
         "prune": "rm -rf dist target"
     }

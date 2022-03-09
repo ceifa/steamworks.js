@@ -31,7 +31,7 @@ jobs:
         STEAM_SDK_LOCATION: ${{ github.workspace }}/sdk
       run: |
         npm i
-        node tools/unzip-sdk ${{ secrets.SDK_PASSWORD }}
+        node scripts/unzip-sdk ${{ secrets.SDK_PASSWORD }}
         npm run build
 
     - name: Upload artifact

@@ -31,3 +31,9 @@ pub fn get_level() -> u32 {
     let client = client::get_client();
     client.user().level()
 }
+
+#[napi_derive::napi]
+pub fn get_ip_country() -> String {
+    let client = client::get_client();
+    client.utils().ip_country()
+}
