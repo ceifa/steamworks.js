@@ -40,15 +40,11 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-artifact@v2
       with:
-        name: ${{ matrix.os }}
         path: dist
 
   deploy:
     runs-on: ubuntu-20.04
     needs: build
-    strategy:
-      matrix:
-        os: [windows-2022, ubuntu-20.04, macos-11]
 
     steps:
     - uses: actions/checkout@v2
@@ -56,7 +52,6 @@ jobs:
     - name: Download build
       uses: actions/download-artifact@v2
       with:
-        name: ${{ matrix.os }}
         path: dist
 
     - name: Log files
