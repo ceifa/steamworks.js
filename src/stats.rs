@@ -1,10 +1,14 @@
 use super::*;
 
 #[napi_derive::napi]
-pub fn get_stat_int(name: String) -> i32 {
+pub fn get_stat_int(name: String) -> Option<i32> {
     let client = client::get_client();
     let result = client.user_stats().get_stat_i32(&name);
-    result.unwrap()
+
+    match result {
+        Ok(stat) => Some(stat),
+        Err(()) => None,
+    }
 }
 
 #[napi_derive::napi]

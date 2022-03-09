@@ -15,7 +15,7 @@ export function isCloudEnabledForApp(): boolean
 export function readFile(name: string): string
 export function writeFile(name: string, content: string): boolean
 export function deleteFile(name: string): boolean
-export function getStatInt(name: string): number
+export function getStatInt(name: string): number | undefined | null
 export function setStatInt(name: string, value: number): boolean
 export function storeStats(): boolean
 export class LocalSteamId {
