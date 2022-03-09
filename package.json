@@ -7,7 +7,7 @@
         "name": "steamworksjs"
     },
     "files": [
-        "dist",
+        "dist/*",
         "index.js",
         "index.d.ts",
         "README.md"
@@ -21,8 +21,8 @@
     },
     "scripts": {
         "artifacts": "napi artifacts",
-        "build": "napi build --platform --release dist",
-        "build:debug": "napi build dist",
+        "build": "napi build --platform --release --js index.js --dts ../index.d.ts dist",
+        "build:debug": "napi build --js index.js --dts ../index.d.ts dist",
         "dist": "node dist",
         "prune": "rm -rf dist target",
         "prepublishOnly": "napi prepublish -t npm"
