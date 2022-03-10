@@ -22,7 +22,7 @@
       "node": ">= 16"
     },
     "scripts": {
-        "build": "node scripts/build -- --release",
+        "build": "node scripts/build --release",
         "build:debug": "node scripts/build",
         "prune": "rimraf dist target client.d.ts",
         "format": "cargo fmt"

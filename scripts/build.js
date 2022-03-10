@@ -5,7 +5,7 @@ const { execSync } = require('node:child_process');
 const copy = (source, dest) => {
     try {
         fs.mkdirSync(path.dirname(dest), { recursive: true })
-    } catch {}
+    } catch { }
 
     fs.copyFileSync(source, dest)
 }
@@ -32,4 +32,5 @@ const dist = path.join(__dirname, '../dist', folder)
 const redist = path.join(__dirname, '../sdk/redistributable_bin', folder)
 files.forEach(file => copy(path.join(redist, file), path.join(dist, file)))
 
-execSync(`napi build --platform --js false --dts ../client.d.ts ${dist} ${process.argv.slice(2).join(' ')}`)
+const command = `napi build --platform --js false --dts ../client.d.ts ${dist} ${process.argv.slice(2).join(' ')}`
+console.log(execSync(command).toString())
