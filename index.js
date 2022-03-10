@@ -1,8 +1,8 @@
 const { platform, arch } = process
 
 /** @typedef {typeof import('./client.d')} Client */
-/** @type {Client | null} */
-let nativeBinding = null
+/** @type {Client | undefined} */
+let nativeBinding = undefined
 
 if (platform === 'win32' && arch === 'x64') {
     nativeBinding = require('./dist/win64/steamworksjs.win32-x64-msvc.node')
@@ -13,6 +13,9 @@ if (platform === 'win32' && arch === 'x64') {
 } else {
     throw new Error(`Unsupported OS: ${platform}, architecture: ${arch}`)
 }
+
+/** @type {number | undefined} */
+let initializedAppId = undefined
 
 /**
  * Initialize the steam client or throw an error if it fails
@@ -35,8 +38,14 @@ module.exports.init = (appId) => {
 
     const { init: internalInit, runCallbacks, ...api } = nativeBinding
 
-    internalInit(appId)
-    setInterval(runCallbacks, 50)
+    if (initializedAppId === undefined) {
+        internalInit(appId)
+        setInterval(runCallbacks, 50)
+
+        initializedAppId = appId
+    } else if (initializedAppId !== appId) {
+        throw new Error('Steam client is already initialized with a different app ID')
+    }
 
     return api
 }

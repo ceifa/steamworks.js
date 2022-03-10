@@ -8,10 +8,6 @@ lazy_static! {
 
 static mut STEAM_SINGLE: Option<SingleClient> = None;
 
-pub fn has_client() -> bool {
-    STEAM_CLIENT.lock().unwrap().is_some()
-}
-
 pub fn get_client() -> Client {
     let option = STEAM_CLIENT.lock().unwrap().to_owned();
     option.unwrap()

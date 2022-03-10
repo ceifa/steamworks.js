@@ -1,6 +1,6 @@
 {
     "name": "steamworks.js",
-    "version": "0.0.10",
+    "version": "0.0.11",
     "main": "index.js",
     "napi": {
         "name": "steamworksjs"
@@ -19,7 +19,7 @@
         "rimraf": "3.0.2"
     },
     "engines": {
-      "node": ">= 16"
+      "node": ">= 14"
     },
     "scripts": {
         "build": "node scripts/build --release",
