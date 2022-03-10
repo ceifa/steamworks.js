@@ -330,7 +330,7 @@ checksum = "43b2853a4d09f215c24cc5489c992ce46052d359b5109343cbafbf26bc62f8a3"
 [[package]]
 name = "steamworks"
 version = "0.8.0"
-source = "git+https://github.com/ceifa/steamworks-rs.git#b1429dca2a5b743def80acfae815d0487d895daa"
+source = "git+https://github.com/ceifa/steamworks-rs.git#be058d9d0b86706f82ba50fd085a17c5aa8d3b39"
 dependencies = [
  "bitflags",
  "lazy_static",
@@ -341,7 +341,7 @@ dependencies = [
 [[package]]
 name = "steamworks-sys"
 version = "0.8.0"
-source = "git+https://github.com/ceifa/steamworks-rs.git#b1429dca2a5b743def80acfae815d0487d895daa"
+source = "git+https://github.com/ceifa/steamworks-rs.git#be058d9d0b86706f82ba50fd085a17c5aa8d3b39"
 dependencies = [
  "bindgen",
 ]

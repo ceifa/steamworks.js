@@ -1,6 +1,6 @@
 const path = require('node:path');
 const fs = require('node:fs');
-const { execSync } = require('node:child_process');
+const child_process = require('node:child_process');
 
 const copy = (source, dest) => {
     try {
@@ -32,18 +32,19 @@ const dist = path.join(__dirname, '../dist', folder)
 const redist = path.join(__dirname, '../sdk/redistributable_bin', folder)
 files.forEach(file => copy(path.join(redist, file), path.join(dist, file)))
 
-const command = `napi build --platform --js false --dts ../client.d.ts ${dist} ${process.argv.slice(2).join(' ')}`
+const relative = path.relative(process.cwd(), dist)
+const params = [
+    'build',
+    '--platform',
+    '--js', 'false',
+    '--dts', '../../client.d.ts',
+    relative,
+    process.argv.slice(2).join(' ')
+]
 
-try {
-    console.log(execSync(command).toString())
-} catch (err) {
-    if (err.output) {
-        console.log(err.output.toString())
-    }
-
-    if (err.stderr) {
-        console.error(err.stderr.toString())
-    } else {
-        console.error(err)
-    }
-}
+child_process.spawn('napi', params, { stdio: 'inherit', shell: true })
+    .on('exit', err => {
+        if (err) {
+            console.error(err)
+        }
+    })

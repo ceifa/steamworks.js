@@ -23,3 +23,4 @@ export function getIpCountry(): string
 export function getStatInt(name: string): number | undefined | null
 export function setStatInt(name: string, value: number): boolean
 export function storeStats(): boolean
+export function resetAllStats(achievementsToo: boolean): boolean

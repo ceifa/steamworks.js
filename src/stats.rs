@@ -24,3 +24,10 @@ pub fn store_stats() -> bool {
     let result = client.user_stats().store_stats();
     result.is_ok()
 }
+
+#[napi_derive::napi]
+pub fn reset_all_stats(achievements_too: bool) -> bool {
+    let client = client::get_client();
+    let result = client.user_stats().reset_all_stats(achievements_too);
+    result.is_ok()
+}
