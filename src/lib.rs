@@ -7,16 +7,17 @@ extern crate lazy_static;
 
 #[napi_derive::napi]
 pub fn init(app_id: u32) -> Result<()> {
-    // TODO: Check if this is the best way to handle multiple calls
     if client::has_client() {
         return Ok(());
     }
 
     let result = Client::init_app(app_id);
     match result {
-        Ok((client, single)) => {
-            client::set_client(client);
-            client::set_single(single);
+        Ok((steam_client, steam_single)) => {
+            steam_client.user_stats().request_current_stats();
+
+            client::set_client(steam_client);
+            client::set_single(steam_single);
             Ok(())
         }
         Err(e) => Err(Error::new(Status::GenericFailure, e.to_string())),

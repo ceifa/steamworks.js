@@ -33,4 +33,17 @@ const redist = path.join(__dirname, '../sdk/redistributable_bin', folder)
 files.forEach(file => copy(path.join(redist, file), path.join(dist, file)))
 
 const command = `napi build --platform --js false --dts ../client.d.ts ${dist} ${process.argv.slice(2).join(' ')}`
-console.log(execSync(command).toString())
+
+try {
+    console.log(execSync(command).toString())
+} catch (err) {
+    if (err.output) {
+        console.log(err.output.toString())
+    }
+
+    if (err.stderr) {
+        console.error(err.stderr.toString())
+    } else {
+        console.error(err)
+    }
+}
