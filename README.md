@@ -11,7 +11,7 @@ A modern implementation of the Steamworks SDK for HTML/JS based applications.
 | Windows | ✔ |
 | Linux | ✔ |
 | MacOS | ✔ |
-| Electron 10+ | ✔ |
+| Electron 12+ | ✔ |
 | NW.js 0.29+ | ✔ |
 | Node.js 14+ | ✔ |
 | Pre-built binaries | ✔ |
@@ -21,7 +21,7 @@ A modern implementation of the Steamworks SDK for HTML/JS based applications.
 
 ## Why
 
-I used [greenworks](https://github.com/greenheartgames/greenworks) for a long time, but I gave up for the following reasons.
+I used [greenworks](https://github.com/greenheartgames/greenworks) for a long time and it's great, but I gave up for the following reasons.
 
 * It's not being maintained anymore.
 * It's not up to date.
@@ -44,4 +44,28 @@ console.log(client.getName()) // Print user name
 if (client.activateAchievement('ACHIEVEMENT')) {
     // ...
 }
+```
+
+## Electron instructions
+
+Because steamworks.js is written using some Node.JS features, it should be initialized on [preload](https://www.electronjs.org/pt/docs/latest/tutorial/context-isolation) and proxied to the renderer:
+
+```js
+// preload.js
+const steamworks = require('steamworks.js')
+const client = steamworks.init()
+
+contextBridge.exposeInMainWorld('steamworksClient', client)
+```
+
+```js
+// renderer.js
+console.log(window.steamworksClient.getName())
+```
+
+You have to enable some flags on chromium to make the steam overlay work, put this code on the final of `main.js`:
+
+```js
+app.commandLine.appendSwitch('in-process-gpu')
+app.commandLine.appendSwitch('disable-direct-composition')
 ```
