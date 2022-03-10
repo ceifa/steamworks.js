@@ -24,6 +24,7 @@
         "build": "napi build --platform --release --js false --dts ../client.d.ts dist",
         "build:debug": "napi build --platform --js false --dts ../client.d.ts dist",
         "dist": "node dist",
-        "prune": "rm -rf dist target client.d.ts"
+        "prune": "rm -rf dist target client.d.ts",
+        "format": "cargo fmt"
     }
 }

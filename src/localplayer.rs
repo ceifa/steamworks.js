@@ -1,6 +1,6 @@
 use super::*;
 
-#[napi_derive::napi]
+#[napi_derive::napi(object)]
 pub struct LocalSteamId {
     pub steam_id64: String,
     pub steam_id32: String,
