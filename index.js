@@ -4,78 +4,16 @@ const { platform, arch } = process
 /** @type {Client | null} */
 let nativeBinding = null
 
-switch (platform) {
-    case 'win32':
-        switch (arch) {
-            case 'x64':
-                try {
-                    nativeBinding = require('./dist/steamworksjs.win32-x64-msvc.node')
-                } catch (e) {
-                    loadError = e
-                }
-                break
-            case 'ia32':
-                try {
-                    nativeBinding = require('./dist/steamworksjs.win32-ia32-msvc.node')
-                } catch (e) {
-                    loadError = e
-                }
-                break
-            case 'arm64':
-                try {
-                    nativeBinding = require('./dist/steamworksjs.win32-arm64-msvc.node')
-                } catch (e) {
-                    loadError = e
-                }
-                break
-            default:
-                throw new Error(`Unsupported architecture on Windows: ${arch}`)
-        }
-        break
-    case 'darwin':
-        switch (arch) {
-            case 'x64':
-                try {
-                    nativeBinding = require('./dist/steamworksjs.darwin-x64.node')
-                } catch (e) {
-                    loadError = e
-                }
-                break
-            case 'arm64':
-                try {
-                    nativeBinding = require('./dist/steamworksjs.darwin-arm64.node')
-                } catch (e) {
-                    loadError = e
-                }
-                break
-            default:
-                throw new Error(`Unsupported architecture on macOS: ${arch}`)
-        }
-        break
-    case 'linux':
-        switch (arch) {
-            case 'x64':
-                try {
-                    nativeBinding = require('./dist/steamworksjs.linux-x64-gnu.node')
-                } catch (e) {
-                    loadError = e
-                }
-
-                break
-            default:
-                throw new Error(`Unsupported architecture on Linux: ${arch}`)
-        }
-        break
-    default:
-        throw new Error(`Unsupported OS: ${platform}, architecture: ${arch}`)
+if (platform === 'win32' && arch === 'x64') {
+    nativeBinding = require('./dist/win64/steamworksjs.win32-x64-msvc.node')
+} else if (platform === 'linux' && arch === 'x64') {
+    nativeBinding = require('./dist/linux64/steamworksjs.linux-x64-gnu.node')
+} else if (platform === 'darwin') {
+    nativeBinding = require('./dist/osx/steamworksjs.darwin-x64.node')
+} else {
+    throw new Error(`Unsupported OS: ${platform}, architecture: ${arch}`)
 }
 
-if (!nativeBinding) {
-    if (loadError) {
-        throw loadError
-    }
-    throw new Error(`Failed to load native binding`)
-}
 /**
  * Initialize the steam client or throw an error if it fails
  * @param {number | undefined} appId - App ID of the game to load, if undefined, will search for a steam_appid.txt file

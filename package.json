@@ -1,6 +1,6 @@
 {
     "name": "steamworks.js",
-    "version": "0.0.8",
+    "version": "0.0.9",
     "main": "index.js",
     "napi": {
         "name": "steamworksjs"
@@ -15,16 +15,16 @@
     "devDependencies": {
         "@napi-rs/cli": "2.4.4",
         "7zip-bin": "5.1.1",
-        "node-7z": "3.0.0"
+        "node-7z": "3.0.0",
+        "rimraf": "3.0.2"
     },
     "engines": {
       "node": ">= 16"
     },
     "scripts": {
-        "build": "napi build --platform --release --js false --dts ../client.d.ts dist",
-        "build:debug": "napi build --platform --js false --dts ../client.d.ts dist",
-        "dist": "node dist",
-        "prune": "rm -rf dist target client.d.ts",
+        "build": "node scripts/build -- --release",
+        "build:debug": "node scripts/build",
+        "prune": "rimraf dist target client.d.ts",
         "format": "cargo fmt"
     }
 }
