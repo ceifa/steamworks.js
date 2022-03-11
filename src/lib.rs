@@ -7,6 +7,10 @@ extern crate lazy_static;
 
 #[napi_derive::napi]
 pub fn init(app_id: u32) -> Result<()> {
+    if client::has_client() {
+        return Ok(());
+    }
+
     let result = Client::init_app(app_id);
     match result {
         Ok((steam_client, steam_single)) => {
@@ -30,3 +34,4 @@ pub mod achievement;
 pub mod cloud;
 pub mod localplayer;
 pub mod stats;
+pub mod workshop;

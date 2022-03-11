@@ -24,3 +24,17 @@ export function getStatInt(name: string): number | undefined | null
 export function setStatInt(name: string, value: number): boolean
 export function storeStats(): boolean
 export function resetAllStats(achievementsToo: boolean): boolean
+export interface UgcResult {
+  itemId: bigint
+  needsToAcceptAgreement: boolean
+}
+export interface UgcUpdate {
+  title?: string | undefined | null
+  description?: string | undefined | null
+  changeNote?: string | undefined | null
+  previewPath?: string | undefined | null
+  contentPath?: string | undefined | null
+  tags?: Array<string> | undefined | null
+}
+export function createCommunityItem(): Promise<UgcResult>
+export function updateCommunityItem(itemId: bigint, updateDetails: UgcUpdate): Promise<UgcResult>

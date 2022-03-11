@@ -14,9 +14,6 @@ if (platform === 'win32' && arch === 'x64') {
     throw new Error(`Unsupported OS: ${platform}, architecture: ${arch}`)
 }
 
-/** @type {number | undefined} */
-let initializedAppId = undefined
-
 /**
  * Initialize the steam client or throw an error if it fails
  * @param {number | undefined} appId - App ID of the game to load, if undefined, will search for a steam_appid.txt file
@@ -38,14 +35,8 @@ module.exports.init = (appId) => {
 
     const { init: internalInit, runCallbacks, ...api } = nativeBinding
 
-    if (initializedAppId === undefined) {
-        internalInit(appId)
-        setInterval(runCallbacks, 50)
-
-        initializedAppId = appId
-    } else if (initializedAppId !== appId) {
-        throw new Error('Steam client is already initialized with a different app ID')
-    }
+    internalInit(appId)
+    setInterval(runCallbacks, 50)
 
     return api
 }
