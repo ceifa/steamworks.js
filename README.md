@@ -26,6 +26,7 @@ I used [greenworks](https://github.com/greenheartgames/greenworks) for a long ti
 
 * It's not being maintained anymore.
 * It's not up to date.
+* It's not context-aware
 * You have to build the binaries by yourself.
 * Don't have typescript definitions.
 * The API it's not trustful.
@@ -41,7 +42,7 @@ const steamworks = require('steamworks.js')
 const client = steamworks.init()
 
 console.log(client.getName()) // Print user name
-// Activate activateAchievement
+// Tries to activate an achievement
 if (client.activateAchievement('ACHIEVEMENT')) {
     // ...
 }
@@ -49,22 +50,20 @@ if (client.activateAchievement('ACHIEVEMENT')) {
 
 ## Electron instructions
 
-Because steamworks.js is written using some Node.JS features, it should be initialized on [preload](https://www.electronjs.org/pt/docs/latest/tutorial/context-isolation) and proxied to the renderer:
+Steamworks.js it's a native module and cannot be used by default in the renderer process. To enable the usage of native modules on the renderer process, the following configurations should be made on `main.js`:
 
 ```js
-// preload.js
-const steamworks = require('steamworks.js')
-const client = steamworks.init()
-
-contextBridge.exposeInMainWorld('steamworksClient', client)
+const mainWindow = new BrowserWindow({
+    // ...
+    webPreferences: {
+        // ...
+        contextIsolation: false,
+        nodeIntegration: true
+    }
+})
 ```
 
-```js
-// renderer.js
-console.log(window.steamworksClient.getName())
-```
-
-You have to enable some flags on chromium to make the steam overlay work, put this code on the final of `main.js`:
+You also have to enable some flags on chromium to make the steam overlay work. Put this code on the final of `main.js`:
 
 ```js
 app.commandLine.appendSwitch('in-process-gpu')
