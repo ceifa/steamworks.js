@@ -33,12 +33,23 @@ I used [greenworks](https://github.com/greenheartgames/greenworks) for a long ti
 * The API implement callbacks instead of return flags or promises.
 * I hate C++.
 
+## Installation
+
+Make sure you have the latest [node.js](https://nodejs.org/en/), [Rust](https://www.rust-lang.org/tools/install), [Clang](https://rust-lang.github.io/rust-bindgen/requirements.html) and [Steam](https://store.steampowered.com/about/) installed.
+
+Download [Steamworks SDK](https://partner.steamgames.com/doc/sdk), unzip it and paste `/sdk` folder in project's root. Now set an environment variable `STEAM_SDK_LOCATION` pointing to SDK's folder.
+
+Install dependencies with `npm install` and then run `npm run build:debug` to build the application.
+
+With the Steam application running, test it by running `node test`. It's set to run with the game Spacewar (AppID: 480). Get your game id [here](https://steamdb.info/apps/).
+
 ## API
 
 ```js
 const steamworks = require('steamworks.js')
 
-// You can pass the appId or nothing if you want to use the steam_appid.txt file
+// You can pass an appID in init() i.e. steamworks.init(480) 
+// or don't pass anything and create a steam_appid.txt file with the appID in it
 const client = steamworks.init()
 
 console.log(client.getName()) // Print user name
