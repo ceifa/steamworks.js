@@ -41,7 +41,7 @@ Download [Steamworks SDK](https://partner.steamgames.com/doc/sdk), unzip it and 
 
 Install dependencies with `npm install` and then run `npm run build:debug` to build the application.
 
-With the Steam application running, test it by running `node test`. It's set to run with the game Spacewar (AppID: 480). Get your game id [here](https://steamdb.info/apps/).
+With the Steam application running, test it by running `node test`. It's set to run with the game Spacewar (AppID: 480). Get your app id [here](https://steamdb.info/apps/).
 
 ## API
 
