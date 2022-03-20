@@ -48,8 +48,7 @@ With the Steam application running, test it by running `node test`. It's set to 
 ```js
 const steamworks = require('steamworks.js')
 
-// You can pass an appID in init() i.e. steamworks.init(480) 
-// or don't pass anything and create a steam_appid.txt file with the appID in it
+// You can pass the appId or nothing if you want to use the steam_appid.txt file
 const client = steamworks.init()
 
 console.log(client.getName()) // Print user name
