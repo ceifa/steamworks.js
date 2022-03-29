@@ -38,3 +38,5 @@ export interface UgcUpdate {
 }
 export function createCommunityItem(): Promise<UgcResult>
 export function updateCommunityItem(itemId: bigint, updateDetails: UgcUpdate): Promise<UgcResult>
+export function ugcSubscribeItem(itemId: bigint): Promise<void>
+export function ugcUnsubscribeItem(itemId: bigint): Promise<void>
