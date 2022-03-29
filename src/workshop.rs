@@ -102,7 +102,7 @@ pub async fn update_community_item(
 }
 
 #[napi_derive::napi]
-pub async fn ugc_subscribe_item(
+pub async fn subscribe_item(
     item_id: BigInt
 ) -> Result<()> {
     let client = client::get_client();
@@ -122,7 +122,7 @@ pub async fn ugc_subscribe_item(
 }
 
 #[napi_derive::napi]
-pub async fn ugc_unsubscribe_item(
+pub async fn unsubscribe_item(
     item_id: BigInt
 ) -> Result<()> {
     let client = client::get_client();
