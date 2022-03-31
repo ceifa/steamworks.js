@@ -11,7 +11,7 @@ napi = { version = "2", features = ["tokio_rt", "napi6"] }
 napi-derive = "2"
 lazy_static = "1"
 tokio = { version = "1", features = ["sync"] }
-steamworks = { git = "https://github.com/ceifa/steamworks-rs.git" }
+steamworks = { path = "../steamworks-rs-fork" }
 
 [build-dependencies]
 napi-build = "1"
