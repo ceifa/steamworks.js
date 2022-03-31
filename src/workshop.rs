@@ -100,3 +100,43 @@ pub async fn update_community_item(
         Err(e) => Err(Error::new(Status::GenericFailure, e.to_string())),
     }
 }
+
+#[napi_derive::napi]
+pub async fn subscribe_item(
+    item_id: BigInt
+) -> Result<()> {
+    let client = client::get_client();
+    let (tx, rx) = oneshot::channel();
+
+    client
+        .ugc()
+        .subscribe_item(PublishedFileId(item_id.get_u64().1), |result| {
+            tx.send(result).unwrap();
+        });
+
+    let result = rx.await.unwrap();
+    match result {
+        Ok(()) => Ok(()),
+        Err(e) => Err(Error::new(Status::GenericFailure, e.to_string())),
+    }
+}
+
+#[napi_derive::napi]
+pub async fn unsubscribe_item(
+    item_id: BigInt
+) -> Result<()> {
+    let client = client::get_client();
+    let (tx, rx) = oneshot::channel();
+
+    client
+        .ugc()
+        .unsubscribe_item(PublishedFileId(item_id.get_u64().1), |result| {
+            tx.send(result).unwrap();
+        });
+
+    let result = rx.await.unwrap();
+    match result {
+        Ok(()) => Ok(()),
+        Err(e) => Err(Error::new(Status::GenericFailure, e.to_string())),
+    }
+}
