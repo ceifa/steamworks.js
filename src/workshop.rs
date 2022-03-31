@@ -102,9 +102,7 @@ pub async fn update_community_item(
 }
 
 #[napi_derive::napi]
-pub async fn subscribe_item(
-    item_id: BigInt
-) -> Result<()> {
+pub async fn subscribe_item(item_id: BigInt) -> Result<()> {
     let client = client::get_client();
     let (tx, rx) = oneshot::channel();
 
@@ -122,9 +120,7 @@ pub async fn subscribe_item(
 }
 
 #[napi_derive::napi]
-pub async fn unsubscribe_item(
-    item_id: BigInt
-) -> Result<()> {
+pub async fn unsubscribe_item(item_id: BigInt) -> Result<()> {
     let client = client::get_client();
     let (tx, rx) = oneshot::channel();
 
