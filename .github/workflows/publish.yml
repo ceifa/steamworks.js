@@ -26,12 +26,16 @@ jobs:
         toolchain: stable
         override: true
 
+    - name: Check formatting
+      uses: actions-rs/cargo@v1
+      if: runner.os == 'linux'
+      with:
+        command: fmt
+        args: --all -- --check
+
     - name: Build
-      env:
-        STEAM_SDK_LOCATION: ${{ github.workspace }}/sdk
       run: |
         npm i
-        node scripts/unzip-sdk ${{ secrets.SDK_PASSWORD }}
         npm run build
 
     - name: Upload artifact
