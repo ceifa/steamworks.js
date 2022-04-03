@@ -43,12 +43,6 @@ Install dependencies with `npm install` and then run `npm run build:debug` to bu
 
 With the Steam application running, test it by running `node test`.
 
-```js
-const { init } = require('./index.js')
-const client = init(480)
-console.log(client.getName())
-```
-
 It's set to run with a test app id 480. Search for your corresponding app id [here](https://steamdb.info/apps/).
 
 ## API
@@ -57,9 +51,11 @@ It's set to run with a test app id 480. Search for your corresponding app id [he
 const steamworks = require('steamworks.js')
 
 // You can pass the appId or nothing if you want to use the steam_appid.txt file
-const client = steamworks.init()
+const client = steamworks.init(480)
 
-console.log(client.getName()) // Print user name
+// Print Steam username
+console.log(client.getName())
+
 // Tries to activate an achievement
 if (client.activateAchievement('ACHIEVEMENT')) {
     // ...
