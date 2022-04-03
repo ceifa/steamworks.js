@@ -35,11 +35,21 @@ I used [greenworks](https://github.com/greenheartgames/greenworks) for a long ti
 
 ## Installation
 
-We need to first build the application with the Steamworks SDK. So make sure you have the latest [node.js](https://nodejs.org/en/), [Rust](https://www.rust-lang.org/tools/install) and [Clang](https://rust-lang.github.io/rust-bindgen/requirements.html). We also need [Steam](https://store.steampowered.com/about/) installed and running.
+We need to first build the application. So make sure you have the latest [node.js](https://nodejs.org/en/), [Rust](https://www.rust-lang.org/tools/install) and [Clang](https://rust-lang.github.io/rust-bindgen/requirements.html). We also need [Steam](https://store.steampowered.com/about/) installed and running.
 
 Install dependencies with `npm install` and then run `npm run build:debug` to build the application.
 
-With the Steam application running, test it by running `node test`. It's set to run with a test app id: 480. Search for your corresponding app id [here](https://steamdb.info/apps/).
+## Usage
+
+With the Steam application running, test it by running `node test`.
+
+```
+const { init } = require('./index.js')
+const client = init(480)
+console.log(client.getName())
+```
+
+It's set to run with a test app id: 480. Search for your corresponding app id [here](https://steamdb.info/apps/).
 
 ## API
 
