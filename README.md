@@ -39,17 +39,17 @@ We need to first build the application. So make sure you have the latest [node.j
 
 Install dependencies with `npm install` and then run `npm run build:debug` to build the application.
 
-## Usage
+## Testing
 
 With the Steam application running, test it by running `node test`.
 
-```
+```js
 const { init } = require('./index.js')
 const client = init(480)
 console.log(client.getName())
 ```
 
-It's set to run with a test app id: 480. Search for your corresponding app id [here](https://steamdb.info/apps/).
+It's set to run with a test app id 480. Search for your corresponding app id [here](https://steamdb.info/apps/).
 
 ## API
 
