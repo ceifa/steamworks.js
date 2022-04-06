@@ -172,6 +172,7 @@ checksum = "f497285884f3fcff424ffc933e56d7cbca511def0c9831a7f9b5f6153e3cc89b"
 [[package]]
 name = "steamworks"
 version = "0.8.0"
+source = "git+https://github.com/Noxime/steamworks-rs.git#28bbcd4aae00f1c1f8efc7e34bb47d36261ef022"
 dependencies = [
  "bitflags",
  "lazy_static",
@@ -182,6 +183,7 @@ dependencies = [
 [[package]]
 name = "steamworks-sys"
 version = "0.8.0"
+source = "git+https://github.com/Noxime/steamworks-rs.git#28bbcd4aae00f1c1f8efc7e34bb47d36261ef022"
 
 [[package]]
 name = "steamworksjs"

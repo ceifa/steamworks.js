@@ -7,19 +7,6 @@
 
 A modern implementation of the Steamworks SDK for HTML/JS based applications.
 
-| Feature | Supported |
-|----------|------------ |
-| Windows | ✔ |
-| Linux | ✔ |
-| MacOS | ✔ |
-| Electron 12+ | ✔ |
-| NW.js 0.29+ | ✔ |
-| Node.js 14+ | ✔ |
-| Pre-built binaries | ✔ |
-| Easy to install | ✔ |
-| Open Source | ✔ |
-| MIT license | ✔ |
-
 ## Why
 
 I used [greenworks](https://github.com/greenheartgames/greenworks) for a long time and it's great, but I gave up for the following reasons.
@@ -32,18 +19,6 @@ I used [greenworks](https://github.com/greenheartgames/greenworks) for a long ti
 * The API it's not trustful.
 * The API implement callbacks instead of return flags or promises.
 * I hate C++.
-
-## Installation
-
-We need to first build the application. So make sure you have the latest [node.js](https://nodejs.org/en/), [Rust](https://www.rust-lang.org/tools/install) and [Clang](https://rust-lang.github.io/rust-bindgen/requirements.html). We also need [Steam](https://store.steampowered.com/about/) installed and running.
-
-Install dependencies with `npm install` and then run `npm run build:debug` to build the application.
-
-## Testing
-
-With the Steam application running, test it by running `node test`.
-
-It's set to run with a test app id 480. Search for your corresponding app id [here](https://steamdb.info/apps/).
 
 ## API
 
@@ -83,3 +58,9 @@ You also have to enable some flags on chromium to make the steam overlay work. P
 app.commandLine.appendSwitch('in-process-gpu')
 app.commandLine.appendSwitch('disable-direct-composition')
 ```
+
+## How to build
+
+Make sure you have the latest [node.js](https://nodejs.org/en/), [Rust](https://www.rust-lang.org/tools/install) and [Clang](https://rust-lang.github.io/rust-bindgen/requirements.html). We also need [Steam](https://store.steampowered.com/about/) installed and running.
+
+Install dependencies with `npm install` and then run `npm run build:debug` to build the library.
