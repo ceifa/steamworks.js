@@ -17,7 +17,7 @@ if (platform === 'win32' && arch === 'x64') {
 /**
  * Initialize the steam client or throw an error if it fails
  * @param {number | undefined} appId - App ID of the game to load, if undefined, will search for a steam_appid.txt file
- * @returns {Client}
+ * @returns {Omit<Client, 'init' | 'runCallbacks'>}
 */
 module.exports.init = (appId) => {
     if (!appId) {
