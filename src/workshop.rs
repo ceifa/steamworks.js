@@ -145,6 +145,6 @@ pub mod workshop {
         let client = crate::client::get_client();
         let result = client.ugc().item_state(PublishedFileId(item_id.get_u64().1));
 
-        return result.bits();
+        result.bits()
     }
 }
