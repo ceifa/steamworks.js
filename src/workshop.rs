@@ -139,4 +139,12 @@ pub mod workshop {
             Err(e) => Err(Error::new(Status::GenericFailure, e.to_string())),
         }
     }
+
+    #[napi]
+    pub fn state(item_id: BigInt) -> u32 {
+        let client = crate::client::get_client();
+        let result = client.ugc().item_state(PublishedFileId(item_id.get_u64().1));
+
+        return result.bits();
+    }
 }
