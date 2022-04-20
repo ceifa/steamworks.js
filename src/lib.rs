@@ -1,12 +1,14 @@
-use napi::bindgen_prelude::*;
+use napi::bindgen_prelude::{Error, Status};
+use napi_derive::napi;
 use steamworks::Client;
+
 pub mod client;
 
 #[macro_use]
 extern crate lazy_static;
 
-#[napi_derive::napi]
-pub fn init(app_id: u32) -> Result<()> {
+#[napi]
+pub fn init(app_id: u32) -> Result<(), Error> {
     if client::has_client() {
         return Ok(());
     }

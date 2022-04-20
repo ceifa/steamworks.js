@@ -7,19 +7,6 @@
 
 A modern implementation of the Steamworks SDK for HTML/JS based applications.
 
-| Feature | Supported |
-|----------|------------ |
-| Windows | ✔ |
-| Linux | ✔ |
-| MacOS | ✔ |
-| Electron 12+ | ✔ |
-| NW.js 0.29+ | ✔ |
-| Node.js 14+ | ✔ |
-| Pre-built binaries | ✔ |
-| Easy to install | ✔ |
-| Open Source | ✔ |
-| MIT license | ✔ |
-
 ## Why
 
 I used [greenworks](https://github.com/greenheartgames/greenworks) for a long time and it's great, but I gave up for the following reasons.
@@ -39,9 +26,11 @@ I used [greenworks](https://github.com/greenheartgames/greenworks) for a long ti
 const steamworks = require('steamworks.js')
 
 // You can pass the appId or nothing if you want to use the steam_appid.txt file
-const client = steamworks.init()
+const client = steamworks.init(480)
 
-console.log(client.getName()) // Print user name
+// Print Steam username
+console.log(client.getName())
+
 // Tries to activate an achievement
 if (client.activateAchievement('ACHIEVEMENT')) {
     // ...
@@ -69,3 +58,9 @@ You also have to enable some flags on chromium to make the steam overlay work. P
 app.commandLine.appendSwitch('in-process-gpu')
 app.commandLine.appendSwitch('disable-direct-composition')
 ```
+
+## How to build
+
+Make sure you have the latest [node.js](https://nodejs.org/en/), [Rust](https://www.rust-lang.org/tools/install) and [Clang](https://rust-lang.github.io/rust-bindgen/requirements.html). We also need [Steam](https://store.steampowered.com/about/) installed and running.
+
+Install dependencies with `npm install` and then run `npm run build:debug` to build the library.
