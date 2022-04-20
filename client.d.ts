@@ -50,4 +50,10 @@ export namespace workshop {
   export function subscribe(itemId: bigint): Promise<void>
   export function unsubscribe(itemId: bigint): Promise<void>
   export function state(itemId: bigint): number
+  export interface InstallInfo {
+    folder: string
+    sizeOnDisk: bigint
+    timestamp: number
+  }
+  export function installInfo(itemId: bigint): InstallInfo | undefined | null
 }

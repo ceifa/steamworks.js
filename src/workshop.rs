@@ -23,6 +23,13 @@ pub mod workshop {
         pub tags: Option<Vec<String>>,
     }
 
+    #[napi(object)]
+    pub struct InstallInfo {
+        pub folder: String,
+        pub size_on_disk: BigInt,
+        pub timestamp: u32,
+    }
+
     #[napi]
     pub async fn create_item() -> Result<UgcResult, Error> {
         let client = crate::client::get_client();
@@ -148,5 +155,25 @@ pub mod workshop {
             .item_state(PublishedFileId(item_id.get_u64().1));
 
         result.bits()
+    }
+
+    #[napi]
+    pub fn install_info(item_id: BigInt) -> Option<InstallInfo> {
+        let client = crate::client::get_client();
+        let result = client
+            .ugc()
+            .item_install_info(PublishedFileId(item_id.get_u64().1));
+
+        match result {
+            Some(install_info) => Some(InstallInfo {
+                folder: install_info.folder,
+                size_on_disk: BigInt {
+                    sign_bit: false,
+                    words: vec![install_info.size_on_disk],
+                },
+                timestamp: install_info.timestamp,
+            }),
+            None => None
+        }
     }
 }
