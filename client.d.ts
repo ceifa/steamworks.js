@@ -49,4 +49,5 @@ export namespace workshop {
   export function updateItem(itemId: bigint, updateDetails: UgcUpdate): Promise<UgcResult>
   export function subscribe(itemId: bigint): Promise<void>
   export function unsubscribe(itemId: bigint): Promise<void>
+  export function state(itemId: bigint): number
 }
