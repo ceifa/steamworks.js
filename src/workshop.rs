@@ -173,7 +173,7 @@ pub mod workshop {
                 },
                 timestamp: install_info.timestamp,
             }),
-            None => None
+            None => None,
         }
     }
 }
