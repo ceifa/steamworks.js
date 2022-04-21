@@ -24,6 +24,7 @@ export namespace localplayer {
   export function getSteamId(): LocalSteamId
   export function getName(): string
   export function getLevel(): number
+  /** @returns the 2 digit ISO 3166-1-alpha-2 format country code which client is running in, e.g "US" or "UK". */
   export function getIpCountry(): string
 }
 export namespace stats {
@@ -45,15 +46,15 @@ export namespace workshop {
     contentPath?: string | undefined | null
     tags?: Array<string> | undefined | null
   }
-  export function createItem(): Promise<UgcResult>
-  export function updateItem(itemId: bigint, updateDetails: UgcUpdate): Promise<UgcResult>
-  export function subscribe(itemId: bigint): Promise<void>
-  export function unsubscribe(itemId: bigint): Promise<void>
-  export function state(itemId: bigint): number
   export interface InstallInfo {
     folder: string
     sizeOnDisk: bigint
     timestamp: number
   }
+  export function createItem(): Promise<UgcResult>
+  export function updateItem(itemId: bigint, updateDetails: UgcUpdate): Promise<UgcResult>
+  export function subscribe(itemId: bigint): Promise<void>
+  export function unsubscribe(itemId: bigint): Promise<void>
+  export function state(itemId: bigint): number
   export function installInfo(itemId: bigint): InstallInfo | undefined | null
 }
