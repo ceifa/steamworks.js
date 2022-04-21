@@ -13,13 +13,11 @@
     ],
     "license": "MIT",
     "devDependencies": {
-        "@napi-rs/cli": "2.4.4",
-        "7zip-bin": "5.1.1",
-        "node-7z": "3.0.0",
+        "@napi-rs/cli": "2.6.2",
         "rimraf": "3.0.2"
     },
     "engines": {
-      "node": ">= 14"
+        "node": ">= 14"
     },
     "scripts": {
         "build": "node scripts/build --release",
