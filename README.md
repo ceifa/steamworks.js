@@ -28,21 +28,8 @@ const steamworks = require('steamworks.js')
 // You can pass an appId, or don't pass anything and use a steam_appid.txt file
 const client = steamworks.init(480)
 
-// Get Steam username
-client.localplayer.getName()
-
-// Get Steam ID
-client.localplayer.getSteamId()
-
-// Subscribe and unsubscribe from a workshop item
-client.workshop.subscribe(BigInt(workshop_id))
-client.workshop.unsubscribe(BigInt(workshop_id))
-
-// Gets the current state of a workshop item
-client.workshop.state(BigInt(workshop_id))
-
-// Gets info about currently installed content on the disc for workshop item
-client.workshop.installInfo(BigInt(workshop_id))
+// Print Steam username
+console.log(client.localplayer.getName())
 
 // Tries to activate an achievement
 if (client.activateAchievement('ACHIEVEMENT')) {
