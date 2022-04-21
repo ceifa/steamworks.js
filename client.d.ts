@@ -53,8 +53,25 @@ export namespace workshop {
   }
   export function createItem(): Promise<UgcResult>
   export function updateItem(itemId: bigint, updateDetails: UgcUpdate): Promise<UgcResult>
+  /**
+   * Subscribe to a workshop item. It will be downloaded and installed as soon as possible.
+   * https://partner.steamgames.com/doc/api/ISteamUGC#SubscribeItem
+   */
   export function subscribe(itemId: bigint): Promise<void>
+  /**
+   * Unsubscribe from a workshop item. This will result in the item being removed after the game quits.
+   * https://partner.steamgames.com/doc/api/ISteamUGC#UnsubscribeItem
+   */
   export function unsubscribe(itemId: bigint): Promise<void>
+  /**
+   * Gets the current state of a workshop item on this client. States can be combined.
+   * https://partner.steamgames.com/doc/api/ISteamUGC#GetItemState
+   * https://partner.steamgames.com/doc/api/ISteamUGC#EItemState
+   */
   export function state(itemId: bigint): number
+  /**
+   * Gets info about currently installed content on the disc for workshop item.
+   * https://partner.steamgames.com/doc/api/ISteamUGC#GetItemInstallInfo
+   */
   export function installInfo(itemId: bigint): InstallInfo | undefined | null
 }
