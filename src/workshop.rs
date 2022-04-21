@@ -206,10 +206,10 @@ pub mod workshop {
     }
 
     #[napi]
-    pub fn download(item_id: BigInt, high_priority: bool) -> () {
+    pub fn download(item_id: BigInt, high_priority: bool) -> bool {
         let client = crate::client::get_client();
         client
             .ugc()
-            .download_item(PublishedFileId(item_id.get_u64().1), high_priority);
+            .download_item(PublishedFileId(item_id.get_u64().1), high_priority)
     }
 }

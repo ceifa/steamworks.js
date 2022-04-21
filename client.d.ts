@@ -61,5 +61,5 @@ export namespace workshop {
   export function state(itemId: bigint): number
   export function installInfo(itemId: bigint): InstallInfo | undefined | null
   export function downloadInfo(itemId: bigint): DownloadInfo | undefined | null
-  export function download(itemId: bigint, highPriority: boolean): void
+  export function download(itemId: bigint, highPriority: boolean): boolean
 }
