@@ -25,11 +25,11 @@ I used [greenworks](https://github.com/greenheartgames/greenworks) for a long ti
 ```js
 const steamworks = require('steamworks.js')
 
-// You can pass the appId or nothing if you want to use the steam_appid.txt file
+// You can pass an appId, or don't pass anything and use a steam_appid.txt file
 const client = steamworks.init(480)
 
 // Print Steam username
-console.log(client.getName())
+console.log(client.localplayer.getName())
 
 // Tries to activate an achievement
 if (client.activateAchievement('ACHIEVEMENT')) {

@@ -117,6 +117,8 @@ pub mod workshop {
         }
     }
 
+    /// Subscribe to a workshop item. It will be downloaded and installed as soon as possible.
+    /// https://partner.steamgames.com/doc/api/ISteamUGC#SubscribeItem
     #[napi]
     pub async fn subscribe(item_id: BigInt) -> Result<(), Error> {
         let client = crate::client::get_client();
@@ -135,6 +137,8 @@ pub mod workshop {
         }
     }
 
+    /// Unsubscribe from a workshop item. This will result in the item being removed after the game quits.
+    /// https://partner.steamgames.com/doc/api/ISteamUGC#UnsubscribeItem
     #[napi]
     pub async fn unsubscribe(item_id: BigInt) -> Result<(), Error> {
         let client = crate::client::get_client();
@@ -153,6 +157,9 @@ pub mod workshop {
         }
     }
 
+    /// Gets the current state of a workshop item on this client. States can be combined.
+    /// https://partner.steamgames.com/doc/api/ISteamUGC#GetItemState
+    /// https://partner.steamgames.com/doc/api/ISteamUGC#EItemState
     #[napi]
     pub fn state(item_id: BigInt) -> u32 {
         let client = crate::client::get_client();
@@ -163,6 +170,8 @@ pub mod workshop {
         result.bits()
     }
 
+    /// Gets info about currently installed content on the disc for workshop item.
+    /// https://partner.steamgames.com/doc/api/ISteamUGC#GetItemInstallInfo
     #[napi]
     pub fn install_info(item_id: BigInt) -> Option<InstallInfo> {
         let client = crate::client::get_client();
