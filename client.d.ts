@@ -45,15 +45,21 @@ export namespace workshop {
     contentPath?: string | undefined | null
     tags?: Array<string> | undefined | null
   }
-  export function createItem(): Promise<UgcResult>
-  export function updateItem(itemId: bigint, updateDetails: UgcUpdate): Promise<UgcResult>
-  export function subscribe(itemId: bigint): Promise<void>
-  export function unsubscribe(itemId: bigint): Promise<void>
-  export function state(itemId: bigint): number
   export interface InstallInfo {
     folder: string
     sizeOnDisk: bigint
     timestamp: number
   }
+  export interface DownloadInfo {
+    current: bigint
+    total: bigint
+  }
+  export function createItem(): Promise<UgcResult>
+  export function updateItem(itemId: bigint, updateDetails: UgcUpdate): Promise<UgcResult>
+  export function subscribe(itemId: bigint): Promise<void>
+  export function unsubscribe(itemId: bigint): Promise<void>
+  export function state(itemId: bigint): number
   export function installInfo(itemId: bigint): InstallInfo | undefined | null
+  export function downloadInfo(itemId: bigint): DownloadInfo | undefined | null
+  export function download(itemId: bigint, highPriority: boolean): void
 }

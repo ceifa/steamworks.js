@@ -30,6 +30,12 @@ pub mod workshop {
         pub timestamp: u32,
     }
 
+    #[napi(object)]
+    pub struct DownloadInfo {
+        pub current: BigInt,
+        pub total: BigInt,
+    }
+
     #[napi]
     pub async fn create_item() -> Result<UgcResult, Error> {
         let client = crate::client::get_client();
@@ -175,5 +181,33 @@ pub mod workshop {
             }),
             None => None,
         }
+    }
+
+    #[napi]
+    pub fn download_info(item_id: BigInt) -> Option<DownloadInfo> {
+        let client = crate::client::get_client();
+        let result = client
+            .ugc()
+            .item_download_info(PublishedFileId(item_id.get_u64().1));
+
+        match result {
+            Some(download_info) => Some(DownloadInfo {
+                current: BigInt {
+                    sign_bit: false,
+                    words: vec![download_info.0],
+                },
+                total: BigInt {
+                    sign_bit: false,
+                    words: vec![download_info.1],
+                },
+            }),
+            None => None,
+        }
+    }
+
+    #[napi]
+    pub fn download(item_id: BigInt, high_priority: bool) -> () {
+        let client = crate::client::get_client();
+        client.ugc().download_item(PublishedFileId(item_id.get_u64().1), high_priority);
     }
 }
