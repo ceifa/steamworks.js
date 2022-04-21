@@ -1,4 +1,4 @@
-use napi::bindgen_prelude::{Error, Status};
+use napi::bindgen_prelude::Error;
 use napi_derive::napi;
 use steamworks::Client;
 
@@ -22,7 +22,7 @@ pub fn init(app_id: u32) -> Result<(), Error> {
             client::set_single(steam_single);
             Ok(())
         }
-        Err(e) => Err(Error::new(Status::GenericFailure, e.to_string())),
+        Err(e) => Err(Error::from_reason(e.to_string())),
     }
 }
 

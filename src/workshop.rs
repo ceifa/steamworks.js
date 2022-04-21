@@ -2,7 +2,7 @@ use napi_derive::napi;
 
 #[napi]
 pub mod workshop {
-    use napi::bindgen_prelude::{BigInt, Error, Status};
+    use napi::bindgen_prelude::{BigInt, Error};
     use std::path::Path;
     use steamworks::{FileType, PublishedFileId};
     use tokio::sync::oneshot;
@@ -58,7 +58,7 @@ pub mod workshop {
                 },
                 needs_to_accept_agreement,
             }),
-            Err(e) => Err(Error::new(Status::GenericFailure, e.to_string())),
+            Err(e) => Err(Error::from_reason(e.to_string())),
         }
     }
 
@@ -113,7 +113,7 @@ pub mod workshop {
                 },
                 needs_to_accept_agreement,
             }),
-            Err(e) => Err(Error::new(Status::GenericFailure, e.to_string())),
+            Err(e) => Err(Error::from_reason(e.to_string())),
         }
     }
 
@@ -133,7 +133,7 @@ pub mod workshop {
         let result = rx.await.unwrap();
         match result {
             Ok(()) => Ok(()),
-            Err(e) => Err(Error::new(Status::GenericFailure, e.to_string())),
+            Err(e) => Err(Error::from_reason(e.to_string())),
         }
     }
 
@@ -153,7 +153,7 @@ pub mod workshop {
         let result = rx.await.unwrap();
         match result {
             Ok(()) => Ok(()),
-            Err(e) => Err(Error::new(Status::GenericFailure, e.to_string())),
+            Err(e) => Err(Error::from_reason(e.to_string())),
         }
     }
 

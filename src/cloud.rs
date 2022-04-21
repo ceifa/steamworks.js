@@ -2,7 +2,7 @@ use napi_derive::napi;
 
 #[napi]
 pub mod cloud {
-    use napi::bindgen_prelude::{Error, Status};
+    use napi::bindgen_prelude::Error;
     use std::io::Read;
     use std::io::Write;
 
@@ -30,10 +30,7 @@ pub mod cloud {
 
         match size {
             Ok(_) => Ok(buf),
-            Err(e) => Err(Error::new(
-                Status::GenericFailure,
-                format!("Failed to read file: {}", e),
-            )),
+            Err(e) => Err(Error::from_reason(format!("Failed to read file: {}", e))),
         }
     }
 

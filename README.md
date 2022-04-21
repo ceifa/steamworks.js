@@ -13,7 +13,7 @@ I used [greenworks](https://github.com/greenheartgames/greenworks) for a long ti
 
 * It's not being maintained anymore.
 * It's not up to date.
-* It's not context-aware
+* It's not context-aware.
 * You have to build the binaries by yourself.
 * Don't have typescript definitions.
 * The API it's not trustful.
@@ -36,6 +36,8 @@ if (client.activateAchievement('ACHIEVEMENT')) {
     // ...
 }
 ```
+
+You can refer to the [declarations file](https://github.com/ceifa/steamworks.js/blob/main/client.d.ts) to check the API support and get more detailed documentation of each function.
 
 ## Electron instructions
 
