@@ -218,7 +218,7 @@ pub mod workshop {
             None => None,
         }
     }
-    
+
     /// Download or update a workshop item.
     /// If high priority is true, start the download in high priority mode, pausing any existing in-progress Steam downloads and immediately begin downloading this workshop item.
     /// @returns boolean
