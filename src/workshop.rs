@@ -158,6 +158,7 @@ pub mod workshop {
     }
 
     /// Gets the current state of a workshop item on this client. States can be combined.
+    /// @returns number
     /// https://partner.steamgames.com/doc/api/ISteamUGC#GetItemState
     /// https://partner.steamgames.com/doc/api/ISteamUGC#EItemState
     #[napi]
@@ -171,6 +172,7 @@ pub mod workshop {
     }
 
     /// Gets info about currently installed content on the disc for workshop item.
+    /// @returns object {folder, size_on_disk, timestamp}
     /// https://partner.steamgames.com/doc/api/ISteamUGC#GetItemInstallInfo
     #[napi]
     pub fn install_info(item_id: BigInt) -> Option<InstallInfo> {
@@ -192,6 +194,9 @@ pub mod workshop {
         }
     }
 
+    /// Get info about a pending download of a workshop item.
+    /// @returns object {current, total}
+    /// https://partner.steamgames.com/doc/api/ISteamUGC#GetItemDownloadInfo
     #[napi]
     pub fn download_info(item_id: BigInt) -> Option<DownloadInfo> {
         let client = crate::client::get_client();
@@ -213,7 +218,11 @@ pub mod workshop {
             None => None,
         }
     }
-
+    
+    /// Download or update a workshop item.
+    /// If high priority is true, start the download in high priority mode, pausing any existing in-progress Steam downloads and immediately begin downloading this workshop item.
+    /// @returns boolean
+    /// https://partner.steamgames.com/doc/api/ISteamUGC#DownloadItem
     #[napi]
     pub fn download(item_id: BigInt, high_priority: bool) -> bool {
         let client = crate::client::get_client();

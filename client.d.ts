@@ -69,15 +69,28 @@ export namespace workshop {
   export function unsubscribe(itemId: bigint): Promise<void>
   /**
    * Gets the current state of a workshop item on this client. States can be combined.
+   * @returns number
    * https://partner.steamgames.com/doc/api/ISteamUGC#GetItemState
    * https://partner.steamgames.com/doc/api/ISteamUGC#EItemState
    */
   export function state(itemId: bigint): number
   /**
    * Gets info about currently installed content on the disc for workshop item.
+   * @returns object {folder, size_on_disk, timestamp}
    * https://partner.steamgames.com/doc/api/ISteamUGC#GetItemInstallInfo
    */
   export function installInfo(itemId: bigint): InstallInfo | undefined | null
+  /**
+   * Get info about a pending download of a workshop item.
+   * @returns object {current, total}
+   * https://partner.steamgames.com/doc/api/ISteamUGC#GetItemDownloadInfo
+   */
   export function downloadInfo(itemId: bigint): DownloadInfo | undefined | null
+  /**
+   * Download or update a workshop item.
+   * Start the download in high priority mode, pausing any existing in-progress Steam downloads and immediately begin downloading this workshop item.
+   * @returns boolean
+   * https://partner.steamgames.com/doc/api/ISteamUGC#DownloadItem
+   */
   export function download(itemId: bigint, highPriority: boolean): boolean
 }
