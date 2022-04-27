@@ -88,7 +88,7 @@ export namespace workshop {
   export function downloadInfo(itemId: bigint): DownloadInfo | undefined | null
   /**
    * Download or update a workshop item.
-   * Start the download in high priority mode, pausing any existing in-progress Steam downloads and immediately begin downloading this workshop item.
+   * If high priority is true, start the download in high priority mode, pausing any existing in-progress Steam downloads and immediately begin downloading this workshop item.
    * @returns boolean
    * https://partner.steamgames.com/doc/api/ISteamUGC#DownloadItem
    */
