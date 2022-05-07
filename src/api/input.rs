@@ -14,10 +14,9 @@ pub mod input {
         #[napi]
         pub fn activate_action_set(&self, action_set_handle: BigInt) {
             let client = crate::client::get_client();
-            client.input().activate_action_set_handle(
-                self.handle.get_u64().1,
-                action_set_handle.get_u64().1,
-            )
+            client
+                .input()
+                .activate_action_set_handle(self.handle.get_u64().1, action_set_handle.get_u64().1)
         }
 
         #[napi]
@@ -57,11 +56,14 @@ pub mod input {
     #[napi]
     pub fn get_controllers() -> Vec<Controller> {
         let client = crate::client::get_client();
-        client.input().get_connected_controllers().into_iter().map(|identity| {
-            Controller {
+        client
+            .input()
+            .get_connected_controllers()
+            .into_iter()
+            .map(|identity| Controller {
                 handle: BigInt::from(identity),
-            }
-        }).collect()
+            })
+            .collect()
     }
 
     #[napi]
