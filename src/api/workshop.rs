@@ -52,10 +52,7 @@ pub mod workshop {
         let result = rx.await.unwrap();
         match result {
             Ok((item_id, needs_to_accept_agreement)) => Ok(UgcResult {
-                item_id: BigInt {
-                    sign_bit: false,
-                    words: vec![item_id.0],
-                },
+                item_id: BigInt::from(item_id.0),
                 needs_to_accept_agreement,
             }),
             Err(e) => Err(Error::from_reason(e.to_string())),
@@ -107,10 +104,7 @@ pub mod workshop {
         let result = rx.await.unwrap();
         match result {
             Ok((item_id, needs_to_accept_agreement)) => Ok(UgcResult {
-                item_id: BigInt {
-                    sign_bit: false,
-                    words: vec![item_id.0],
-                },
+                item_id: BigInt::from(item_id.0),
                 needs_to_accept_agreement,
             }),
             Err(e) => Err(Error::from_reason(e.to_string())),
@@ -182,10 +176,7 @@ pub mod workshop {
         match result {
             Some(install_info) => Some(InstallInfo {
                 folder: install_info.folder,
-                size_on_disk: BigInt {
-                    sign_bit: false,
-                    words: vec![install_info.size_on_disk],
-                },
+                size_on_disk: BigInt::from(install_info.size_on_disk),
                 timestamp: install_info.timestamp,
             }),
             None => None,
@@ -201,14 +192,8 @@ pub mod workshop {
 
         match result {
             Some(download_info) => Some(DownloadInfo {
-                current: BigInt {
-                    sign_bit: false,
-                    words: vec![download_info.0],
-                },
-                total: BigInt {
-                    sign_bit: false,
-                    words: vec![download_info.1],
-                },
+                current: BigInt::from(download_info.0),
+                total: BigInt::from(download_info.1),
             }),
             None => None,
         }

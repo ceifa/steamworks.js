@@ -15,4 +15,4 @@ tokio = { version = "1", features = ["sync"] }
 steamworks = { git = "https://github.com/Noxime/steamworks-rs.git" }
 
 [build-dependencies]
-napi-build = "1"
+napi-build = "2"

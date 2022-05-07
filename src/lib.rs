@@ -31,9 +31,4 @@ pub fn run_callbacks() {
     client::get_single().run_callbacks();
 }
 
-// other apis
-pub mod achievement;
-pub mod cloud;
-pub mod localplayer;
-pub mod stats;
-pub mod workshop;
+pub mod api;

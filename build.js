@@ -3,10 +3,7 @@ const fs = require('node:fs');
 const child_process = require('node:child_process');
 
 const copy = (source, dest) => {
-    try {
-        fs.mkdirSync(path.dirname(dest), { recursive: true })
-    } catch { }
-
+    try { fs.mkdirSync(path.dirname(dest), { recursive: true }) } catch { }
     fs.copyFileSync(source, dest)
 }
 
@@ -28,14 +25,15 @@ if (platform === 'win32' && arch === 'x64') {
     throw new Error(`Unsupported OS: ${platform}, architecture: ${arch}`)
 }
 
-const dist = path.join(__dirname, '../dist', folder)
-const redist = path.join(__dirname, '../sdk/redistributable_bin', folder)
+const dist = path.join(__dirname, 'dist', folder)
+const redist = path.join(__dirname, 'sdk/redistributable_bin', folder)
 files.forEach(file => copy(path.join(redist, file), path.join(dist, file)))
 
 const relative = path.relative(process.cwd(), dist)
 const params = [
     'build',
     '--platform',
+    '--no-dts-header',
     '--js', 'false',
     '--dts', '../../client.d.ts',
     relative,

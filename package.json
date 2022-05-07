@@ -13,15 +13,15 @@
     ],
     "license": "MIT",
     "devDependencies": {
-        "@napi-rs/cli": "2.6.2",
+        "@napi-rs/cli": "2.8.0",
         "rimraf": "3.0.2"
     },
     "engines": {
         "node": ">= 14"
     },
     "scripts": {
-        "build": "node scripts/build --release",
-        "build:debug": "node scripts/build",
+        "build": "node build --release",
+        "build:debug": "node build",
         "prune": "rimraf dist target client.d.ts",
         "format": "cargo fmt"
     }
