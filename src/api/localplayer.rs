@@ -39,4 +39,10 @@ pub mod localplayer {
         let client = crate::client::get_client();
         client.utils().ip_country()
     }
+
+    #[napi]
+    pub fn set_rich_presence(key: String, value: Option<String>) {
+        let client = crate::client::get_client();
+        client.friends().set_rich_presence(&key, value.as_deref());
+    }
 }
