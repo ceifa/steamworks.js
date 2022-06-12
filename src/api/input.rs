@@ -6,7 +6,7 @@ pub mod input {
 
     #[napi]
     pub struct Controller {
-        pub handle: BigInt,
+        pub(crate) handle: BigInt,
     }
 
     #[napi]

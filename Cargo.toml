@@ -10,7 +10,7 @@ crate-type = ["cdylib"]
 napi = { version = "2", features = ["tokio_rt", "napi6"] }
 napi-derive = "2"
 lazy_static = "1"
-tokio = { version = "1", features = ["sync"] }
+tokio = { version = "1", features = ["sync", "time"] }
 # TODO: Change to the official crate release
 steamworks = { git = "https://github.com/Noxime/steamworks-rs.git" }
 

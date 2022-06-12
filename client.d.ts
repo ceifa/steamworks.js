@@ -3,6 +3,14 @@ export function runCallbacks(): void
 export namespace achievement {
   export function activate(achievement: string): boolean
 }
+export namespace auth {
+  /** @param timeoutSeconds - The number of seconds to wait for the ticket to be validated. Default value is 10 seconds. */
+  export function getSessionTicket(timeoutSeconds?: number | undefined | null): Promise<Ticket>
+  export class Ticket {
+    cancel(): void
+    getBytes(): Buffer
+  }
+}
 export namespace cloud {
   export function isEnabledForAccount(): boolean
   export function isEnabledForApp(): boolean
@@ -22,7 +30,6 @@ export namespace input {
   export function getAnalogAction(actionName: string): bigint
   export function shutdown(): void
   export class Controller {
-    handle: bigint
     activateActionSet(actionSetHandle: bigint): void
     isDigitalActionPressed(actionHandle: bigint): boolean
     getAnalogActionVector(actionHandle: bigint): AnalogActionVector
