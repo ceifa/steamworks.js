@@ -43,6 +43,6 @@ const params = [
 child_process.spawn('napi', params, { stdio: 'inherit', shell: true })
     .on('exit', err => {
         if (err) {
-            console.error(err)
+            throw err;
         }
     })
