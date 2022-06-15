@@ -32,7 +32,7 @@ const client = steamworks.init(480)
 console.log(client.localplayer.getName())
 
 // Tries to activate an achievement
-if (client.activateAchievement('ACHIEVEMENT')) {
+if (client.achievement.activate('ACHIEVEMENT')) {
     // ...
 }
 ```

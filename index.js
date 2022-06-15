@@ -36,7 +36,7 @@ module.exports.init = (appId) => {
     const { init: internalInit, runCallbacks, ...api } = nativeBinding
 
     internalInit(appId)
-    setInterval(runCallbacks, 50)
+    setInterval(runCallbacks, 1000 / 30)
 
     return api
 }
