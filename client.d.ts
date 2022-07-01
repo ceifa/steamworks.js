@@ -12,6 +12,18 @@ export namespace auth {
     getBytes(): Buffer
   }
 }
+export namespace callback {
+  export const enum SteamCallback {
+    PersonaStateChange = 0,
+    SteamServersConnected = 1,
+    SteamServersDisconnected = 2,
+    SteamServerConnectFailure = 3
+  }
+  export function register<C extends keyof import('./callbacks').CallbackReturns>(steamCallback: C, handler: (value: import('./callbacks').CallbackReturns[C]) => void): Handle
+  export class Handle {
+    disconnect(): void
+  }
+}
 export namespace cloud {
   export function isEnabledForAccount(): boolean
   export function isEnabledForApp(): boolean
@@ -126,16 +138,4 @@ export namespace workshop {
    * {@link https://partner.steamgames.com/doc/api/ISteamUGC#DownloadItem}
    */
   export function download(itemId: bigint, highPriority: boolean): boolean
-}
-export namespace callback {
-  export const enum SteamCallback {
-    PersonaStateChange = 0,
-    SteamServersConnected = 1,
-    SteamServersDisconnected = 2,
-    SteamServerConnectFailure = 3
-  }
-  export function register<C extends keyof import('./callbacks').CallbackReturns>(steamCallback: SteamCallback, handler: (value: import('./callbacks').CallbackReturns[C]) => void): Handle
-  export class Handle {
-    disconnect(): void
-  }
 }
