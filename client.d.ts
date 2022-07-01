@@ -127,3 +127,15 @@ export namespace workshop {
    */
   export function download(itemId: bigint, highPriority: boolean): boolean
 }
+export namespace callback {
+  export const enum SteamCallback {
+    PersonaStateChange = 0,
+    SteamServersConnected = 1,
+    SteamServersDisconnected = 2,
+    SteamServerConnectFailure = 3
+  }
+  export function register<C extends keyof import('./callbacks').CallbackReturns>(steamCallback: SteamCallback, handler: (value: import('./callbacks').CallbackReturns[C]) => void): Handle
+  export class Handle {
+    disconnect(): void
+  }
+}

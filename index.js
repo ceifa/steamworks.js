@@ -1,7 +1,7 @@
 const { platform, arch } = process
 
 /** @typedef {typeof import('./client.d')} Client */
-/** @type {Client | undefined} */
+/** @type {Client} */
 let nativeBinding = undefined
 
 if (platform === 'win32' && arch === 'x64') {
@@ -40,3 +40,5 @@ module.exports.init = (appId) => {
 
     return api
 }
+
+module.exports.SteamCallback = nativeBinding.callback.SteamCallback;
