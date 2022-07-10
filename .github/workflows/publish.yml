@@ -37,6 +37,10 @@ jobs:
       run: |
         npm i
         npm run build
+        
+    - name: Include M1 build
+      run: |
+        mv ./build/osx/steamworksjs.darwin-arm64.node ./dist/osx/
 
     - name: Upload artifact
       uses: actions/upload-artifact@v2
