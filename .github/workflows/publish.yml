@@ -59,6 +59,10 @@ jobs:
       with:
         name: OS specific binaries
         path: dist
+        
+    - name: Include M1 build
+      run: |
+        mv ./build/osx/steamworksjs.darwin-arm64.node ./dist/osx/
 
     - name: Log files
       run: |

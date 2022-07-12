@@ -9,7 +9,11 @@ if (platform === 'win32' && arch === 'x64') {
 } else if (platform === 'linux' && arch === 'x64') {
     nativeBinding = require('./dist/linux64/steamworksjs.linux-x64-gnu.node')
 } else if (platform === 'darwin') {
-    nativeBinding = require('./dist/osx/steamworksjs.darwin-x64.node')
+    if (arch === 'x64') {
+        nativeBinding = require('./dist/osx/steamworksjs.darwin-x64.node')  
+    } else if (arch === 'arm64') {
+        nativeBinding = require('./dist/osx/steamworksjs.darwin-arm64.node')  
+    }
 } else {
     throw new Error(`Unsupported OS: ${platform}, architecture: ${arch}`)
 }
