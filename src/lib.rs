@@ -10,7 +10,8 @@ extern crate lazy_static;
 #[napi]
 pub fn init(app_id: u32) -> Result<(), Error> {
     if client::has_client() {
-        return Ok(());
+        let app_id = client::get_client().utils().app_id().0;
+        return Err(Error::from_reason(format!("Client already initialized for app id {}", app_id)));
     }
 
     let result = Client::init_app(app_id);
