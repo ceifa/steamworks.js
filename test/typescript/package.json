@@ -1,12 +1,11 @@
 {
-  "name": "steamworks.js-test",
+  "name": "steamworks.js-typescript-test",
   "private": true,
   "version": "0.0.1",
   "dependencies": {
 	  "steamworks.js": "../.."
   },
   "devDependencies": {
-    "@types/node": "=18.6.1",
 	  "typescript": "=4.7.4"
   },
   "main": "index.js",

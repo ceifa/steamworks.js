@@ -1,3 +1,5 @@
+/// <reference types="node" />
+
 export function init(appId?: number): void
 export function runCallbacks(): void
 export namespace achievement {
