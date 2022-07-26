@@ -1,6 +1,4 @@
-/// <reference types="node" />
-
-export function init(appId?: number): void
+export function init(appId: number): void
 export function runCallbacks(): void
 export namespace achievement {
   export function activate(achievement: string): boolean

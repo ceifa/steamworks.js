@@ -2,6 +2,7 @@
     "name": "steamworks.js",
     "version": "0.0.19",
     "main": "index.js",
+    "types": "index.d.ts",
     "napi": {
         "name": "steamworksjs"
     },
@@ -14,16 +15,20 @@
     "license": "MIT",
     "devDependencies": {
         "@napi-rs/cli": "2.10.0",
-        "@types/node": "*",
-        "rimraf": "3.0.2"
+        "rimraf": "3.0.2",
+        "typescript": "4.7.4"
+    },
+    "dependencies": {
+        "@types/node": "*"
     },
     "engines": {
         "node": ">= 14"
     },
     "scripts": {
-        "build": "node build --release",
+        "build": "node build --release && npm run types",
         "build:debug": "node build",
         "prune": "rimraf dist target client.d.ts",
-        "format": "cargo fmt"
+        "format": "cargo fmt",
+        "types": "tsc index.js --allowJs --declaration --emitDeclarationOnly"
     }
 }
