@@ -13,7 +13,7 @@ jobs:
         node-version: 16.x
 
     - name: Install NPM dependencies
-      run: cd test/typescript && npm install
+      run: npm install && cd test/typescript && npm install
 
     - name: Compile TypeScript sources
       run: cd test/typescript && npm run compile
