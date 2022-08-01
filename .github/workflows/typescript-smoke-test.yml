@@ -1,0 +1,19 @@
+name: TypeScript Smoke Test
+on:
+  push:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 16.x
+
+    - name: Install NPM dependencies
+      run: npm install && cd test/typescript && npm install
+
+    - name: Compile TypeScript sources
+      run: cd test/typescript && npm run compile

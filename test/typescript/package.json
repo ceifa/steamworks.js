@@ -1,0 +1,14 @@
+{
+    "name": "steamworks.js-typescript-test",
+    "private": true,
+    "dependencies": {
+        "steamworks.js": "../.."
+    },
+    "devDependencies": {
+        "typescript": "4.7.4"
+    },
+    "main": "index.ts",
+    "scripts": {
+        "compile": "tsc --noEmit --strict index.ts"
+    }
+}
