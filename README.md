@@ -39,9 +39,17 @@ if (client.achievement.activate('ACHIEVEMENT')) {
 
 You can refer to the [declarations file](https://github.com/ceifa/steamworks.js/blob/main/client.d.ts) to check the API support and get more detailed documentation of each function.
 
-## Electron instructions
+## Installation
 
-Steamworks.js it's a native module and cannot be used by default in the renderer process. To enable the usage of native modules on the renderer process, the following configurations should be made on `main.js`:
+To use steamworks.js you don't have to build anything, just install it from npm:
+
+```sh
+$: npm i steamworks.js
+```
+
+### Electron
+
+Steamworks.js is a native module and cannot be used by default in the renderer process. To enable the usage of native modules on the renderer process, the following configurations should be made on `main.js`:
 
 ```js
 const mainWindow = new BrowserWindow({
@@ -61,6 +69,8 @@ require('steamworks.js').electronEnableSteamOverlay()
 ```
 
 ## How to build
+
+> You **only** need to build if you are going to change something on steamworks.js code, if you are looking to just consume the library or use it in your game, refer to the [installation section](#installation).
 
 Make sure you have the latest [node.js](https://nodejs.org/en/), [Rust](https://www.rust-lang.org/tools/install) and [Clang](https://rust-lang.github.io/rust-bindgen/requirements.html). We also need [Steam](https://store.steampowered.com/about/) installed and running.
 
