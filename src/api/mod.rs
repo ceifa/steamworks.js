@@ -1,4 +1,5 @@
 pub mod achievement;
+pub mod apps;
 pub mod auth;
 pub mod callback;
 pub mod cloud;

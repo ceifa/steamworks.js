@@ -4,6 +4,9 @@ export namespace achievement {
   export function activate(achievement: string): boolean
   export function isActivated(achievement: string): boolean
 }
+export namespace apps {
+  export function isSubscribedApp(appId: number): boolean
+}
 export namespace auth {
   /** @param timeoutSeconds - The number of seconds to wait for the ticket to be validated. Default value is 10 seconds. */
   export function getSessionTicket(timeoutSeconds?: number | undefined | null): Promise<Ticket>
