@@ -5,7 +5,25 @@ export namespace achievement {
   export function isActivated(achievement: string): boolean
 }
 export namespace apps {
+  export interface LocalSteamId {
+    steamId64: string
+    steamId32: string
+    accountId: number
+  }
   export function isSubscribedApp(appId: number): boolean
+  export function isAppInstalled(appId: number): boolean
+  export function isDlcInstalled(appId: number): boolean
+  export function isSubscribedFromFreeWeekend(): boolean
+  export function isVacBanned(): boolean
+  export function isCybercafe(): boolean
+  export function isLowViolence(): boolean
+  export function isSubscribed(): boolean
+  export function appBuildId(): number
+  export function appInstallDir(appId: number): string
+  export function appOwner(): LocalSteamId
+  export function availableGameLanguages(): Array<string>
+  export function currentGameLanguage(): string
+  export function currentBetaName(): string | null
 }
 export namespace auth {
   /** @param timeoutSeconds - The number of seconds to wait for the ticket to be validated. Default value is 10 seconds. */
