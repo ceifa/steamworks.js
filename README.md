@@ -75,3 +75,5 @@ require('steamworks.js').electronEnableSteamOverlay()
 Make sure you have the latest [node.js](https://nodejs.org/en/), [Rust](https://www.rust-lang.org/tools/install) and [Clang](https://rust-lang.github.io/rust-bindgen/requirements.html). We also need [Steam](https://store.steampowered.com/about/) installed and running.
 
 Install dependencies with `npm install` and then run `npm run build:debug` to build the library.
+
+There is no way to build for all targets easily. The good news is that you don't need to. You can develop and test on your current target, and open a PR. When the code is merged to main, a github action will build for all targets and publish a new version.
