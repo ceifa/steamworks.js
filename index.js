@@ -45,5 +45,36 @@ module.exports.init = (appId) => {
     return api
 }
 
+/**
+ * Enable the steam overlay for the given electron app
+ * @param {import('electron').App} app - Electron app
+ * @param {boolean} [disableEachFrameInvalidation] - Should attach a single pixel to be rendered each frame
+*/
+module.exports.electronEnableSteamOverlay = (disableEachFrameInvalidation) => {
+    const electron = require('electron')
+    if (!electron) {
+        throw new Error('Electron module not found')
+    }
+
+    electron.app.commandLine.appendSwitch('in-process-gpu')
+    electron.app.commandLine.appendSwitch('disable-direct-composition')
+
+    if (!disableEachFrameInvalidation) {
+        /** @param {electron.BrowserWindow} browserWindow */
+        const attachFrameInvalidator = (browserWindow) => {
+            browserWindow.steamworksRepaintInterval = setInterval(() => {
+                if (browserWindow.isDestroyed()) {
+                    clearInterval(browserWindow.steamworksRepaintInterval)
+                } else if (!browserWindow.webContents.isPainting()) {
+                    browserWindow.webContents.invalidate()
+                }
+            }, 1000 / 60)
+        }
+
+        electron.BrowserWindow.getAllWindows().forEach(attachFrameInvalidator)
+        electron.app.on('browser-window-created', (_, bw) => attachFrameInvalidator(bw))
+    }
+}
+
 const SteamCallback = nativeBinding.callback.SteamCallback
 module.exports.SteamCallback = SteamCallback

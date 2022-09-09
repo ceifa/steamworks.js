@@ -54,11 +54,10 @@ const mainWindow = new BrowserWindow({
 })
 ```
 
-You also have to enable some flags on chromium to make the steam overlay work. Put this code on the final of `main.js`:
+To make the steam overlay working, call the `electronEnableSteamOverlay` on the end of your `main.js` file:
 
 ```js
-app.commandLine.appendSwitch('in-process-gpu')
-app.commandLine.appendSwitch('disable-direct-composition')
+require('steamworks.js').electronEnableSteamOverlay()
 ```
 
 ## How to build
