@@ -18,6 +18,8 @@ if (platform === 'win32' && arch === 'x64') {
     throw new Error(`Unsupported OS: ${platform}, architecture: ${arch}`)
 }
 
+let runCallbacksInterval = undefined
+
 /**
  * Initialize the steam client or throw an error if it fails
  * @param {number} [appId] - App ID of the game to load, if undefined, will search for a steam_appid.txt file
@@ -40,7 +42,9 @@ module.exports.init = (appId) => {
     const { init: internalInit, runCallbacks, ...api } = nativeBinding
 
     internalInit(appId)
-    setInterval(runCallbacks, 1000 / 30)
+
+    clearInterval(runCallbacksInterval)
+    runCallbacksInterval = setInterval(runCallbacks, 1000 / 30)
 
     return api
 }
