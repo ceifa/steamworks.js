@@ -1,4 +1,5 @@
 export function init(appId: number): void
+export function restartAppIfNecessary(appId: number): boolean
 export function runCallbacks(): void
 export namespace achievement {
   export function activate(achievement: string): boolean
