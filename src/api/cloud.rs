@@ -50,4 +50,12 @@ pub mod cloud {
 
         file.delete()
     }
+
+    #[napi]
+    pub fn file_exists(name: String) -> bool {
+        let client = crate::client::get_client();
+        let file = client.remote_storage().file(&name);
+
+        file.exists()
+    }
 }
