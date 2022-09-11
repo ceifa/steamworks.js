@@ -1,14 +1,10 @@
+use super::localplayer::PlayerSteamId;
 use napi_derive::napi;
 
 #[napi]
 pub mod apps {
+    use super::PlayerSteamId;
     use steamworks::AppId;
-    #[napi(object)]
-    pub struct LocalSteamId {
-        pub steam_id64: String,
-        pub steam_id32: String,
-        pub account_id: u32,
-    }
 
     #[napi]
     pub fn is_subscribed_app(app_id: u32) -> bool {
@@ -70,11 +66,11 @@ pub mod apps {
     }
 
     #[napi]
-    pub fn app_owner() -> LocalSteamId {
+    pub fn app_owner() -> PlayerSteamId {
         let client = crate::client::get_client();
         let steam_id = client.apps().app_owner();
 
-        LocalSteamId {
+        PlayerSteamId {
             steam_id64: steam_id.raw().to_string(),
             steam_id32: steam_id.steamid32(),
             account_id: steam_id.account_id().raw(),
