@@ -1,5 +1,6 @@
 use napi::bindgen_prelude::Error;
 use napi_derive::napi;
+use steamworks::AppId;
 use steamworks::Client;
 
 pub mod client;
@@ -28,6 +29,11 @@ pub fn init(app_id: u32) -> Result<(), Error> {
         }
         Err(e) => Err(Error::from_reason(e.to_string())),
     }
+}
+
+#[napi]
+pub fn restart_app_if_necessary(app_id: u32) -> bool {
+    steamworks::restart_app_if_necessary(AppId(app_id))
 }
 
 #[napi_derive::napi]
