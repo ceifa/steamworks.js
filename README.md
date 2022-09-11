@@ -5,7 +5,7 @@
 
 # Steamworks.js
 
-A modern implementation of the Steamworks SDK for HTML/JS based applications.
+A modern implementation of the Steamworks SDK for HTML/JS and NodeJS based applications.
 
 ## Why
 
