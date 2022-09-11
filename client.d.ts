@@ -1,12 +1,30 @@
 export function init(appId: number): void
 export function restartAppIfNecessary(appId: number): boolean
 export function runCallbacks(): void
+export interface PlayerSteamId {
+  steamId64: string
+  steamId32: string
+  accountId: number
+}
 export namespace achievement {
   export function activate(achievement: string): boolean
   export function isActivated(achievement: string): boolean
 }
 export namespace apps {
   export function isSubscribedApp(appId: number): boolean
+  export function isAppInstalled(appId: number): boolean
+  export function isDlcInstalled(appId: number): boolean
+  export function isSubscribedFromFreeWeekend(): boolean
+  export function isVacBanned(): boolean
+  export function isCybercafe(): boolean
+  export function isLowViolence(): boolean
+  export function isSubscribed(): boolean
+  export function appBuildId(): number
+  export function appInstallDir(appId: number): string
+  export function appOwner(): PlayerSteamId
+  export function availableGameLanguages(): Array<string>
+  export function currentGameLanguage(): string
+  export function currentBetaName(): string | null
 }
 export namespace auth {
   /** @param timeoutSeconds - The number of seconds to wait for the ticket to be validated. Default value is 10 seconds. */
@@ -53,12 +71,7 @@ export namespace input {
   }
 }
 export namespace localplayer {
-  export interface LocalSteamId {
-    steamId64: string
-    steamId32: string
-    accountId: number
-  }
-  export function getSteamId(): LocalSteamId
+  export function getSteamId(): PlayerSteamId
   export function getName(): string
   export function getLevel(): number
   /** @returns the 2 digit ISO 3166-1-alpha-2 format country code which client is running in, e.g. "US" or "UK". */
