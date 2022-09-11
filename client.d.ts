@@ -52,6 +52,7 @@ export namespace cloud {
   export function readFile(name: string): string
   export function writeFile(name: string, content: string): boolean
   export function deleteFile(name: string): boolean
+  export function fileExists(name: string): boolean
 }
 export namespace input {
   export interface AnalogActionVector {
