@@ -50,6 +50,14 @@ module.exports.init = (appId) => {
 }
 
 /**
+ * @returns {boolean}
+ */
+module.exports.restartAppIfNecessary = (appId) => {
+    const { restartAppIfNecessary: internalRestartAppIfNecessary } = nativeBinding;
+    return internalRestartAppIfNecessary(appId);
+}
+
+/**
  * Enable the steam overlay for the given electron app
  * @param {import('electron').App} app - Electron app
  * @param {boolean} [disableEachFrameInvalidation] - Should attach a single pixel to be rendered each frame
