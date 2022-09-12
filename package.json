@@ -31,5 +31,9 @@
         "prune": "rimraf dist target client.d.ts",
         "format": "cargo fmt",
         "types": "tsc index.js --allowJs --declaration --emitDeclarationOnly"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/ceifa/steamworks.js"
     }
 }
