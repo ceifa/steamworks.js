@@ -39,7 +39,7 @@ module.exports.init = (appId) => {
         }
     }
 
-    const { init: internalInit, runCallbacks, ...api } = nativeBinding
+    const { init: internalInit, runCallbacks, restartAppIfNecessary, ...api } = nativeBinding
 
     internalInit(appId)
 
@@ -50,16 +50,14 @@ module.exports.init = (appId) => {
 }
 
 /**
- * @returns {boolean}
+ * @param {number} appId - App ID of the game to load
+ * {@link https://partner.steamgames.com/doc/api/steam_api#SteamAPI_RestartAppIfNecessary}
+ * @returns {boolean} 
  */
-module.exports.restartAppIfNecessary = (appId) => {
-    const { restartAppIfNecessary: internalRestartAppIfNecessary } = nativeBinding;
-    return internalRestartAppIfNecessary(appId);
-}
+module.exports.restartAppIfNecessary = (appId) => nativeBinding.restartAppIfNecessary(appId);
 
 /**
- * Enable the steam overlay for the given electron app
- * @param {import('electron').App} app - Electron app
+ * Enable the steam overlay on electron
  * @param {boolean} [disableEachFrameInvalidation] - Should attach a single pixel to be rendered each frame
 */
 module.exports.electronEnableSteamOverlay = (disableEachFrameInvalidation) => {
