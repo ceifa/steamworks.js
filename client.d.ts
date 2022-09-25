@@ -157,3 +157,18 @@ export namespace workshop {
    */
   export function download(itemId: bigint, highPriority: boolean): boolean
 }
+export namespace matchmaking {
+  export const enum LobbyType {
+    Private = 0,
+    FriendsOnly = 1,
+    Public = 2,
+    Invisible = 3
+  }
+  export function createLobby(lobbyType: LobbyType, maxMembers: number): Promise<Lobby>
+  export function joinJobby(lobbyId: bigint): Promise<Lobby>
+  export function getLobbies(): Promise<Array<Lobby>>
+  export class Lobby {
+    id: bigint
+    join(): Promise<void>
+  }
+}
