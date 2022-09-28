@@ -3,6 +3,7 @@ use napi_derive::napi;
 #[napi]
 pub mod matchmaking {
     use napi::bindgen_prelude::{BigInt, Error, ToNapiValue};
+    use steamworks::LobbyId;
     use tokio::sync::oneshot;
 
     #[napi]
@@ -16,6 +17,7 @@ pub mod matchmaking {
     #[napi]
     pub struct Lobby {
         pub id: BigInt,
+        lobby_id: LobbyId,
     }
 
     #[napi]
@@ -26,6 +28,50 @@ pub mod matchmaking {
                 Ok(_) => Ok(()),
                 Err(e) => Err(e),
             }
+        }
+
+        #[napi]
+        pub fn leave(&self) {
+            let client = crate::client::get_client();
+            client.matchmaking().leave_lobby(self.lobby_id);
+        }
+
+        #[napi]
+        pub fn open_invite_dialog(&self) {
+            let client = crate::client::get_client();
+            client.friends().activate_invite_dialog(self.lobby_id);
+        }
+
+        #[napi]
+        pub fn get_member_count(&self) -> usize {
+            let client = crate::client::get_client();
+            client.matchmaking().lobby_member_count(self.lobby_id)
+        }
+
+        #[napi]
+        pub fn get_member_limit(&self) -> Option<usize> {
+            let client = crate::client::get_client();
+            client.matchmaking().lobby_member_limit(self.lobby_id)
+        }
+
+        #[napi]
+        pub fn get_members(&self) {
+            let client = crate::client::get_client();
+            client.matchmaking().lobby_members(self.lobby_id);
+        }
+
+        #[napi]
+        pub fn get_owner(&self) -> u64 {
+            let client = crate::client::get_client();
+            client.matchmaking().lobby_owner(self.lobby_id).raw()
+        }
+
+        #[napi]
+        pub fn set_joinable(&self, joinable: bool) -> bool {
+            let client = crate::client::get_client();
+            client
+                .matchmaking()
+                .set_lobby_joinable(self.lobby_id, joinable)
         }
     }
 
@@ -52,6 +98,7 @@ pub mod matchmaking {
         match result {
             Ok(lobby_id) => Ok(Lobby {
                 id: BigInt::from(lobby_id.raw()),
+                lobby_id,
             }),
             Err(e) => Err(Error::from_reason(e.to_string())),
         }
@@ -74,6 +121,7 @@ pub mod matchmaking {
         match result {
             Ok(lobby_id) => Ok(Lobby {
                 id: BigInt::from(lobby_id.raw()),
+                lobby_id,
             }),
             Err(_) => Err(Error::from_reason("Failed to join lobby".to_string())),
         }
@@ -94,8 +142,9 @@ pub mod matchmaking {
         match lobbies {
             Ok(lobbies) => Ok(lobbies
                 .iter()
-                .map(|lobby| Lobby {
-                    id: BigInt::from(lobby.raw()),
+                .map(|lobby_id| Lobby {
+                    id: BigInt::from(lobby_id.raw()),
+                    lobby_id: *lobby_id,
                 })
                 .collect()),
             Err(e) => Err(Error::from_reason(e.to_string())),

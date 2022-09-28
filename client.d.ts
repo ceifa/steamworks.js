@@ -170,5 +170,12 @@ export namespace matchmaking {
   export class Lobby {
     id: bigint
     join(): Promise<void>
+    leave(): void
+    openInviteDialog(): void
+    getMemberCount(): bigint
+    getMemberLimit(): bigint | null
+    getMembers(): void
+    getOwner(): bigint
+    setJoinable(joinable: boolean): boolean
   }
 }
