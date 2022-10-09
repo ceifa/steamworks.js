@@ -2,6 +2,7 @@ use napi_derive::napi;
 
 #[napi]
 pub mod matchmaking {
+    use std::collections::HashMap;
     use napi::bindgen_prelude::{BigInt, Error, ToNapiValue};
     use steamworks::LobbyId;
     use tokio::sync::oneshot;
@@ -72,6 +73,62 @@ pub mod matchmaking {
             client
                 .matchmaking()
                 .set_lobby_joinable(self.lobby_id, joinable)
+        }
+
+        #[napi]
+        pub fn get_data(&self, key: String) -> Option<String> {
+            let client = crate::client::get_client();
+            client
+                .matchmaking()
+                .lobby_data(self.lobby_id, &key)
+                .map(|s| s.to_string())
+        }
+
+        #[napi]
+        pub fn set_data(&self, key: String, value: String) -> bool {
+            let client = crate::client::get_client();
+            client
+                .matchmaking()
+                .set_lobby_data(self.lobby_id, &key, &value)
+        }
+
+        #[napi]
+        pub fn delete_data(&self, key: String) -> bool {
+            let client = crate::client::get_client();
+            client.matchmaking().delete_lobby_data(self.lobby_id, &key)
+        }
+
+        /// Get an object containing all the lobby data
+        #[napi]
+        pub fn get_full_data(&self) -> HashMap<String, String> {
+            let client = crate::client::get_client();
+
+            let mut data = HashMap::new();
+
+            let count = client.matchmaking().lobby_data_count(self.lobby_id);
+            for i in 0..count {
+                let maybe_lobby_data = client.matchmaking().lobby_data_by_index(self.lobby_id, i);
+
+                if let Some((key, value)) = maybe_lobby_data {
+                    data.insert(key, value);
+                }
+            }
+
+            return data;
+        }
+
+        /// Merge current lobby data with provided data in a single batch
+        #[napi]
+        pub fn merge_full_data(&self, data: HashMap<String, String>) -> bool {
+            let client = crate::client::get_client();
+
+            for (key, value) in data {
+                client
+                    .matchmaking()
+                    .set_lobby_data(self.lobby_id, &key, &value);
+            }
+
+            return true;
         }
     }
 
