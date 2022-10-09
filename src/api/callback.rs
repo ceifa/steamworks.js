@@ -31,6 +31,8 @@ pub mod callback {
         SteamServersConnected,
         SteamServersDisconnected,
         SteamServerConnectFailure,
+        LobbyDataUpdate,
+        LobbyChatUpdate,
     }
 
     #[napi(ts_generic_types = "C extends keyof import('./callbacks').CallbackReturns")]
@@ -56,6 +58,12 @@ pub mod callback {
             SteamCallback::SteamServerConnectFailure => {
                 register_callback::<SteamServerConnectFailure>(threadsafe_handler)
             }
+            SteamCallback::LobbyDataUpdate => {
+                register_callback::<steamworks::LobbyDataUpdate>(threadsafe_handler)
+            }
+            SteamCallback::LobbyChatUpdate => {
+                register_callback::<steamworks::LobbyChatUpdate>(threadsafe_handler)
+            }
         };
 
         Handle {
@@ -72,10 +80,7 @@ pub mod callback {
         let client = crate::client::get_client();
         client.register_callback(move |value: C| {
             let value = serde_json::to_value(&value).unwrap();
-            threadsafe_handler.call(
-                serde_json::to_value(value).unwrap(),
-                ThreadsafeFunctionCallMode::Blocking,
-            );
+            threadsafe_handler.call(value, ThreadsafeFunctionCallMode::Blocking);
         })
     }
 }

@@ -5,5 +5,6 @@ pub mod callback;
 pub mod cloud;
 pub mod input;
 pub mod localplayer;
+pub mod matchmaking;
 pub mod stats;
 pub mod workshop;

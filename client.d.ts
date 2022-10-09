@@ -39,7 +39,9 @@ export namespace callback {
     PersonaStateChange = 0,
     SteamServersConnected = 1,
     SteamServersDisconnected = 2,
-    SteamServerConnectFailure = 3
+    SteamServerConnectFailure = 3,
+    LobbyDataUpdate = 4,
+    LobbyChatUpdate = 5
   }
   export function register<C extends keyof import('./callbacks').CallbackReturns>(steamCallback: C, handler: (value: import('./callbacks').CallbackReturns[C]) => void): Handle
   export class Handle {
@@ -78,6 +80,35 @@ export namespace localplayer {
   /** @returns the 2 digit ISO 3166-1-alpha-2 format country code which client is running in, e.g. "US" or "UK". */
   export function getIpCountry(): string
   export function setRichPresence(key: string, value?: string | undefined | null): void
+}
+export namespace matchmaking {
+  export const enum LobbyType {
+    Private = 0,
+    FriendsOnly = 1,
+    Public = 2,
+    Invisible = 3
+  }
+  export function createLobby(lobbyType: LobbyType, maxMembers: number): Promise<Lobby>
+  export function joinJobby(lobbyId: bigint): Promise<Lobby>
+  export function getLobbies(): Promise<Array<Lobby>>
+  export class Lobby {
+    id: bigint
+    join(): Promise<void>
+    leave(): void
+    openInviteDialog(): void
+    getMemberCount(): bigint
+    getMemberLimit(): bigint | null
+    getMembers(): void
+    getOwner(): bigint
+    setJoinable(joinable: boolean): boolean
+    getData(key: string): string | null
+    setData(key: string, value: string): boolean
+    deleteData(key: string): boolean
+    /** Get an object containing all the lobby data */
+    getFullData(): Record<string, string>
+    /** Merge current lobby data with provided data */
+    mergeFullData(data: Record<string, string>): boolean
+  }
 }
 export namespace stats {
   export function getInt(name: string): number | null
