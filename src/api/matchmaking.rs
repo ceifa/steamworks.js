@@ -2,8 +2,8 @@ use napi_derive::napi;
 
 #[napi]
 pub mod matchmaking {
-    use std::collections::HashMap;
     use napi::bindgen_prelude::{BigInt, Error, ToNapiValue};
+    use std::collections::HashMap;
     use steamworks::LobbyId;
     use tokio::sync::oneshot;
 
