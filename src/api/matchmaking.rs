@@ -2,6 +2,7 @@ use napi_derive::napi;
 
 #[napi]
 pub mod matchmaking {
+    use crate::api::localplayer::PlayerSteamId;
     use napi::bindgen_prelude::{BigInt, Error, ToNapiValue};
     use std::collections::HashMap;
     use steamworks::LobbyId;
@@ -24,9 +25,9 @@ pub mod matchmaking {
     #[napi]
     impl Lobby {
         #[napi]
-        pub async fn join(&self) -> Result<(), Error> {
+        pub async fn join(&self) -> Result<Lobby, Error> {
             match join_jobby(self.id.clone()).await {
-                Ok(_) => Ok(()),
+                Ok(lobby) => Ok(lobby),
                 Err(e) => Err(e),
             }
         }
@@ -56,9 +57,14 @@ pub mod matchmaking {
         }
 
         #[napi]
-        pub fn get_members(&self) {
+        pub fn get_members(&self) -> Vec<PlayerSteamId> {
             let client = crate::client::get_client();
-            client.matchmaking().lobby_members(self.lobby_id);
+            client
+                .matchmaking()
+                .lobby_members(self.lobby_id)
+                .into_iter()
+                .map(|member| PlayerSteamId::from_steamid(member))
+                .collect()
         }
 
         #[napi]

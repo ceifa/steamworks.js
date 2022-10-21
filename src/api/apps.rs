@@ -69,12 +69,7 @@ pub mod apps {
     pub fn app_owner() -> PlayerSteamId {
         let client = crate::client::get_client();
         let steam_id = client.apps().app_owner();
-
-        PlayerSteamId {
-            steam_id64: steam_id.raw().to_string(),
-            steam_id32: steam_id.steamid32(),
-            account_id: steam_id.account_id().raw(),
-        }
+        PlayerSteamId::from_steamid(steam_id)
     }
 
     #[napi]

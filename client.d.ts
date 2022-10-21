@@ -93,12 +93,12 @@ export namespace matchmaking {
   export function getLobbies(): Promise<Array<Lobby>>
   export class Lobby {
     id: bigint
-    join(): Promise<void>
+    join(): Promise<Lobby>
     leave(): void
     openInviteDialog(): void
     getMemberCount(): bigint
     getMemberLimit(): bigint | null
-    getMembers(): void
+    getMembers(): Array<PlayerSteamId>
     getOwner(): bigint
     setJoinable(joinable: boolean): boolean
     getData(key: string): string | null
@@ -106,7 +106,7 @@ export namespace matchmaking {
     deleteData(key: string): boolean
     /** Get an object containing all the lobby data */
     getFullData(): Record<string, string>
-    /** Merge current lobby data with provided data */
+    /** Merge current lobby data with provided data in a single batch */
     mergeFullData(data: Record<string, string>): boolean
   }
 }

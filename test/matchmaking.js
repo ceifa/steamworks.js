@@ -1,12 +1,17 @@
 const { init, SteamCallback } = require('../index.js')
 
 const client = init(480)
-const callback = client.callback.register(SteamCallback.LobbyDataUpdate, (batata) => {
-    console.log(batata)
+const callback1 = client.callback.register(SteamCallback.LobbyDataUpdate, (data) => {
+    console.log('LobbyDataUpdate', data)
+});
+
+const callback2 = client.callback.register(SteamCallback.LobbyChatUpdate, (data) => {
+    console.log('LobbyChatUpdate', data)
 });
 
 setTimeout(() => {
-    callback.disconnect()
+    callback1.disconnect()
+    callback2.disconnect()
 }, 5000);
 
 (async () => {
@@ -26,6 +31,10 @@ setTimeout(() => {
     lobby.leave();
 
     console.log("=====")
-    const lobbies = await client.matchmaking.getLobbies();
+    const lobbies = await client.matchmaking.getLobbies()
     console.log(lobbies.map(lobby => lobby.id))
+
+    const lobbyWithMorePeople = await lobbies.sort((a, b) => Number(b.getMemberCount() - a.getMemberCount()))[1].join()
+    console.log("Joined at " + lobbyWithMorePeople.id + " with " + lobbyWithMorePeople.getMemberCount() + " members:")
+    console.log(lobbyWithMorePeople.getMembers())
 })();

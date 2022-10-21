@@ -7,14 +7,10 @@ pub mod callback {
         threadsafe_function::{ErrorStrategy, ThreadsafeFunction, ThreadsafeFunctionCallMode},
         JsFunction,
     };
-    use steamworks::{
-        CallbackHandle, PersonaStateChange, SteamServerConnectFailure, SteamServersConnected,
-        SteamServersDisconnected,
-    };
 
     #[napi]
     pub struct Handle {
-        handle: Option<CallbackHandle>,
+        handle: Option<steamworks::CallbackHandle>,
     }
 
     #[napi]
@@ -47,16 +43,16 @@ pub mod callback {
 
         let handle = match steam_callback {
             SteamCallback::PersonaStateChange => {
-                register_callback::<PersonaStateChange>(threadsafe_handler)
+                register_callback::<steamworks::PersonaStateChange>(threadsafe_handler)
             }
             SteamCallback::SteamServersConnected => {
-                register_callback::<SteamServersConnected>(threadsafe_handler)
+                register_callback::<steamworks::SteamServersConnected>(threadsafe_handler)
             }
             SteamCallback::SteamServersDisconnected => {
-                register_callback::<SteamServersDisconnected>(threadsafe_handler)
+                register_callback::<steamworks::SteamServersDisconnected>(threadsafe_handler)
             }
             SteamCallback::SteamServerConnectFailure => {
-                register_callback::<SteamServerConnectFailure>(threadsafe_handler)
+                register_callback::<steamworks::SteamServerConnectFailure>(threadsafe_handler)
             }
             SteamCallback::LobbyDataUpdate => {
                 register_callback::<steamworks::LobbyDataUpdate>(threadsafe_handler)
@@ -73,10 +69,11 @@ pub mod callback {
 
     fn register_callback<C>(
         threadsafe_handler: ThreadsafeFunction<serde_json::Value, ErrorStrategy::Fatal>,
-    ) -> CallbackHandle
+    ) -> steamworks::CallbackHandle
     where
         C: steamworks::Callback + serde::Serialize,
     {
+        println!("Registering callback for {}", C::ID);
         let client = crate::client::get_client();
         client.register_callback(move |value: C| {
             let value = serde_json::to_value(&value).unwrap();

@@ -1,10 +1,21 @@
 use napi_derive::napi;
+use steamworks::SteamId;
 
 #[napi(object)]
 pub struct PlayerSteamId {
     pub steam_id64: String,
     pub steam_id32: String,
     pub account_id: u32,
+}
+
+impl PlayerSteamId {
+    pub(crate) fn from_steamid(steam_id: SteamId) -> Self {
+        Self {
+            steam_id64: steam_id.raw().to_string(),
+            steam_id32: steam_id.steamid32(),
+            account_id: steam_id.account_id().raw(),
+        }
+    }
 }
 
 #[napi]
@@ -15,12 +26,7 @@ pub mod localplayer {
     pub fn get_steam_id() -> PlayerSteamId {
         let client = crate::client::get_client();
         let steam_id = client.user().steam_id();
-
-        PlayerSteamId {
-            steam_id64: steam_id.raw().to_string(),
-            steam_id32: steam_id.steamid32(),
-            account_id: steam_id.account_id().raw(),
-        }
+        PlayerSteamId::from_steamid(steam_id)
     }
 
     #[napi]
