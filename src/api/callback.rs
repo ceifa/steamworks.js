@@ -29,6 +29,8 @@ pub mod callback {
         SteamServerConnectFailure,
         LobbyDataUpdate,
         LobbyChatUpdate,
+        P2PSessionRequest,
+        P2PSessionConnectFail,
     }
 
     #[napi(ts_generic_types = "C extends keyof import('./callbacks').CallbackReturns")]
@@ -60,6 +62,12 @@ pub mod callback {
             SteamCallback::LobbyChatUpdate => {
                 register_callback::<steamworks::LobbyChatUpdate>(threadsafe_handler)
             }
+            SteamCallback::P2PSessionRequest => {
+                register_callback::<steamworks::P2PSessionRequest>(threadsafe_handler)
+            }
+            SteamCallback::P2PSessionConnectFail => {
+                register_callback::<steamworks::P2PSessionConnectFail>(threadsafe_handler)
+            }
         };
 
         Handle {
@@ -73,7 +81,6 @@ pub mod callback {
     where
         C: steamworks::Callback + serde::Serialize,
     {
-        println!("Registering callback for {}", C::ID);
         let client = crate::client::get_client();
         client.register_callback(move |value: C| {
             let value = serde_json::to_value(&value).unwrap();

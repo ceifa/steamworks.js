@@ -41,7 +41,9 @@ export namespace callback {
     SteamServersDisconnected = 2,
     SteamServerConnectFailure = 3,
     LobbyDataUpdate = 4,
-    LobbyChatUpdate = 5
+    LobbyChatUpdate = 5,
+    P2PSessionRequest = 6,
+    P2PSessionConnectFail = 7
   }
   export function register<C extends keyof import('./callbacks').CallbackReturns>(steamCallback: C, handler: (value: import('./callbacks').CallbackReturns[C]) => void): Handle
   export class Handle {
@@ -99,7 +101,7 @@ export namespace matchmaking {
     getMemberCount(): bigint
     getMemberLimit(): bigint | null
     getMembers(): Array<PlayerSteamId>
-    getOwner(): bigint
+    getOwner(): PlayerSteamId
     setJoinable(joinable: boolean): boolean
     getData(key: string): string | null
     setData(key: string, value: string): boolean
@@ -109,6 +111,42 @@ export namespace matchmaking {
     /** Merge current lobby data with provided data in a single batch */
     mergeFullData(data: Record<string, string>): boolean
   }
+}
+export namespace networking {
+  export interface P2PPacket {
+    data: Buffer
+    size: number
+    steamId: PlayerSteamId
+  }
+  /** The method used to send a packet */
+  export const enum SendType {
+    /**
+     * Send the packet directly over udp.
+     *
+     * Can't be larger than 1200 bytes
+     */
+    Unreliable = 0,
+    /**
+     * Like `Unreliable` but doesn't buffer packets
+     * sent before the connection has started.
+     */
+    UnreliableNoDelay = 1,
+    /**
+     * Reliable packet sending.
+     *
+     * Can't be larger than 1 megabyte.
+     */
+    Reliable = 2,
+    /**
+     * Like `Reliable` but applies the nagle
+     * algorithm to packets being sent
+     */
+    ReliableWithBuffering = 3
+  }
+  export function sendP2PPacket(steamId64: string, sendType: SendType, data: Buffer): boolean
+  export function isP2PPacketAvailable(): number
+  export function readP2PPacket(size: number): P2PPacket
+  export function acceptP2PSession(steamId64: string): void
 }
 export namespace stats {
   export function getInt(name: string): number | null

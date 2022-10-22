@@ -68,9 +68,9 @@ pub mod matchmaking {
         }
 
         #[napi]
-        pub fn get_owner(&self) -> u64 {
+        pub fn get_owner(&self) -> PlayerSteamId {
             let client = crate::client::get_client();
-            client.matchmaking().lobby_owner(self.lobby_id).raw()
+            PlayerSteamId::from_steamid(client.matchmaking().lobby_owner(self.lobby_id))
         }
 
         #[napi]

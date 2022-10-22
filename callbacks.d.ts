@@ -37,4 +37,11 @@ export interface CallbackReturns {
         making_change: bigint
         member_state_change: ChatMemberStateChange
     }
+    [client.callback.SteamCallback.P2PSessionRequest]: {
+        remote: bigint
+    }
+    [client.callback.SteamCallback.P2PSessionConnectFail]: {
+        remote: bigint
+        error: number
+    }
 }
