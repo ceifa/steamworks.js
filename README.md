@@ -68,6 +68,10 @@ To make the steam overlay working, call the `electronEnableSteamOverlay` on the 
 require('steamworks.js').electronEnableSteamOverlay()
 ```
 
+[Some users have reported an issue when launching Linux apps](https://github.com/ceifa/steamworks.js/issues/42). A workaround is available, to pass a `--no-sandbox` as an argument to the app launcher in Steamworks --> Steamworks Settings --> Installation --> General Installation --> Launch Options. (Note that `--no-sandbox` makes it unsafe to run third-party code, but as long as you're only running game code under your own control, it should be fine.) A screenshot example of this appears below.
+
+![screenshot](LaunchOption.png)
+
 ## How to build
 
 > You **only** need to build if you are going to change something on steamworks.js code, if you are looking to just consume the library or use it in your game, refer to the [installation section](#installation).
