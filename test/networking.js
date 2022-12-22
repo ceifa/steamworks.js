@@ -19,7 +19,7 @@ const rlInterface = rl.createInterface({
 rlInterface.question('Enter a lobby id or press enter to create one: ', async lobbyId => {
     let lobby
     if (lobbyId) {
-        lobby = await client.matchmaking.joinJobby(BigInt(lobbyId))
+        lobby = await client.matchmaking.joinLobby(BigInt(lobbyId))
         lobby.getMembers().forEach(peer => {
             client.networking.sendP2PPacket(peer.steamId64, client.networking.SendType.Reliable, Buffer.from('Connection request'))
         })
