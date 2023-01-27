@@ -26,7 +26,7 @@ pub mod matchmaking {
     impl Lobby {
         #[napi]
         pub async fn join(&self) -> Result<Lobby, Error> {
-            match join_jobby(self.id.clone()).await {
+            match join_lobby(self.id.clone()).await {
                 Ok(lobby) => Ok(lobby),
                 Err(e) => Err(e),
             }
@@ -168,7 +168,7 @@ pub mod matchmaking {
     }
 
     #[napi]
-    pub async fn join_jobby(lobby_id: BigInt) -> Result<Lobby, Error> {
+    pub async fn join_lobby(lobby_id: BigInt) -> Result<Lobby, Error> {
         let client = crate::client::get_client();
 
         let (tx, rx) = oneshot::channel();
