@@ -91,7 +91,7 @@ export namespace matchmaking {
     Invisible = 3
   }
   export function createLobby(lobbyType: LobbyType, maxMembers: number): Promise<Lobby>
-  export function joinLobby(lobbyId: bigint): Promise<Lobby>
+  export function joinJobby(lobbyId: bigint): Promise<Lobby>
   export function getLobbies(): Promise<Array<Lobby>>
   export class Lobby {
     id: bigint

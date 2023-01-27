@@ -59,9 +59,16 @@ pub mod auth {
         drop(callback);
 
         match result {
-            Ok(result) => match result.unwrap() {
-                Ok(()) => Ok(ticket),
-                Err(e) => Err(Error::from_reason(e.to_string())),
+            Ok(result) => match result {
+                Ok(Ok(())) => Ok(ticket),
+                Ok(Err(e)) => {
+                    ticket.cancel();
+                    Err(e)
+                }
+                Err(e) => {
+                    ticket.cancel();
+                    Err(Error::from_reason(e.to_string()))
+                }
             },
             Err(_) => {
                 ticket.cancel();
