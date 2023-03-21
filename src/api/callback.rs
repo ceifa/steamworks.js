@@ -2,6 +2,7 @@ use napi_derive::napi;
 
 #[napi]
 pub mod callback {
+    use crate::api::callbackextra::MicroTxnAuthorizationResponse;
     use napi::{
         bindgen_prelude::ToNapiValue,
         threadsafe_function::{ErrorStrategy, ThreadsafeFunction, ThreadsafeFunctionCallMode},
@@ -31,6 +32,7 @@ pub mod callback {
         LobbyChatUpdate,
         P2PSessionRequest,
         P2PSessionConnectFail,
+        MicroTxnAuthorizationResponse,
     }
 
     #[napi(ts_generic_types = "C extends keyof import('./callbacks').CallbackReturns")]
@@ -67,6 +69,9 @@ pub mod callback {
             }
             SteamCallback::P2PSessionConnectFail => {
                 register_callback::<steamworks::P2PSessionConnectFail>(threadsafe_handler)
+            }
+            SteamCallback::MicroTxnAuthorizationResponse => {
+                register_callback::<MicroTxnAuthorizationResponse>(threadsafe_handler)
             }
         };
 

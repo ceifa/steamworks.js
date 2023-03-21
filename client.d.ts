@@ -43,7 +43,8 @@ export namespace callback {
     LobbyDataUpdate = 4,
     LobbyChatUpdate = 5,
     P2PSessionRequest = 6,
-    P2PSessionConnectFail = 7
+    P2PSessionConnectFail = 7,
+    MicroTxnAuthorizationResponse = 8,
   }
   export function register<C extends keyof import('./callbacks').CallbackReturns>(steamCallback: C, handler: (value: import('./callbacks').CallbackReturns[C]) => void): Handle
   export class Handle {

@@ -44,4 +44,10 @@ export interface CallbackReturns {
         remote: bigint
         error: number
     }
+    [client.callback.SteamCallback.MicroTxnAuthorizationResponse]: {
+        app_id: bigint
+        order_id: bigint
+        // Authorized: 0, Unauthorized: 1
+        authorized: number
+    }
 }
