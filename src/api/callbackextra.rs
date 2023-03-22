@@ -5,7 +5,6 @@ use steamworks_sys as sys;
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct MicroTxnAuthorizationResponse {
-    /// The reason we were disconnected from the Steam servers
     pub app_id: u32,
     pub order_id: u64,
     // Authorized: 0, Unauthorized: 1
