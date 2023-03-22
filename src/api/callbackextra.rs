@@ -3,8 +3,6 @@ use std::ffi::c_void;
 use steamworks::Callback;
 use steamworks_sys as sys;
 
-const CALLBACK_BASE_ID: i32 = 9000;
-
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct MicroTxnAuthorizationResponse {
     /// The reason we were disconnected from the Steam servers
@@ -15,7 +13,7 @@ pub struct MicroTxnAuthorizationResponse {
 }
 
 unsafe impl Callback for MicroTxnAuthorizationResponse {
-    const ID: i32 = CALLBACK_BASE_ID + 1;
+    const ID: i32 = 152;
     const SIZE: i32 = std::mem::size_of::<sys::MicroTxnAuthorizationResponse_t>() as i32;
 
     unsafe fn from_raw(raw: *mut c_void) -> Self {
