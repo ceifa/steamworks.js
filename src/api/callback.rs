@@ -31,6 +31,7 @@ pub mod callback {
         LobbyChatUpdate,
         P2PSessionRequest,
         P2PSessionConnectFail,
+        GameLobbyJoinRequested,
     }
 
     #[napi(ts_generic_types = "C extends keyof import('./callbacks').CallbackReturns")]
@@ -67,6 +68,9 @@ pub mod callback {
             }
             SteamCallback::P2PSessionConnectFail => {
                 register_callback::<steamworks::P2PSessionConnectFail>(threadsafe_handler)
+            }
+            SteamCallback::GameLobbyJoinRequested => {
+                register_callback::<steamworks::GameLobbyJoinRequested>(threadsafe_handler)
             }
         };
 

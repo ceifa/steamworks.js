@@ -3,7 +3,7 @@ use napi_derive::napi;
 #[napi]
 pub mod networking {
     use napi::{
-        bindgen_prelude::{Buffer, ToNapiValue},
+        bindgen_prelude::{BigInt, Buffer, ToNapiValue},
         Error,
     };
     use steamworks::SteamId;
@@ -38,29 +38,22 @@ pub mod networking {
 
     #[napi]
     pub fn send_p2p_packet(
-        steam_id64: String,
+        steam_id64: BigInt,
         send_type: SendType,
         data: Buffer,
     ) -> Result<bool, Error> {
         let client = crate::client::get_client();
-        if let Ok(steam_id64) = steam_id64.parse::<u64>() {
-            let result = client.networking().send_p2p_packet(
-                SteamId::from_raw(steam_id64),
-                match send_type {
-                    SendType::Unreliable => steamworks::SendType::Unreliable,
-                    SendType::UnreliableNoDelay => steamworks::SendType::UnreliableNoDelay,
-                    SendType::Reliable => steamworks::SendType::Reliable,
-                    SendType::ReliableWithBuffering => steamworks::SendType::ReliableWithBuffering,
-                },
-                &data,
-            );
-            Ok(result)
-        } else {
-            Err(Error::new(
-                napi::Status::GenericFailure,
-                format!("Invalid SteamId64: {}", steam_id64),
-            ))
-        }
+        let result = client.networking().send_p2p_packet(
+            SteamId::from_raw(steam_id64.get_u64().1),
+            match send_type {
+                SendType::Unreliable => steamworks::SendType::Unreliable,
+                SendType::UnreliableNoDelay => steamworks::SendType::UnreliableNoDelay,
+                SendType::Reliable => steamworks::SendType::Reliable,
+                SendType::ReliableWithBuffering => steamworks::SendType::ReliableWithBuffering,
+            },
+            &data,
+        );
+        Ok(result)
     }
 
     #[napi]
@@ -91,18 +84,11 @@ pub mod networking {
     }
 
     #[napi]
-    pub fn accept_p2p_session(steam_id64: String) -> Result<(), Error> {
+    pub fn accept_p2p_session(steam_id64: BigInt) -> Result<(), Error> {
         let client = crate::client::get_client();
-        if let Ok(steam_id64) = steam_id64.parse::<u64>() {
-            client
-                .networking()
-                .accept_p2p_session(SteamId::from_raw(steam_id64));
-            Ok(())
-        } else {
-            Err(Error::new(
-                napi::Status::GenericFailure,
-                format!("Invalid SteamId64: {}", steam_id64),
-            ))
-        }
+        client
+            .networking()
+            .accept_p2p_session(SteamId::from_raw(steam_id64.get_u64().1));
+        Ok(())
     }
 }

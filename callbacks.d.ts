@@ -44,4 +44,8 @@ export interface CallbackReturns {
         remote: bigint
         error: number
     }
+    [client.callback.SteamCallback.GameLobbyJoinRequested]: {
+        lobby_steam_id: bigint
+        friend_steam_id: bigint
+    }
 }

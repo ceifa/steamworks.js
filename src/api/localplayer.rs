@@ -1,9 +1,10 @@
+use napi::bindgen_prelude::BigInt;
 use napi_derive::napi;
 use steamworks::SteamId;
 
 #[napi(object)]
 pub struct PlayerSteamId {
-    pub steam_id64: String,
+    pub steam_id64: BigInt,
     pub steam_id32: String,
     pub account_id: u32,
 }
@@ -11,7 +12,7 @@ pub struct PlayerSteamId {
 impl PlayerSteamId {
     pub(crate) fn from_steamid(steam_id: SteamId) -> Self {
         Self {
-            steam_id64: steam_id.raw().to_string(),
+            steam_id64: steam_id.raw().into(),
             steam_id32: steam_id.steamid32(),
             account_id: steam_id.account_id().raw(),
         }
