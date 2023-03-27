@@ -2,7 +2,6 @@ pub mod achievement;
 pub mod apps;
 pub mod auth;
 pub mod callback;
-pub mod callbackextra;
 pub mod cloud;
 pub mod input;
 pub mod localplayer;

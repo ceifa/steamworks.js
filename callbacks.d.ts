@@ -44,10 +44,13 @@ export interface CallbackReturns {
         remote: bigint
         error: number
     }
+    [client.callback.SteamCallback.GameLobbyJoinRequested]: {
+        lobby_steam_id: bigint
+        friend_steam_id: bigint
+    }
     [client.callback.SteamCallback.MicroTxnAuthorizationResponse]: {
-        app_id: bigint
-        order_id: bigint
-        // Authorized: 0, Unauthorized: 1
-        authorized: number
+        app_id: number
+        order_id: number | bigint
+        authorized: boolean
     }
 }

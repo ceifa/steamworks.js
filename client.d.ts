@@ -2,7 +2,7 @@ export function init(appId: number): void
 export function restartAppIfNecessary(appId: number): boolean
 export function runCallbacks(): void
 export interface PlayerSteamId {
-  steamId64: string
+  steamId64: bigint
   steamId32: string
   accountId: number
 }
@@ -44,7 +44,8 @@ export namespace callback {
     LobbyChatUpdate = 5,
     P2PSessionRequest = 6,
     P2PSessionConnectFail = 7,
-    MicroTxnAuthorizationResponse = 8,
+    GameLobbyJoinRequested = 8,
+    MicroTxnAuthorizationResponse = 9
   }
   export function register<C extends keyof import('./callbacks').CallbackReturns>(steamCallback: C, handler: (value: import('./callbacks').CallbackReturns[C]) => void): Handle
   export class Handle {
@@ -144,10 +145,10 @@ export namespace networking {
      */
     ReliableWithBuffering = 3
   }
-  export function sendP2PPacket(steamId64: string, sendType: SendType, data: Buffer): boolean
+  export function sendP2PPacket(steamId64: bigint, sendType: SendType, data: Buffer): boolean
   export function isP2PPacketAvailable(): number
   export function readP2PPacket(size: number): P2PPacket
-  export function acceptP2PSession(steamId64: string): void
+  export function acceptP2PSession(steamId64: bigint): void
 }
 export namespace stats {
   export function getInt(name: string): number | null
