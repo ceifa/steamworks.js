@@ -37,9 +37,16 @@ pub mod workshop {
     }
 
     #[napi]
-    pub async fn create_item() -> Result<UgcResult, Error> {
+    pub async fn create_item(
+        appId: BigInt
+    ) -> Result<UgcResult, Error> {
         let client = crate::client::get_client();
-        let appid = client.utils().app_id();
+        // if app id is not provided, use the current app id
+        let appid = if appId.get_u64().1 == 0 {
+            client.utils().app_id()
+        } else {
+            appId.get_u64().1
+        };
 
         let (tx, rx) = oneshot::channel();
 
