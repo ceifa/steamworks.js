@@ -37,12 +37,9 @@ pub mod workshop {
     }
 
     #[napi]
-    pub async fn create_item(
-        app_id: Option<u32>,
-    ) -> Result<UgcResult, Error> {
+    pub async fn create_item(app_id: Option<u32>) -> Result<UgcResult, Error> {
         let client = crate::client::get_client();
 
-        // override appid if provided
         let appid = steamworks::AppId(app_id.unwrap_or(client.utils().app_id().0));
 
         let (tx, rx) = oneshot::channel();
