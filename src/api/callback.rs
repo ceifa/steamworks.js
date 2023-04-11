@@ -3,7 +3,7 @@ use napi_derive::napi;
 #[napi]
 pub mod callback {
     use napi::{
-        bindgen_prelude::ToNapiValue,
+        bindgen_prelude::{FromNapiValue, ToNapiValue},
         threadsafe_function::{ErrorStrategy, ThreadsafeFunction, ThreadsafeFunctionCallMode},
         JsFunction,
     };

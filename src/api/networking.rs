@@ -3,7 +3,7 @@ use napi_derive::napi;
 #[napi]
 pub mod networking {
     use napi::{
-        bindgen_prelude::{BigInt, Buffer, ToNapiValue},
+        bindgen_prelude::{BigInt, Buffer, FromNapiValue, ToNapiValue},
         Error,
     };
     use steamworks::SteamId;
