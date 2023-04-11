@@ -8,4 +8,5 @@ pub mod localplayer;
 pub mod matchmaking;
 pub mod networking;
 pub mod stats;
+pub mod utils;
 pub mod workshop;

@@ -231,3 +231,8 @@ export namespace workshop {
    */
   export function download(itemId: bigint, highPriority: boolean): boolean
 }
+export namespace utils {
+  export function getAppId(): number
+  export function getServerRealTime(): number
+  export function isSteamRunningOnSteamDeck(): boolean
+}
