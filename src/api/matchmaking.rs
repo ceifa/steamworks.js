@@ -129,7 +129,7 @@ pub mod matchmaking {
         pub fn merge_full_data(&self, data: HashMap<String, String>) -> bool {
             let matchmaking = crate::client::get_client().matchmaking();
             data.iter()
-                .map(|(key, value)| matchmaking.set_lobby_data(self.lobby_id, &key, &value))
+                .map(|(key, value)| matchmaking.set_lobby_data(self.lobby_id, key, value))
                 .all(|x| x)
         }
     }
