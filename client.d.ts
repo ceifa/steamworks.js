@@ -110,7 +110,10 @@ export namespace matchmaking {
     deleteData(key: string): boolean
     /** Get an object containing all the lobby data */
     getFullData(): Record<string, string>
-    /** Merge current lobby data with provided data in a single batch */
+    /**
+     * Merge current lobby data with provided data in a single batch
+     * @returns true if all data was set successfully
+     */
     mergeFullData(data: Record<string, string>): boolean
   }
 }

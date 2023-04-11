@@ -210,13 +210,10 @@ pub mod workshop {
             .ugc()
             .item_download_info(PublishedFileId(item_id.get_u64().1));
 
-        match result {
-            Some(download_info) => Some(DownloadInfo {
-                current: BigInt::from(download_info.0),
-                total: BigInt::from(download_info.1),
-            }),
-            None => None,
-        }
+        result.map(|download_info| DownloadInfo {
+            current: BigInt::from(download_info.0),
+            total: BigInt::from(download_info.1),
+        })
     }
 
     /// Download or update a workshop item.
