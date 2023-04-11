@@ -39,14 +39,15 @@ pub mod workshop {
     #[napi]
     pub async fn create_item(app_id: Option<u32>) -> Result<UgcResult, Error> {
         let client = crate::client::get_client();
-
-        let appid = steamworks::AppId(app_id.unwrap_or(client.utils().app_id().0));
+        let app_id = app_id
+            .map(steamworks::AppId)
+            .unwrap_or_else(|| client.utils().app_id());
 
         let (tx, rx) = oneshot::channel();
 
         client
             .ugc()
-            .create_item(appid, FileType::Community, |result| {
+            .create_item(app_id, FileType::Community, |result| {
                 tx.send(result).unwrap();
             });
 
@@ -64,16 +65,20 @@ pub mod workshop {
     pub async fn update_item(
         item_id: BigInt,
         update_details: UgcUpdate,
+        app_id: Option<u32>,
     ) -> Result<UgcResult, Error> {
         let client = crate::client::get_client();
-        let appid = client.utils().app_id();
+
+        let app_id = app_id
+            .map(steamworks::AppId)
+            .unwrap_or_else(|| client.utils().app_id());
 
         let (tx, rx) = oneshot::channel();
 
         {
             let mut update = client
                 .ugc()
-                .start_item_update(appid, PublishedFileId(item_id.get_u64().1));
+                .start_item_update(app_id, PublishedFileId(item_id.get_u64().1));
 
             if let Some(title) = update_details.title {
                 update = update.title(title.as_str());
