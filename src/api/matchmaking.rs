@@ -63,7 +63,7 @@ pub mod matchmaking {
                 .matchmaking()
                 .lobby_members(self.lobby_id)
                 .into_iter()
-                .map(|member| PlayerSteamId::from_steamid(member))
+                .map(PlayerSteamId::from_steamid)
                 .collect()
         }
 
@@ -120,21 +120,17 @@ pub mod matchmaking {
                 }
             }
 
-            return data;
+            data
         }
 
         /// Merge current lobby data with provided data in a single batch
+        /// @returns true if all data was set successfully
         #[napi]
         pub fn merge_full_data(&self, data: HashMap<String, String>) -> bool {
-            let client = crate::client::get_client();
-
-            for (key, value) in data {
-                client
-                    .matchmaking()
-                    .set_lobby_data(self.lobby_id, &key, &value);
-            }
-
-            return true;
+            let matchmaking = crate::client::get_client().matchmaking();
+            data.iter()
+                .map(|(key, value)| matchmaking.set_lobby_data(self.lobby_id, &key, &value))
+                .all(|x| x)
         }
     }
 

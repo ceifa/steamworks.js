@@ -39,8 +39,8 @@ pub mod cloud {
         let client = crate::client::get_client();
         let file = client.remote_storage().file(&name);
 
-        let mut buf = content.as_bytes();
-        file.write().write_all(&mut buf).is_ok()
+        let buf = content.as_bytes();
+        file.write().write_all(buf).is_ok()
     }
 
     #[napi]
