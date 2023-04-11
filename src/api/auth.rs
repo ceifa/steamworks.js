@@ -72,9 +72,9 @@ pub mod auth {
             },
             Err(_) => {
                 ticket.cancel();
-                return Err(Error::from_reason(
+                Err(Error::from_reason(
                     "Steam didn't validated the ticket in time.",
-                ));
+                ))
             }
         }
     }
