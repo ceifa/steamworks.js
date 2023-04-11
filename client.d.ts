@@ -181,8 +181,8 @@ export namespace workshop {
     current: bigint
     total: bigint
   }
-  export function createItem(): Promise<UgcResult>
-  export function updateItem(itemId: bigint, updateDetails: UgcUpdate): Promise<UgcResult>
+  export function createItem(appId?: number | undefined | null): Promise<UgcResult>
+  export function updateItem(itemId: bigint, updateDetails: UgcUpdate, appId?: number | undefined | null): Promise<UgcResult>
   /**
    * Subscribe to a workshop item. It will be downloaded and installed as soon as possible.
    *
