@@ -35,7 +35,7 @@
         "node": ">= 14"
     },
     "scripts": {
-        "build": "node build --release && npm run types",
+        "build": "npm run types && node build --release",
         "build:debug": "node build",
         "prune": "rimraf dist target client.d.ts",
         "format": "cargo fmt",
