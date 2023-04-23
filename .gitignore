@@ -1,6 +1,5 @@
 /target
 /dist
 node_modules
-Cargo.lock
 test/**/package-lock.json
 test/electron/steamworks.js-electron-test-*
