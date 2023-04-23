@@ -25,12 +25,7 @@ jobs:
               uses: dtolnay/rust-toolchain@stable
               with:
                   toolchain: stable
-                  targets: [
-                    'x86_64-pc-windows-msvc',
-                    'x86_64-unknown-linux-gnu',
-                    'x86_64-apple-darwin',
-                    'aarch64-apple-darwin'
-                  ]
+                  targets: x86_64-pc-windows-msvc, x86_64-unknown-linux-gnu, x86_64-apple-darwin, aarch64-apple-darwin
 
             - name: Install ziglang
               uses: goto-bus-stop/setup-zig@v2
@@ -48,7 +43,7 @@ jobs:
 
             - name: Build Mac x64
               run: npm run build -- --zig --target x86_64-apple-darwin
-            
+
             - name: Build Mac arm64
               run: npm run build -- --zig --target aarch64-apple-darwin
 
