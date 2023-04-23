@@ -12,13 +12,6 @@ env:
 jobs:
     build:
         runs-on: ubuntu-latest
-        strategy:
-            matrix:
-                target:
-                    - x86_64-pc-windows-msvc
-                    - x86_64-unknown-linux-gnu
-                    - x86_64-apple-darwin
-                    - aarch64-apple-darwin
 
         steps:
             - uses: actions/checkout@v3
@@ -29,44 +22,40 @@ jobs:
                   node-version: 18.x
 
             - name: Setup Rust
-              uses: actions-rs/toolchain@v1
+              uses: dtolnay/rust-toolchain@stable
               with:
                   toolchain: stable
-                  override: true
-                  target: ${{ matrix.target }}
+                  targets:
+                    - x86_64-pc-windows-msvc
+                    - x86_64-unknown-linux-gnu
+                    - x86_64-apple-darwin
+                    - aarch64-apple-darwin
 
             - name: Install ziglang
-              if: matrix.target != 'x86_64-pc-windows-msvc'
               uses: goto-bus-stop/setup-zig@v2
 
             - run: cargo install cargo-xwin
-              if: matrix.target == 'x86_64-pc-windows-msvc'
 
             - name: Check formatting
-              uses: actions-rs/cargo@v1
-              if: matrix.target == 'x86_64-pc-windows-msvc'
-              with:
-                  command: fmt
-                  args: --all -- --check
+              run: cargo fmt --all --check
 
             - name: Clippy
               run: cargo clippy
-              if: matrix.target == 'x86_64-pc-windows-msvc'
 
             - name: Node install
               run: npm ci
 
-            - name: Build Mac
-              if: matrix.target == 'x86_64-apple-darwin' || matrix.target == 'aarch64-apple-darwin'
-              run: npm run build -- --zig --target ${{ matrix.target }}
+            - name: Build Mac x64
+              run: npm run build -- --zig --target x86_64-apple-darwin
+            
+            - name: Build Mac arm64
+              run: npm run build -- --zig --target aarch64-apple-darwin
 
             - name: Build Linux
-              if: matrix.target == 'x86_64-unknown-linux-gnu'
-              run: npm run build -- --target ${{ matrix.target }}
+              run: npm run build -- --target x86_64-unknown-linux-gnu
 
             - name: Build Windows
-              if: matrix.target == 'x86_64-pc-windows-msvc'
-              run: npm run build -- --target ${{ matrix.target }}
+              run: npm run build -- --target x86_64-pc-windows-msvc
 
             - name: Upload artifact
               uses: actions/upload-artifact@v3
