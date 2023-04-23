@@ -1,78 +1,97 @@
 name: Publish
 
 on:
-  push:
-    branches: [ main ]
-  pull_request:
+    push:
+        branches: [main]
+    pull_request:
+
+env:
+    DEBUG: 'napi:*'
+    MACOSX_DEPLOYMENT_TARGET: '10.13'
 
 jobs:
-  build:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [windows-2022, ubuntu-20.04, macos-11]
+    build:
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                target:
+                    - x86_64-pc-windows-msvc
+                    - x86_64-unknown-linux-gnu
+                    - aarch64-unknown-linux-gnu
+                    - x86_64-apple-darwin
+                    - aarch64-apple-darwin
 
-    steps:
-    - uses: actions/checkout@v3
+        steps:
+            - uses: actions/checkout@v3
 
-    - name: Setup Node
-      uses: actions/setup-node@v3
-      with:
-        node-version: 18.x
+            - name: Setup Node
+              uses: actions/setup-node@v3
+              with:
+                  node-version: 18.x
 
-    - name: Setup Rust
-      uses: actions-rs/toolchain@v1
-      with:
-        toolchain: stable
-        override: true
+            - name: Setup Rust
+              uses: actions-rs/toolchain@v1
+              with:
+                  toolchain: stable
+                  override: true
+                  target: ${{ matrix.target }}
 
-    - name: Check formatting
-      uses: actions-rs/cargo@v1
-      if: runner.os == 'linux'
-      with:
-        command: fmt
-        args: --all -- --check
+            - name: Install ziglang
+              uses: goto-bus-stop/setup-zig@v2
 
-    - name: Clippy
-      run: cargo clippy
+            - run: cargo install cargo-xwin
+              if: matrix.target == 'x86_64-pc-windows-msvc'
 
-    - name: Build
-      run: |
-        npm i
-        npm run build
+            - name: Check formatting
+              uses: actions-rs/cargo@v1
+              if: runner.os == 'linux'
+              with:
+                  command: fmt
+                  args: --all -- --check
 
-    - name: Upload artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: OS specific binaries
-        path: dist
+            - name: Clippy
+              run: cargo clippy
 
-  deploy:
-    # prevents this action from running on forks or pull requests
-    if: ${{ github.repository == 'ceifa/steamworks.js' && github.event_name == 'push' }}
+            - name: Node install
+              run: npm ci
 
-    runs-on: ubuntu-20.04
-    needs: build
+            - name: Build Mac and Linux
+              if: matrix.target != 'x86_64-pc-windows-msvc'
+              run: npm run build -- --zig --target ${{ matrix.target }}
 
-    steps:
-    - uses: actions/checkout@v3
+            - name: Build Windows
+              if: matrix.target == 'x86_64-pc-windows-msvc'
+              run: npm run build -- --target ${{ matrix.target }}
 
-    - name: Download build
-      uses: actions/download-artifact@v3
-      with:
-        name: OS specific binaries
-        path: dist
-        
-    - name: Include M1 build
-      run: |
-        mv ./build/osx/steamworksjs.darwin-arm64.node ./dist/osx/
+            - name: Upload artifact
+              uses: actions/upload-artifact@v3
+              with:
+                  name: OS specific binaries
+                  path: dist
+                  if-no-files-found: error
 
-    - name: Log files
-      run: |
-        echo "- Root directory:" && ls
-        echo "- Dist directory:" && ls -R dist
+    deploy:
+        # prevents this action from running on forks or pull requests
+        if: ${{ github.repository == 'ceifa/steamworks.js' && github.event_name == 'push' }}
 
-    - name: Publish to npm
-      uses: JS-DevTools/npm-publish@v1
-      with:
-          token: ${{ secrets.NPM_TOKEN }}
+        runs-on: ubuntu-20.04
+        needs: build
+
+        steps:
+            - uses: actions/checkout@v3
+
+            - name: Download build
+              uses: actions/download-artifact@v3
+              with:
+                  name: OS specific binaries
+                  path: dist/
+
+            - name: Log files
+              run: |
+                  echo "- Root directory:" && ls
+                  echo "- Dist directory:" && ls -R dist
+
+            - name: Publish to npm
+              uses: JS-DevTools/npm-publish@v1
+              with:
+                  token: ${{ secrets.NPM_TOKEN }}

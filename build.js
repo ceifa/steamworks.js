@@ -15,7 +15,7 @@ let folder = undefined
 if (platform === 'win32' && arch === 'x64') {
     folder = 'win64'
     files = ['steam_api64.dll', 'steam_api64.lib']
-} else if (platform === 'linux' && arch === 'x64') {
+} else if (platform === 'linux' && ['x64', 'arm64'].includes(arch)) {
     folder = 'linux64'
     files = ['libsteam_api.so']
 } else if (platform === 'darwin') {
