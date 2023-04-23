@@ -32,6 +32,8 @@ jobs:
 
             - run: cargo install cargo-xwin
 
+            - uses: Swatinem/rust-cache@v2
+
             - name: Check formatting
               run: cargo fmt --all --check
 
