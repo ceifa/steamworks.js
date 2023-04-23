@@ -37,7 +37,7 @@
         "build": "npm run types && node build --release",
         "build:debug": "node build",
         "prune": "rimraf dist target client.d.ts",
-        "format": "cargo fmt",
+        "format": "cargo fmt && cargo clippy --fix --allow-staged",
         "types": "tsc index.js --allowJs --declaration --emitDeclarationOnly"
     },
     "repository": {
