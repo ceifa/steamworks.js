@@ -36,6 +36,7 @@ jobs:
                   target: ${{ matrix.target }}
 
             - name: Install ziglang
+              if: matrix.target != 'x86_64-pc-windows-msvc'
               uses: goto-bus-stop/setup-zig@v2
 
             - run: cargo install cargo-xwin
@@ -43,20 +44,25 @@ jobs:
 
             - name: Check formatting
               uses: actions-rs/cargo@v1
-              if: runner.os == 'linux'
+              if: matrix.target == 'x86_64-pc-windows-msvc'
               with:
                   command: fmt
                   args: --all -- --check
 
             - name: Clippy
               run: cargo clippy
+              if: matrix.target == 'x86_64-pc-windows-msvc'
 
             - name: Node install
               run: npm ci
 
-            - name: Build Mac and Linux
-              if: matrix.target != 'x86_64-pc-windows-msvc'
+            - name: Build Mac
+              if: matrix.target == 'x86_64-apple-darwin' || matrix.target == 'aarch64-apple-darwin'
               run: npm run build -- --zig --target ${{ matrix.target }}
+
+            - name: Build Linux
+              if: matrix.target == 'x86_64-unknown-linux-gnu'
+              run: npm run build -- --target ${{ matrix.target }}
 
             - name: Build Windows
               if: matrix.target == 'x86_64-pc-windows-msvc'
@@ -73,7 +79,7 @@ jobs:
         # prevents this action from running on forks or pull requests
         if: ${{ github.repository == 'ceifa/steamworks.js' && github.event_name == 'push' }}
 
-        runs-on: ubuntu-20.04
+        runs-on: ubuntu-latest
         needs: build
 
         steps:
