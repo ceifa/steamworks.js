@@ -4,7 +4,15 @@
     "main": "index.js",
     "types": "index.d.ts",
     "napi": {
-        "name": "steamworksjs"
+        "name": "steamworksjs",
+        "triples": {
+            "additional": [
+                "x86_64-pc-windows-msvc",
+                "x86_64-unknown-linux-gnu",
+                "x86_64-apple-darwin",
+                "aarch64-apple-darwin"
+            ]
+        }
     },
     "files": [
         "dist/*",
@@ -26,10 +34,10 @@
         "node": ">= 14"
     },
     "scripts": {
-        "build": "node build --release && npm run types",
+        "build": "npm run types && node build --release",
         "build:debug": "node build",
         "prune": "rimraf dist target client.d.ts",
-        "format": "cargo fmt",
+        "format": "cargo fmt && cargo clippy --fix --allow-staged",
         "types": "tsc index.js --allowJs --declaration --emitDeclarationOnly"
     },
     "repository": {
