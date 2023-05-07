@@ -9,6 +9,7 @@ export interface PlayerSteamId {
 export namespace achievement {
   export function activate(achievement: string): boolean
   export function isActivated(achievement: string): boolean
+  export function clear(achievement: string): boolean
 }
 export namespace apps {
   export function isSubscribedApp(appId: number): boolean
@@ -169,6 +170,12 @@ export namespace workshop {
     itemId: bigint
     needsToAcceptAgreement: boolean
   }
+  export const enum UgcItemVisibility {
+    Public = 0,
+    FriendsOnly = 1,
+    Private = 2,
+    Unlisted = 3
+  }
   export interface UgcUpdate {
     title?: string
     description?: string
@@ -176,6 +183,7 @@ export namespace workshop {
     previewPath?: string
     contentPath?: string
     tags?: Array<string>
+    visibility?: UgcItemVisibility
   }
   export interface InstallInfo {
     folder: string

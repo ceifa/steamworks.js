@@ -2,7 +2,7 @@ use napi_derive::napi;
 
 #[napi]
 pub mod workshop {
-    use napi::bindgen_prelude::{BigInt, Error};
+    use napi::bindgen_prelude::{BigInt, Error, FromNapiValue, ToNapiValue};
     use std::path::Path;
     use steamworks::{FileType, PublishedFileId};
     use tokio::sync::oneshot;
@@ -13,6 +13,25 @@ pub mod workshop {
         pub needs_to_accept_agreement: bool,
     }
 
+    #[napi]
+    pub enum UgcItemVisibility {
+        Public,
+        FriendsOnly,
+        Private,
+        Unlisted,
+    }
+
+    impl From<UgcItemVisibility> for steamworks::PublishedFileVisibility {
+        fn from(visibility: UgcItemVisibility) -> Self {
+            match visibility {
+                UgcItemVisibility::Public => steamworks::PublishedFileVisibility::Public,
+                UgcItemVisibility::FriendsOnly => steamworks::PublishedFileVisibility::FriendsOnly,
+                UgcItemVisibility::Private => steamworks::PublishedFileVisibility::Private,
+                UgcItemVisibility::Unlisted => steamworks::PublishedFileVisibility::Unlisted,
+            }
+        }
+    }
+
     #[napi(object)]
     pub struct UgcUpdate {
         pub title: Option<String>,
@@ -21,6 +40,7 @@ pub mod workshop {
         pub preview_path: Option<String>,
         pub content_path: Option<String>,
         pub tags: Option<Vec<String>>,
+        pub visibility: Option<UgcItemVisibility>,
     }
 
     #[napi(object)]
@@ -98,6 +118,10 @@ pub mod workshop {
 
             if let Some(content_path) = update_details.content_path {
                 update = update.content_path(Path::new(&content_path));
+            }
+
+            if let Some(visibility) = update_details.visibility {
+                update = update.visibility(visibility.into());
             }
 
             let change_note = update_details.change_note.as_deref();
