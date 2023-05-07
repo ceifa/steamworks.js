@@ -159,6 +159,11 @@ export namespace stats {
   export function store(): boolean
   export function resetAll(achievementsToo: boolean): boolean
 }
+export namespace utils {
+  export function getAppId(): number
+  export function getServerRealTime(): number
+  export function isSteamRunningOnSteamDeck(): boolean
+}
 export namespace workshop {
   export interface UgcResult {
     itemId: bigint
@@ -230,9 +235,4 @@ export namespace workshop {
    * {@link https://partner.steamgames.com/doc/api/ISteamUGC#DownloadItem}
    */
   export function download(itemId: bigint, highPriority: boolean): boolean
-}
-export namespace utils {
-  export function getAppId(): number
-  export function getServerRealTime(): number
-  export function isSteamRunningOnSteamDeck(): boolean
 }
