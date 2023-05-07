@@ -22,4 +22,15 @@ pub mod achievement {
             .get()
             .unwrap_or(false)
     }
+
+    #[napi]
+    pub fn clear(achievement: String) -> bool {
+        let client = crate::client::get_client();
+        client
+            .user_stats()
+            .achievement(&achievement)
+            .clear()
+            .and_then(|_| client.user_stats().store_stats())
+            .is_ok()
+    }
 }
