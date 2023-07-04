@@ -22,6 +22,11 @@ pub fn set_client(client: Client) {
     *client_ref = Some(client);
 }
 
+pub fn drop_client() {
+    let mut client_ref = STEAM_CLIENT.lock().unwrap();
+    *client_ref = None;
+}
+
 pub fn get_single() -> &'static SingleClient {
     unsafe {
         match &STEAM_SINGLE {
@@ -34,5 +39,11 @@ pub fn get_single() -> &'static SingleClient {
 pub fn set_single(single: SingleClient) {
     unsafe {
         STEAM_SINGLE = Some(single);
+    }
+}
+
+pub fn drop_single() {
+    unsafe {
+        STEAM_SINGLE = None;
     }
 }

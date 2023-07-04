@@ -9,20 +9,16 @@ pub mod client;
 extern crate lazy_static;
 
 #[napi]
-pub fn init(app_id: u32) -> Result<(), Error> {
+pub fn init(app_id: Option<u32>) -> Result<(), Error> {
     if client::has_client() {
-        let initialized_app_id = client::get_client().utils().app_id().0;
-        if initialized_app_id != app_id {
-            return Err(Error::from_reason(format!(
-                "Client already initialized for app id {}",
-                app_id
-            )));
-        } else {
-            return Ok(());
-        }
+        client::drop_single();
+        client::drop_client();
     }
 
-    let result = Client::init_app(app_id);
+    let result = match app_id {
+        Some(app_id) => Client::init_app(app_id),
+        None => Client::init(),
+    };
     match result {
         Ok((steam_client, steam_single)) => {
             steam_client.user_stats().request_current_stats();
@@ -40,7 +36,7 @@ pub fn restart_app_if_necessary(app_id: u32) -> bool {
     steamworks::restart_app_if_necessary(AppId(app_id))
 }
 
-#[napi_derive::napi]
+#[napi]
 pub fn run_callbacks() {
     client::get_single().run_callbacks();
 }

@@ -26,19 +26,6 @@ let runCallbacksInterval = undefined
  * @returns {Omit<Client, 'init' | 'runCallbacks'>}
 */
 module.exports.init = (appId) => {
-    if (!appId) {
-        try {
-            const content = require('fs').readFileSync('steam_appid.txt', 'utf8')
-            if (content) {
-                appId = parseInt(content)
-            } else {
-                throw new Error('steam_appid.txt file is not valid')
-            }
-        } catch (e) {
-            throw new Error('Failed to load steam_appid.txt file')
-        }
-    }
-
     const { init: internalInit, runCallbacks, restartAppIfNecessary, ...api } = nativeBinding
 
     internalInit(appId)

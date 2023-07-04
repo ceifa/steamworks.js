@@ -1,4 +1,4 @@
-export function init(appId: number): void
+export function init(appId?: number | undefined | null): void
 export function restartAppIfNecessary(appId: number): boolean
 export function runCallbacks(): void
 export interface PlayerSteamId {
