@@ -266,5 +266,4 @@ pub mod workshop {
             .map(|item| BigInt::from(item.0))
             .collect::<Vec<_>>()
     }
-
 }
