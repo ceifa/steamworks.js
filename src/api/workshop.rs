@@ -253,4 +253,18 @@ pub mod workshop {
             .ugc()
             .download_item(PublishedFileId(item_id.get_u64().1), high_priority)
     }
+
+    /// Get all subscribed workshop items.
+    /// @returns an array of subscribed workshop item ids
+    #[napi]
+    pub fn get_subscribed_items() -> Vec<BigInt> {
+        let client = crate::client::get_client();
+        let result = client.ugc().subscribed_items();
+
+        result
+            .iter()
+            .map(|item| BigInt::from(item.0))
+            .collect::<Vec<_>>()
+    }
+
 }

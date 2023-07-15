@@ -264,4 +264,5 @@ export namespace workshop {
    * {@link https://partner.steamgames.com/doc/api/ISteamUGC#DownloadItem}
    */
   export function download(itemId: bigint, highPriority: boolean): boolean
+  export function getSubscribedItems(): Array<bigint>
 }
