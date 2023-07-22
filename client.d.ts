@@ -264,5 +264,38 @@ export namespace workshop {
    * {@link https://partner.steamgames.com/doc/api/ISteamUGC#DownloadItem}
    */
   export function download(itemId: bigint, highPriority: boolean): boolean
+  /**
+   * Get all subscribed workshop items.
+   * @returns an array of subscribed workshop item ids
+   */
   export function getSubscribedItems(): Array<bigint>
+  export interface WorkshopItem {
+    publishedFileId: bigint
+    creatorAppId?: number
+    consumerAppId?: number
+    title: string
+    description: string
+    owner: PlayerSteamId
+    /** Time created in unix epoch seconds format */
+    timeCreated: number
+    /** Time updated in unix epoch seconds format */
+    timeUpdated: number
+    banned: boolean
+    acceptedForUse: boolean
+    tags: Array<string>
+    tagsTruncated: boolean
+    url: string
+    numUpvotes: number
+    numDownvotes: number
+    numChildren: number
+    previewUrl?: string
+  }
+  export interface WorkshopItemQuery {
+    cachedResponseMaxAge?: number
+    includeMetadata?: boolean
+    includeLongDescription?: boolean
+    language?: string
+  }
+  export function getItem(item: bigint, query?: WorkshopItemQuery | undefined | null): Promise<WorkshopItem | null>
+  export function getItems(items: Array<bigint>, query?: WorkshopItemQuery | undefined | null): Promise<Array<WorkshopItem | undefined | null>>
 }
