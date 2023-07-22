@@ -7,11 +7,13 @@ edition = "2021"
 crate-type = ["cdylib"]
 
 [dependencies]
-napi = { version = "2", features = ["tokio_rt", "napi6", "serde-json"] }
-napi-derive = "2"
+napi = { version = "2.13.1", features = ["tokio_rt", "napi6", "serde-json"] }
+napi-derive = "2.13.0"
 lazy_static = "1"
 tokio = { version = "1", features = ["sync", "time"] }
-steamworks = { git = "https://github.com/Noxime/steamworks-rs.git", features = ["serde"]}
+steamworks = { git = "https://github.com/Noxime/steamworks-rs.git", rev = "66f002e245c50a6a115c585abbb4c3c40c27afa5", features = [
+    "serde",
+] }
 serde = "1"
 serde_json = "1"
 

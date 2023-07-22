@@ -15,20 +15,16 @@ pub fn init(app_id: Option<u32>) -> Result<(), Error> {
         client::drop_client();
     }
 
-    let result = match app_id {
-        Some(app_id) => Client::init_app(app_id),
-        None => Client::init(),
-    };
-    match result {
-        Ok((steam_client, steam_single)) => {
-            steam_client.user_stats().request_current_stats();
+    let (steam_client, steam_single) = app_id
+        .map(|app_id| Client::init_app(AppId(app_id)))
+        .unwrap_or_else(Client::init)
+        .map_err(|e| Error::from_reason(e.to_string()))?;
 
-            client::set_client(steam_client);
-            client::set_single(steam_single);
-            Ok(())
-        }
-        Err(e) => Err(Error::from_reason(e.to_string())),
-    }
+    steam_client.user_stats().request_current_stats();
+
+    client::set_client(steam_client);
+    client::set_single(steam_single);
+    Ok(())
 }
 
 #[napi]

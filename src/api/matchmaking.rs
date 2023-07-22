@@ -26,10 +26,7 @@ pub mod matchmaking {
     impl Lobby {
         #[napi]
         pub async fn join(&self) -> Result<Lobby, Error> {
-            match join_lobby(self.id.clone()).await {
-                Ok(lobby) => Ok(lobby),
-                Err(e) => Err(e),
-            }
+            join_lobby(self.id.clone()).await
         }
 
         #[napi]
@@ -153,14 +150,13 @@ pub mod matchmaking {
             },
         );
 
-        let result = rx.await.unwrap();
-        match result {
-            Ok(lobby_id) => Ok(Lobby {
+        rx.await
+            .unwrap()
+            .map(|lobby_id| Lobby {
                 id: BigInt::from(lobby_id.raw()),
                 lobby_id,
-            }),
-            Err(e) => Err(Error::from_reason(e.to_string())),
-        }
+            })
+            .map_err(|e| Error::from_reason(e.to_string()))
     }
 
     #[napi]
@@ -176,14 +172,13 @@ pub mod matchmaking {
             },
         );
 
-        let result = rx.await.unwrap();
-        match result {
-            Ok(lobby_id) => Ok(Lobby {
+        rx.await
+            .unwrap()
+            .map(|lobby_id| Lobby {
                 id: BigInt::from(lobby_id.raw()),
                 lobby_id,
-            }),
-            Err(_) => Err(Error::from_reason("Failed to join lobby".to_string())),
-        }
+            })
+            .map_err(|_| Error::from_reason("Failed to join lobby".to_string()))
     }
 
     #[napi]
@@ -196,17 +191,17 @@ pub mod matchmaking {
             tx.send(lobbies).unwrap();
         });
 
-        let lobbies = rx.await.unwrap();
-
-        match lobbies {
-            Ok(lobbies) => Ok(lobbies
-                .iter()
-                .map(|lobby_id| Lobby {
-                    id: BigInt::from(lobby_id.raw()),
-                    lobby_id: *lobby_id,
-                })
-                .collect()),
-            Err(e) => Err(Error::from_reason(e.to_string())),
-        }
+        rx.await
+            .unwrap()
+            .map(|lobbies| {
+                lobbies
+                    .iter()
+                    .map(|lobby_id| Lobby {
+                        id: BigInt::from(lobby_id.raw()),
+                        lobby_id: *lobby_id,
+                    })
+                    .collect()
+            })
+            .map_err(|e| Error::from_reason(e.to_string()))
     }
 }

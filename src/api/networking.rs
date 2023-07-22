@@ -69,26 +69,28 @@ pub mod networking {
     pub fn read_p2p_packet(size: i32) -> Result<P2PPacket, Error> {
         let client = crate::client::get_client();
         let mut buffer = vec![0; size as usize];
-        if let Some((steam_id, read_size)) = client.networking().read_p2p_packet(&mut buffer) {
-            Ok(P2PPacket {
+
+        client
+            .networking()
+            .read_p2p_packet(&mut buffer)
+            .map(|(steam_id, read_size)| P2PPacket {
                 data: buffer.into(),
                 size: read_size as i32,
                 steam_id: PlayerSteamId::from_steamid(steam_id),
             })
-        } else {
-            Err(Error::new(
-                napi::Status::GenericFailure,
-                "No packet available".to_string(),
-            ))
-        }
+            .ok_or_else(|| {
+                Error::new(
+                    napi::Status::GenericFailure,
+                    "No packet available".to_string(),
+                )
+            })
     }
 
     #[napi]
-    pub fn accept_p2p_session(steam_id64: BigInt) -> Result<(), Error> {
+    pub fn accept_p2p_session(steam_id64: BigInt) {
         let client = crate::client::get_client();
         client
             .networking()
             .accept_p2p_session(SteamId::from_raw(steam_id64.get_u64().1));
-        Ok(())
     }
 }
