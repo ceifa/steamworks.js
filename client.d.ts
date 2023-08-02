@@ -185,6 +185,13 @@ export namespace utils {
   export function getAppId(): number
   export function getServerRealTime(): number
   export function isSteamRunningOnSteamDeck(): boolean
+  export const enum FloatingGamepadTextInputMode {
+    SingleLine = 0,
+    MultipleLines = 1,
+    Email = 2,
+    Numeric = 3
+  }
+  export function showFloatingGamepadTextInput(keyboardMode: FloatingGamepadTextInputMode, x: number, y: number, width: number, height: number): boolean
 }
 export namespace workshop {
   export interface UgcResult {
