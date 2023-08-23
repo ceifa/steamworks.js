@@ -10,6 +10,23 @@ env:
     MACOSX_DEPLOYMENT_TARGET: '10.13'
 
 jobs:
+    check:
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v3
+
+            - name: Setup Rust
+              uses: dtolnay/rust-toolchain@stable
+              with:
+                  toolchain: stable
+
+            - name: Check formatting
+              run: cargo fmt --all --check
+
+            - name: Clippy
+              run: cargo clippy
+
     build:
         runs-on: ubuntu-latest
 
@@ -30,12 +47,6 @@ jobs:
             - uses: Swatinem/rust-cache@v2
 
             - run: cargo install cargo-xwin
-
-            - name: Check formatting
-              run: cargo fmt --all --check
-
-            - name: Clippy
-              run: cargo clippy
 
             - name: Node install
               run: npm ci
@@ -71,11 +82,6 @@ jobs:
                   targets: x86_64-apple-darwin, aarch64-apple-darwin
 
             - uses: Swatinem/rust-cache@v2
-
-            - run: cargo install cargo-xwin
-
-            - name: Clippy
-              run: cargo clippy
 
             - name: Node install
               run: npm ci
