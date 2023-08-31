@@ -185,6 +185,15 @@ export namespace utils {
   export function getAppId(): number
   export function getServerRealTime(): number
   export function isSteamRunningOnSteamDeck(): boolean
+  export const enum GamepadTextInputMode {
+    Normal = 0,
+    Password = 1
+  }
+  export const enum GamepadTextInputLineMode {
+    SingleLine = 0,
+    MultipleLines = 1
+  }
+  export function showGamepadTextInput(inputMode: GamepadTextInputMode, inputLineMode: GamepadTextInputLineMode, description: string, maxCharacters: number, existingText?: string | undefined | null): boolean
   export const enum FloatingGamepadTextInputMode {
     SingleLine = 0,
     MultipleLines = 1,
