@@ -2,8 +2,8 @@ use napi_derive::napi;
 
 #[napi]
 pub mod auth {
-    use napi::bindgen_prelude::{Buffer, Error};
-    use steamworks::{AuthSessionTicketResponse, AuthTicket};
+    use napi::bindgen_prelude::{BigInt, Buffer, Error};
+    use steamworks::{AuthSessionTicketResponse, AuthTicket, SteamId};
     use tokio::sync::oneshot;
 
     #[napi]
@@ -26,14 +26,20 @@ pub mod auth {
         }
     }
 
+    /// @param steam_id64 - The 64bit SteamId.
     /// @param timeoutSeconds - The number of seconds to wait for the ticket to be validated. Default value is 10 seconds.
     #[napi]
-    pub async fn get_session_ticket(timeout_seconds: Option<u32>) -> Result<Ticket, Error> {
+    pub async fn get_session_ticket_with_steam_id(
+        steam_id64: BigInt,
+        timeout_seconds: Option<u32>,
+    ) -> Result<Ticket, Error> {
         let client = crate::client::get_client();
         let (tx, rx) = oneshot::channel();
         let mut tx = Some(tx);
 
-        let (ticket_handle, ticket) = client.user().authentication_session_ticket();
+        let (ticket_handle, ticket) = client
+            .user()
+            .authentication_session_ticket_with_steam_id(SteamId::from_raw(steam_id64.get_u64().1));
         let callback =
             client.register_callback(move |session_ticket_response: AuthSessionTicketResponse| {
                 if session_ticket_response.ticket == ticket_handle {

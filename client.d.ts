@@ -28,8 +28,11 @@ export namespace apps {
   export function currentBetaName(): string | null
 }
 export namespace auth {
-  /** @param timeoutSeconds - The number of seconds to wait for the ticket to be validated. Default value is 10 seconds. */
-  export function getSessionTicket(timeoutSeconds?: number | undefined | null): Promise<Ticket>
+  /**
+   * @param steam_id64 - The 64bit SteamId.
+   * @param timeoutSeconds - The number of seconds to wait for the ticket to be validated. Default value is 10 seconds.
+   */
+  export function getSessionTicketWithSteamId(steamId64: bigint, timeoutSeconds?: number | undefined | null): Promise<Ticket>
   export class Ticket {
     cancel(): void
     getBytes(): Buffer

@@ -3,3 +3,6 @@
 node_modules
 test/**/package-lock.json
 test/electron/steamworks.js-electron-test-*
+
+sdk/*
+!sdk/redistributable_bin/
