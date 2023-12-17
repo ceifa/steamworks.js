@@ -218,8 +218,14 @@ export namespace workshop {
     current: bigint
     total: bigint
   }
+  export interface UpdateProgress {
+    status: number
+    progress: bigint
+    total: bigint
+  }
   export function createItem(appId?: number | undefined | null): Promise<UgcResult>
   export function updateItem(itemId: bigint, updateDetails: UgcUpdate, appId?: number | undefined | null): Promise<UgcResult>
+  export function updateItemWithCallback(itemId: bigint, updateDetails: UgcUpdate, appId: number | undefined | null, successCallback: (data: { itemId: bigint; needsToAcceptAgreement: boolean }) => void, errorCallback: (err: any) => void, progressCallback: (data: { status: number; progress: bigint; total: bigint }) => void): void
   /**
    * Subscribe to a workshop item. It will be downloaded and installed as soon as possible.
    *
