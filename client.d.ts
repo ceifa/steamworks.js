@@ -33,6 +33,7 @@ export namespace auth {
    * @param timeoutSeconds - The number of seconds to wait for the ticket to be validated. Default value is 10 seconds.
    */
   export function getSessionTicketWithSteamId(steamId64: bigint, timeoutSeconds?: number | undefined | null): Promise<Ticket>
+  export function getAuthTicketForWebApi(identity: string, timeoutSeconds?: number | undefined | null): Promise<Ticket>
   export class Ticket {
     cancel(): void
     getBytes(): Buffer
