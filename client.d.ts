@@ -29,10 +29,15 @@ export namespace apps {
 }
 export namespace auth {
   /**
-   * @param steam_id64 - The 64bit SteamId.
+   * @param steamId64 - The user steam id or game server steam id. Use as NetworkIdentity of the remote system that will authenticate the ticket. If it is peer-to-peer then the user steam ID. If it is a game server, then the game server steam ID may be used if it was obtained from a trusted 3rd party
    * @param timeoutSeconds - The number of seconds to wait for the ticket to be validated. Default value is 10 seconds.
    */
   export function getSessionTicketWithSteamId(steamId64: bigint, timeoutSeconds?: number | undefined | null): Promise<Ticket>
+  /**
+   * @param ip - The string of IPv4 or IPv6 address. Use as NetworkIdentity of the remote system that will authenticate the ticket.
+   * @param timeoutSeconds - The number of seconds to wait for the ticket to be validated. Default value is 10 seconds.
+   */
+  export function getSessionTicketWithIp(ip: string, timeoutSeconds?: number | undefined | null): Promise<Ticket>
   export function getAuthTicketForWebApi(identity: string, timeoutSeconds?: number | undefined | null): Promise<Ticket>
   export class Ticket {
     cancel(): void
@@ -226,7 +231,7 @@ export namespace workshop {
   }
   export function createItem(appId?: number | undefined | null): Promise<UgcResult>
   export function updateItem(itemId: bigint, updateDetails: UgcUpdate, appId?: number | undefined | null): Promise<UgcResult>
-  export function updateItemWithCallback(itemId: bigint, updateDetails: UgcUpdate, appId: number | undefined | null, successCallback: (data: { itemId: bigint; needsToAcceptAgreement: boolean }) => void, errorCallback: (err: any) => void, progressCallback: (data: { status: number; progress: bigint; total: bigint }) => void): void
+  export function updateItemWithCallback(itemId: bigint, updateDetails: UgcUpdate, appId: number | undefined | null, successCallback: (data: { itemId: bigint; needsToAcceptAgreement: boolean }) => void, errorCallback: (err: any) => void, progressCallback?: (data: { status: number; progress: bigint; total: bigint }) => void, progressCallbackIntervalMs?: number | undefined | null): void
   /**
    * Subscribe to a workshop item. It will be downloaded and installed as soon as possible.
    *

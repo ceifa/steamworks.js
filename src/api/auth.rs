@@ -2,8 +2,13 @@ use napi_derive::napi;
 
 #[napi]
 pub mod auth {
+    use std::net::SocketAddr;
+
     use napi::bindgen_prelude::{BigInt, Buffer, Error};
-    use steamworks::{AuthSessionTicketResponse, AuthTicket, SteamId, TicketForWebApiResponse};
+    use steamworks::{
+        networking_types::NetworkingIdentity, AuthSessionTicketResponse, AuthTicket, SteamId,
+        TicketForWebApiResponse,
+    };
     use tokio::sync::oneshot;
 
     #[napi]
@@ -26,11 +31,37 @@ pub mod auth {
         }
     }
 
-    /// @param steam_id64 - The 64bit SteamId.
+    /// @param steamId64 - The user steam id or game server steam id. Use as NetworkIdentity of the remote system that will authenticate the ticket. If it is peer-to-peer then the user steam ID. If it is a game server, then the game server steam ID may be used if it was obtained from a trusted 3rd party
     /// @param timeoutSeconds - The number of seconds to wait for the ticket to be validated. Default value is 10 seconds.
     #[napi]
     pub async fn get_session_ticket_with_steam_id(
         steam_id64: BigInt,
+        timeout_seconds: Option<u32>,
+    ) -> Result<Ticket, Error> {
+        get_session_ticket(
+            NetworkingIdentity::new_steam_id(SteamId::from_raw(steam_id64.get_u64().1)),
+            timeout_seconds,
+        )
+        .await
+    }
+
+    /// @param ip - The string of IPv4 or IPv6 address. Use as NetworkIdentity of the remote system that will authenticate the ticket.
+    /// @param timeoutSeconds - The number of seconds to wait for the ticket to be validated. Default value is 10 seconds.
+    #[napi]
+    pub async fn get_session_ticket_with_ip(
+        ip: String,
+        timeout_seconds: Option<u32>,
+    ) -> Result<Ticket, Error> {
+        match ip.parse::<SocketAddr>() {
+            Ok(addr) => get_session_ticket(NetworkingIdentity::new_ip(addr), timeout_seconds).await,
+            Err(e) => Err(Error::from_reason(e.to_string())),
+        }
+    }
+
+    /// @param networkIdentity - The identity of the remote system that will authenticate the ticket. If it is peer-to-peer then the user steam ID. If it is a game server, then the game server steam ID may be used if it was obtained from a trusted 3rd party, otherwise use the IP address. If it is a service, a string identifier of that service if one if provided.
+    /// @param timeoutSeconds - The number of seconds to wait for the ticket to be validated. Default value is 10 seconds.
+    async fn get_session_ticket(
+        network_identity: NetworkingIdentity,
         timeout_seconds: Option<u32>,
     ) -> Result<Ticket, Error> {
         let client = crate::client::get_client();
@@ -39,7 +70,8 @@ pub mod auth {
 
         let (ticket_handle, ticket) = client
             .user()
-            .authentication_session_ticket_with_steam_id(SteamId::from_raw(steam_id64.get_u64().1));
+            .authentication_session_ticket(network_identity);
+
         let callback =
             client.register_callback(move |session_ticket_response: AuthSessionTicketResponse| {
                 if session_ticket_response.ticket == ticket_handle {

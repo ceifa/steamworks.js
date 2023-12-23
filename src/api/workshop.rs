@@ -167,7 +167,9 @@ pub mod workshop {
         #[napi(
             ts_arg_type = "(data: { status: number; progress: bigint; total: bigint }) => void"
         )]
-        progress_callback: napi::JsFunction,
+        progress_callback: Option<napi::JsFunction>,
+
+        progress_callback_interval_ms: Option<u32>,
     ) {
         let success_callback: ThreadsafeFunction<UgcResult, ErrorStrategy::Fatal> =
             success_callback
@@ -176,10 +178,6 @@ pub mod workshop {
         let error_callback: ThreadsafeFunction<Error, ErrorStrategy::Fatal> = error_callback
             .create_threadsafe_function(0, |ctx| Ok(vec![ctx.value]))
             .unwrap();
-        let progress_callback: ThreadsafeFunction<UpdateProgress, ErrorStrategy::Fatal> =
-            progress_callback
-                .create_threadsafe_function(0, |ctx| Ok(vec![ctx.value]))
-                .unwrap();
 
         let client = crate::client::get_client();
 
@@ -234,21 +232,30 @@ pub mod workshop {
                 };
             });
 
-            std::thread::spawn(move || loop {
-                let (status, progress, total) = update_watch_handle.progress();
-                let value = UpdateProgress {
-                    status: status as u32,
-                    progress: BigInt::from(progress),
-                    total: BigInt::from(total),
-                };
-                progress_callback.call(value, ThreadsafeFunctionCallMode::Blocking);
-                match status {
-                    UpdateStatus::Invalid => break,
-                    UpdateStatus::CommittingChanges => break,
-                    _ => (),
-                }
-                std::thread::sleep(std::time::Duration::from_secs(1));
-            });
+            if let Some(progress_callback) = progress_callback {
+                let progress_callback: ThreadsafeFunction<UpdateProgress, ErrorStrategy::Fatal> =
+                    progress_callback
+                        .create_threadsafe_function(0, |ctx| Ok(vec![ctx.value]))
+                        .unwrap();
+
+                std::thread::spawn(move || loop {
+                    let (status, progress, total) = update_watch_handle.progress();
+                    let value = UpdateProgress {
+                        status: status as u32,
+                        progress: BigInt::from(progress),
+                        total: BigInt::from(total),
+                    };
+                    progress_callback.call(value, ThreadsafeFunctionCallMode::Blocking);
+                    match status {
+                        UpdateStatus::Invalid => break,
+                        UpdateStatus::CommittingChanges => break,
+                        _ => (),
+                    }
+                    std::thread::sleep(std::time::Duration::from_millis(
+                        progress_callback_interval_ms.unwrap_or(1000) as u64,
+                    ));
+                });
+            }
         };
     }
 
