@@ -7,7 +7,7 @@ pub mod workshop {
     use napi::threadsafe_function::ThreadsafeFunction;
     use napi::threadsafe_function::ThreadsafeFunctionCallMode;
     use std::path::Path;
-    use steamworks::{FileType, PublishedFileId, UpdateStatus};
+    use steamworks::{FileType, PublishedFileId};
     use tokio::sync::oneshot;
 
     #[napi(object)]
@@ -59,9 +59,34 @@ pub mod workshop {
         pub total: BigInt,
     }
 
+    #[napi]
+    pub enum UpdateStatus {
+        Invalid,
+        PreparingConfig,
+        PreparingContent,
+        UploadingContent,
+        UploadingPreviewFile,
+        CommittingChanges,
+    }
+
+    impl From<steamworks::UpdateStatus> for UpdateStatus {
+        fn from(visibility: steamworks::UpdateStatus) -> Self {
+            match visibility {
+                steamworks::UpdateStatus::Invalid => UpdateStatus::Invalid,
+                steamworks::UpdateStatus::PreparingConfig => UpdateStatus::PreparingConfig,
+                steamworks::UpdateStatus::PreparingContent => UpdateStatus::PreparingContent,
+                steamworks::UpdateStatus::UploadingContent => UpdateStatus::UploadingContent,
+                steamworks::UpdateStatus::UploadingPreviewFile => {
+                    UpdateStatus::UploadingPreviewFile
+                }
+                steamworks::UpdateStatus::CommittingChanges => UpdateStatus::CommittingChanges,
+            }
+        }
+    }
+
     #[napi(object)]
     pub struct UpdateProgress {
-        pub status: u32,
+        pub status: UpdateStatus,
         pub progress: BigInt,
         pub total: BigInt,
     }
@@ -241,14 +266,14 @@ pub mod workshop {
                 std::thread::spawn(move || loop {
                     let (status, progress, total) = update_watch_handle.progress();
                     let value = UpdateProgress {
-                        status: status as u32,
+                        status: status.into(),
                         progress: BigInt::from(progress),
                         total: BigInt::from(total),
                     };
                     progress_callback.call(value, ThreadsafeFunctionCallMode::Blocking);
                     match status {
-                        UpdateStatus::Invalid => break,
-                        UpdateStatus::CommittingChanges => break,
+                        steamworks::UpdateStatus::Invalid => break,
+                        steamworks::UpdateStatus::CommittingChanges => break,
                         _ => (),
                     }
                     std::thread::sleep(std::time::Duration::from_millis(

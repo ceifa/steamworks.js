@@ -224,8 +224,16 @@ export namespace workshop {
     current: bigint
     total: bigint
   }
+  export const enum UpdateStatus {
+    Invalid = 0,
+    PreparingConfig = 1,
+    PreparingContent = 2,
+    UploadingContent = 3,
+    UploadingPreviewFile = 4,
+    CommittingChanges = 5
+  }
   export interface UpdateProgress {
-    status: number
+    status: UpdateStatus
     progress: bigint
     total: bigint
   }
