@@ -190,7 +190,7 @@ pub mod workshop {
         #[napi(ts_arg_type = "(err: any) => void")] error_callback: napi::JsFunction,
 
         #[napi(
-            ts_arg_type = "(data: { status: number; progress: bigint; total: bigint }) => void"
+            ts_arg_type = "(data: { status: UpdateStatus; progress: bigint; total: bigint }) => void"
         )]
         progress_callback: Option<napi::JsFunction>,
 
