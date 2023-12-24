@@ -3,7 +3,7 @@ use napi_derive::napi;
 #[napi]
 pub mod workshop {
     use napi::bindgen_prelude::{BigInt, Error, FromNapiValue, ToNapiValue};
-    use steamworks::{AccountId, PublishedFileId, UGCQuery};
+    use steamworks::{AccountId, PublishedFileId};
     use tokio::sync::oneshot;
 
     use crate::api::localplayer::PlayerSteamId;
@@ -247,10 +247,10 @@ pub mod workshop {
         pub search_text: Option<String>,
     }
 
-    fn handle_query_config<Manager, T: UGCQuery<Manager>>(
-        mut query_handle: T,
+    fn handle_query_config<Manager>(
+        mut query_handle: steamworks::QueryHandle<Manager>,
         query_config: Option<WorkshopItemQueryConfig>,
-    ) -> T {
+    ) -> steamworks::QueryHandle<Manager> {
         // Apply additional query parameters if provided
         if let Some(query_config) = query_config {
             if let Some(cached_response_max_age) = query_config.cached_response_max_age {
