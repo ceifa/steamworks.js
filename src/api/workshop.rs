@@ -193,17 +193,13 @@ pub mod workshop {
         update_details: UgcUpdate,
         app_id: Option<u32>,
 
-        #[napi(
-            ts_arg_type = "(data: { itemId: bigint; needsToAcceptAgreement: boolean }) => void"
-        )]
-        success_callback: napi::JsFunction,
+        #[napi(ts_arg_type = "(data: UgcResult) => void")] success_callback: napi::JsFunction,
 
         #[napi(ts_arg_type = "(err: any) => void")] error_callback: napi::JsFunction,
 
-        #[napi(
-            ts_arg_type = "(data: { status: UpdateStatus; progress: bigint; total: bigint }) => void"
-        )]
-        progress_callback: Option<napi::JsFunction>,
+        #[napi(ts_arg_type = "(data: UpdateProgress) => void")] progress_callback: Option<
+            napi::JsFunction,
+        >,
 
         progress_callback_interval_ms: Option<u32>,
     ) {
