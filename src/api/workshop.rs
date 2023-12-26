@@ -7,7 +7,7 @@ pub mod workshop {
     use napi::threadsafe_function::ThreadsafeFunction;
     use napi::threadsafe_function::ThreadsafeFunctionCallMode;
     use std::path::Path;
-    use steamworks::{FileType, PublishedFileId};
+    use steamworks::{ClientManager, FileType, PublishedFileId, UpdateHandle};
     use tokio::sync::oneshot;
 
     #[napi(object)]
@@ -44,6 +44,43 @@ pub mod workshop {
         pub content_path: Option<String>,
         pub tags: Option<Vec<String>>,
         pub visibility: Option<UgcItemVisibility>,
+    }
+
+    impl UgcUpdate {
+        pub fn submit(
+            self,
+            mut update: UpdateHandle<ClientManager>,
+            callback: impl FnOnce(Result<(PublishedFileId, bool), steamworks::SteamError>)
+                + Send
+                + 'static,
+        ) -> steamworks::UpdateWatchHandle<ClientManager> {
+            if let Some(title) = self.title {
+                update = update.title(title.as_str());
+            }
+
+            if let Some(description) = self.description {
+                update = update.description(description.as_str());
+            }
+
+            if let Some(preview_path) = self.preview_path {
+                update = update.preview_path(Path::new(&preview_path));
+            }
+
+            if let Some(tags) = self.tags {
+                update = update.tags(tags);
+            }
+
+            if let Some(content_path) = self.content_path {
+                update = update.content_path(Path::new(&content_path));
+            }
+
+            if let Some(visibility) = self.visibility {
+                update = update.visibility(visibility.into());
+            }
+
+            let change_note = self.change_note.as_deref();
+            update.submit(change_note, callback)
+        }
     }
 
     #[napi(object)]
@@ -131,37 +168,11 @@ pub mod workshop {
         let (tx, rx) = oneshot::channel();
 
         {
-            let mut update = client
+            let update_handle = client
                 .ugc()
                 .start_item_update(app_id, PublishedFileId(item_id.get_u64().1));
 
-            if let Some(title) = update_details.title {
-                update = update.title(title.as_str());
-            }
-
-            if let Some(description) = update_details.description {
-                update = update.description(description.as_str());
-            }
-
-            if let Some(preview_path) = update_details.preview_path {
-                update = update.preview_path(Path::new(&preview_path));
-            }
-
-            if let Some(tags) = update_details.tags {
-                update = update.tags(tags);
-            }
-
-            if let Some(content_path) = update_details.content_path {
-                update = update.content_path(Path::new(&content_path));
-            }
-
-            if let Some(visibility) = update_details.visibility {
-                update = update.visibility(visibility.into());
-            }
-
-            let change_note = update_details.change_note.as_deref();
-
-            update.submit(change_note, |result| {
+            update_details.submit(update_handle, |result| {
                 tx.send(result).unwrap();
             });
         };
@@ -182,17 +193,13 @@ pub mod workshop {
         update_details: UgcUpdate,
         app_id: Option<u32>,
 
-        #[napi(
-            ts_arg_type = "(data: { itemId: bigint; needsToAcceptAgreement: boolean }) => void"
-        )]
-        success_callback: napi::JsFunction,
+        #[napi(ts_arg_type = "(data: UgcResult) => void")] success_callback: napi::JsFunction,
 
         #[napi(ts_arg_type = "(err: any) => void")] error_callback: napi::JsFunction,
 
-        #[napi(
-            ts_arg_type = "(data: { status: UpdateStatus; progress: bigint; total: bigint }) => void"
-        )]
-        progress_callback: Option<napi::JsFunction>,
+        #[napi(ts_arg_type = "(data: UpdateProgress) => void")] progress_callback: Option<
+            napi::JsFunction,
+        >,
 
         progress_callback_interval_ms: Option<u32>,
     ) {
@@ -211,37 +218,11 @@ pub mod workshop {
             .unwrap_or_else(|| client.utils().app_id());
 
         {
-            let mut update = client
+            let update_handle = client
                 .ugc()
                 .start_item_update(app_id, PublishedFileId(item_id.get_u64().1));
 
-            if let Some(title) = update_details.title {
-                update = update.title(title.as_str());
-            }
-
-            if let Some(description) = update_details.description {
-                update = update.description(description.as_str());
-            }
-
-            if let Some(preview_path) = update_details.preview_path {
-                update = update.preview_path(Path::new(&preview_path));
-            }
-
-            if let Some(tags) = update_details.tags {
-                update = update.tags(tags);
-            }
-
-            if let Some(content_path) = update_details.content_path {
-                update = update.content_path(Path::new(&content_path));
-            }
-
-            if let Some(visibility) = update_details.visibility {
-                update = update.visibility(visibility.into());
-            }
-
-            let change_note = update_details.change_note.as_deref();
-
-            let update_watch_handle = update.submit(change_note, move |result| {
+            let update_watch_handle = update_details.submit(update_handle, move |result| {
                 match result {
                     Ok((item_id, needs_to_accept_agreement)) => success_callback.call(
                         UgcResult {
