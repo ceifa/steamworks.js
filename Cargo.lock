@@ -335,7 +335,7 @@ dependencies = [
 [[package]]
 name = "steamworks"
 version = "0.10.0"
-source = "git+ssh://git@github.com/ai-zen/steamworks-rs.git?branch=feature/ugc-query-all#5834d4641183e41fbba93769318da7cc163e4a31"
+source = "git+ssh://git@github.com/ai-zen/steamworks-rs.git?branch=master#d3f95575c92f218608b09e33b52e18eaf92b1d71"
 dependencies = [
  "bitflags 1.3.2",
  "lazy_static",
@@ -347,7 +347,7 @@ dependencies = [
 [[package]]
 name = "steamworks-sys"
 version = "0.10.0"
-source = "git+ssh://git@github.com/ai-zen/steamworks-rs.git?branch=feature/ugc-query-all#5834d4641183e41fbba93769318da7cc163e4a31"
+source = "git+ssh://git@github.com/ai-zen/steamworks-rs.git?branch=master#d3f95575c92f218608b09e33b52e18eaf92b1d71"
 
 [[package]]
 name = "steamworksjs"

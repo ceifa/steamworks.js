@@ -186,6 +186,78 @@ pub mod workshop {
 
     #[derive(Debug)]
     #[napi(object)]
+    pub struct WorkshopItemAdditionalInformation {
+        pub preview_url: Option<String>,
+        pub num_subscriptions: Option<BigInt>, //   0	gets the number of subscriptions.
+        pub num_favorites: Option<BigInt>,     //   1	gets the number of favorites.
+        pub num_followers: Option<BigInt>,     //   2	gets the number of followers.
+        pub num_unique_subscriptions: Option<BigInt>, // 3	gets the number of unique subscriptions.
+        pub num_unique_favorites: Option<BigInt>, // 4	gets the number of unique favorites.
+        pub num_unique_followers: Option<BigInt>, // 5	gets the number of unique followers.
+        pub num_unique_website_views: Option<BigInt>, //  6	gets the number of unique views the item has on its steam workshop page.
+        pub report_score: Option<BigInt>, //    7	gets the number of times the item has been reported.
+        pub num_seconds_played: Option<BigInt>, //   8	gets the total number of seconds this item has been used across all players.
+        pub num_playtime_sessions: Option<BigInt>, //    9	gets the total number of play sessions this item has been used in.
+        pub num_comments: Option<BigInt>, //    10	gets the number of comments on the items that steam has on its steam workshop page.
+        pub num_seconds_played_during_time_period: Option<BigInt>, //   11	gets the number of seconds this item has been used over the given time period.
+        pub num_playtime_sessions_during_time_period: Option<BigInt>, //    12	Gets the number of sessions this item has been used in over the given time period.
+    }
+
+    impl WorkshopItemAdditionalInformation {
+        fn from_query_results(results: &steamworks::QueryResults, index: u32) -> Self {
+            Self {
+                preview_url: results.preview_url(index),
+                num_subscriptions: results
+                    .statistic(index, steamworks::UGCStatisticType::Subscriptions)
+                    .map(|v| BigInt::from(v)),
+                num_favorites: results
+                    .statistic(index, steamworks::UGCStatisticType::Favorites)
+                    .map(|v| BigInt::from(v)),
+                num_followers: results
+                    .statistic(index, steamworks::UGCStatisticType::Followers)
+                    .map(|v| BigInt::from(v)),
+                num_unique_subscriptions: results
+                    .statistic(index, steamworks::UGCStatisticType::UniqueSubscriptions)
+                    .map(|v| BigInt::from(v)),
+                num_unique_favorites: results
+                    .statistic(index, steamworks::UGCStatisticType::UniqueFavorites)
+                    .map(|v| BigInt::from(v)),
+                num_unique_followers: results
+                    .statistic(index, steamworks::UGCStatisticType::UniqueFollowers)
+                    .map(|v| BigInt::from(v)),
+                num_unique_website_views: results
+                    .statistic(index, steamworks::UGCStatisticType::UniqueWebsiteViews)
+                    .map(|v| BigInt::from(v)),
+                report_score: results
+                    .statistic(index, steamworks::UGCStatisticType::Reports)
+                    .map(|v| BigInt::from(v)),
+                num_seconds_played: results
+                    .statistic(index, steamworks::UGCStatisticType::SecondsPlayed)
+                    .map(|v| BigInt::from(v)),
+                num_playtime_sessions: results
+                    .statistic(index, steamworks::UGCStatisticType::PlaytimeSessions)
+                    .map(|v| BigInt::from(v)),
+                num_comments: results
+                    .statistic(index, steamworks::UGCStatisticType::Comments)
+                    .map(|v| BigInt::from(v)),
+                num_seconds_played_during_time_period: results
+                    .statistic(
+                        index,
+                        steamworks::UGCStatisticType::SecondsPlayedDuringTimePeriod,
+                    )
+                    .map(|v| BigInt::from(v)),
+                num_playtime_sessions_during_time_period: results
+                    .statistic(
+                        index,
+                        steamworks::UGCStatisticType::PlaytimeSessionsDuringTimePeriod,
+                    )
+                    .map(|v| BigInt::from(v)),
+            }
+        }
+    }
+
+    #[derive(Debug)]
+    #[napi(object)]
     pub struct WorkshopItem {
         pub published_file_id: BigInt,
         pub creator_app_id: Option<u32>,
@@ -205,11 +277,14 @@ pub mod workshop {
         pub num_upvotes: u32,
         pub num_downvotes: u32,
         pub num_children: u32,
-        pub preview_url: Option<String>,
+        pub additional: Option<WorkshopItemAdditionalInformation>,
     }
 
     impl WorkshopItem {
-        fn from_query(result: steamworks::QueryResult, preview_url: Option<String>) -> Self {
+        fn from_query(
+            result: steamworks::QueryResult,
+            additional: Option<WorkshopItemAdditionalInformation>,
+        ) -> Self {
             Self {
                 published_file_id: BigInt::from(result.published_file_id.0),
                 creator_app_id: result.creator_app_id.map(|id| id.0),
@@ -227,7 +302,7 @@ pub mod workshop {
                 num_upvotes: result.num_upvotes,
                 num_downvotes: result.num_downvotes,
                 num_children: result.num_children,
-                preview_url,
+                additional,
             }
         }
     }
@@ -311,11 +386,17 @@ pub mod workshop {
 
             query_handle = handle_query_config(query_handle, query_config);
 
-            query_handle.fetch(|result| {
-                tx.send(result.map(|result| {
-                    result
-                        .get(0)
-                        .map(|item| WorkshopItem::from_query(item, result.preview_url(0)))
+            query_handle.fetch(|fetch_result| {
+                tx.send(fetch_result.map(|query_results| {
+                    query_results.get(0).map(|query_result| {
+                        WorkshopItem::from_query(
+                            query_result,
+                            Some(WorkshopItemAdditionalInformation::from_query_results(
+                                &query_results,
+                                0,
+                            )),
+                        )
+                    })
                 }))
                 .unwrap();
             });
@@ -347,14 +428,20 @@ pub mod workshop {
 
             query_handle = handle_query_config(query_handle, query_config);
 
-            query_handle.fetch(|result| {
-                tx.send(result.map(|result| {
-                    result
+            query_handle.fetch(|fetch_result| {
+                tx.send(fetch_result.map(|query_results| {
+                    query_results
                         .iter()
                         .enumerate()
-                        .map(|(i, item)| {
-                            item.map(|item| {
-                                WorkshopItem::from_query(item, result.preview_url(i as u32))
+                        .map(|(i, query_result)| {
+                            query_result.map(|query_result| {
+                                WorkshopItem::from_query(
+                                    query_result,
+                                    Some(WorkshopItemAdditionalInformation::from_query_results(
+                                        &query_results,
+                                        i as u32,
+                                    )),
+                                )
                             })
                         })
                         .collect()
@@ -397,14 +484,20 @@ pub mod workshop {
 
             query_handle = handle_query_config(query_handle, query_config);
 
-            query_handle.fetch(|result| {
-                tx.send(result.map(|result| {
-                    result
+            query_handle.fetch(|fetch_result| {
+                tx.send(fetch_result.map(|query_results| {
+                    query_results
                         .iter()
                         .enumerate()
-                        .map(|(i, item)| {
-                            item.map(|item| {
-                                WorkshopItem::from_query(item, result.preview_url(i as u32))
+                        .map(|(i, query_result)| {
+                            query_result.map(|query_result| {
+                                WorkshopItem::from_query(
+                                    query_result,
+                                    Some(WorkshopItemAdditionalInformation::from_query_results(
+                                        &query_results,
+                                        i as u32,
+                                    )),
+                                )
                             })
                         })
                         .collect()
@@ -451,14 +544,20 @@ pub mod workshop {
 
             query_handle = handle_query_config(query_handle, query_config);
 
-            query_handle.fetch(|result| {
-                tx.send(result.map(|result| {
-                    result
+            query_handle.fetch(|fetch_result| {
+                tx.send(fetch_result.map(|query_results| {
+                    query_results
                         .iter()
                         .enumerate()
-                        .map(|(i, item)| {
-                            item.map(|item| {
-                                WorkshopItem::from_query(item, result.preview_url(i as u32))
+                        .map(|(i, query_result)| {
+                            query_result.map(|query_result| {
+                                WorkshopItem::from_query(
+                                    query_result,
+                                    Some(WorkshopItemAdditionalInformation::from_query_results(
+                                        &query_results,
+                                        i as u32,
+                                    )),
+                                )
                             })
                         })
                         .collect()

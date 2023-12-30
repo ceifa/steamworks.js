@@ -349,6 +349,22 @@ export namespace workshop {
     VoteScoreDesc = 5,
     ForModeration = 6
   }
+  export interface WorkshopItemAdditionalInformation {
+    previewUrl?: string
+    numSubscriptions?: bigint
+    numFavorites?: bigint
+    numFollowers?: bigint
+    numUniqueSubscriptions?: bigint
+    numUniqueFavorites?: bigint
+    numUniqueFollowers?: bigint
+    numUniqueWebsiteViews?: bigint
+    reportScore?: bigint
+    numSecondsPlayed?: bigint
+    numPlaytimeSessions?: bigint
+    numComments?: bigint
+    numSecondsPlayedDuringTimePeriod?: bigint
+    numPlaytimeSessionsDuringTimePeriod?: bigint
+  }
   export interface WorkshopItem {
     publishedFileId: bigint
     creatorAppId?: number
@@ -368,7 +384,7 @@ export namespace workshop {
     numUpvotes: number
     numDownvotes: number
     numChildren: number
-    previewUrl?: string
+    additional?: WorkshopItemAdditionalInformation
   }
   export interface WorkshopItemQueryConfig {
     cachedResponseMaxAge?: number
