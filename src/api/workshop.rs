@@ -3,8 +3,11 @@ use napi_derive::napi;
 #[napi]
 pub mod workshop {
     use napi::bindgen_prelude::{BigInt, Error, FromNapiValue, ToNapiValue};
+    use napi::threadsafe_function::ErrorStrategy;
+    use napi::threadsafe_function::ThreadsafeFunction;
+    use napi::threadsafe_function::ThreadsafeFunctionCallMode;
     use std::path::Path;
-    use steamworks::{FileType, PublishedFileId};
+    use steamworks::{ClientManager, FileType, PublishedFileId, UpdateHandle};
     use tokio::sync::oneshot;
 
     #[napi(object)]
@@ -43,6 +46,43 @@ pub mod workshop {
         pub visibility: Option<UgcItemVisibility>,
     }
 
+    impl UgcUpdate {
+        pub fn submit(
+            self,
+            mut update: UpdateHandle<ClientManager>,
+            callback: impl FnOnce(Result<(PublishedFileId, bool), steamworks::SteamError>)
+                + Send
+                + 'static,
+        ) -> steamworks::UpdateWatchHandle<ClientManager> {
+            if let Some(title) = self.title {
+                update = update.title(title.as_str());
+            }
+
+            if let Some(description) = self.description {
+                update = update.description(description.as_str());
+            }
+
+            if let Some(preview_path) = self.preview_path {
+                update = update.preview_path(Path::new(&preview_path));
+            }
+
+            if let Some(tags) = self.tags {
+                update = update.tags(tags);
+            }
+
+            if let Some(content_path) = self.content_path {
+                update = update.content_path(Path::new(&content_path));
+            }
+
+            if let Some(visibility) = self.visibility {
+                update = update.visibility(visibility.into());
+            }
+
+            let change_note = self.change_note.as_deref();
+            update.submit(change_note, callback)
+        }
+    }
+
     #[napi(object)]
     pub struct InstallInfo {
         pub folder: String,
@@ -53,6 +93,38 @@ pub mod workshop {
     #[napi(object)]
     pub struct DownloadInfo {
         pub current: BigInt,
+        pub total: BigInt,
+    }
+
+    #[napi]
+    pub enum UpdateStatus {
+        Invalid,
+        PreparingConfig,
+        PreparingContent,
+        UploadingContent,
+        UploadingPreviewFile,
+        CommittingChanges,
+    }
+
+    impl From<steamworks::UpdateStatus> for UpdateStatus {
+        fn from(visibility: steamworks::UpdateStatus) -> Self {
+            match visibility {
+                steamworks::UpdateStatus::Invalid => UpdateStatus::Invalid,
+                steamworks::UpdateStatus::PreparingConfig => UpdateStatus::PreparingConfig,
+                steamworks::UpdateStatus::PreparingContent => UpdateStatus::PreparingContent,
+                steamworks::UpdateStatus::UploadingContent => UpdateStatus::UploadingContent,
+                steamworks::UpdateStatus::UploadingPreviewFile => {
+                    UpdateStatus::UploadingPreviewFile
+                }
+                steamworks::UpdateStatus::CommittingChanges => UpdateStatus::CommittingChanges,
+            }
+        }
+    }
+
+    #[napi(object)]
+    pub struct UpdateProgress {
+        pub status: UpdateStatus,
+        pub progress: BigInt,
         pub total: BigInt,
     }
 
@@ -96,40 +168,14 @@ pub mod workshop {
         let (tx, rx) = oneshot::channel();
 
         {
-            let mut update = client
+            let update_handle = client
                 .ugc()
                 .start_item_update(app_id, PublishedFileId(item_id.get_u64().1));
 
-            if let Some(title) = update_details.title {
-                update = update.title(title.as_str());
-            }
-
-            if let Some(description) = update_details.description {
-                update = update.description(description.as_str());
-            }
-
-            if let Some(preview_path) = update_details.preview_path {
-                update = update.preview_path(Path::new(&preview_path));
-            }
-
-            if let Some(tags) = update_details.tags {
-                update = update.tags(tags);
-            }
-
-            if let Some(content_path) = update_details.content_path {
-                update = update.content_path(Path::new(&content_path));
-            }
-
-            if let Some(visibility) = update_details.visibility {
-                update = update.visibility(visibility.into());
-            }
-
-            let change_note = update_details.change_note.as_deref();
-
-            update.submit(change_note, |result| {
+            update_details.submit(update_handle, |result| {
                 tx.send(result).unwrap();
             });
-        }
+        };
 
         let result = rx.await.unwrap();
         match result {
@@ -139,6 +185,84 @@ pub mod workshop {
             }),
             Err(e) => Err(Error::from_reason(e.to_string())),
         }
+    }
+
+    #[napi]
+    pub fn update_item_with_callback(
+        item_id: BigInt,
+        update_details: UgcUpdate,
+        app_id: Option<u32>,
+
+        #[napi(ts_arg_type = "(data: UgcResult) => void")] success_callback: napi::JsFunction,
+
+        #[napi(ts_arg_type = "(err: any) => void")] error_callback: napi::JsFunction,
+
+        #[napi(ts_arg_type = "(data: UpdateProgress) => void")] progress_callback: Option<
+            napi::JsFunction,
+        >,
+
+        progress_callback_interval_ms: Option<u32>,
+    ) {
+        let success_callback: ThreadsafeFunction<UgcResult, ErrorStrategy::Fatal> =
+            success_callback
+                .create_threadsafe_function(0, |ctx| Ok(vec![ctx.value]))
+                .unwrap();
+        let error_callback: ThreadsafeFunction<Error, ErrorStrategy::Fatal> = error_callback
+            .create_threadsafe_function(0, |ctx| Ok(vec![ctx.value]))
+            .unwrap();
+
+        let client = crate::client::get_client();
+
+        let app_id = app_id
+            .map(steamworks::AppId)
+            .unwrap_or_else(|| client.utils().app_id());
+
+        {
+            let update_handle = client
+                .ugc()
+                .start_item_update(app_id, PublishedFileId(item_id.get_u64().1));
+
+            let update_watch_handle = update_details.submit(update_handle, move |result| {
+                match result {
+                    Ok((item_id, needs_to_accept_agreement)) => success_callback.call(
+                        UgcResult {
+                            item_id: BigInt::from(item_id.0),
+                            needs_to_accept_agreement,
+                        },
+                        ThreadsafeFunctionCallMode::Blocking,
+                    ),
+                    Err(e) => error_callback.call(
+                        Error::from_reason(e.to_string()),
+                        ThreadsafeFunctionCallMode::Blocking,
+                    ),
+                };
+            });
+
+            if let Some(progress_callback) = progress_callback {
+                let progress_callback: ThreadsafeFunction<UpdateProgress, ErrorStrategy::Fatal> =
+                    progress_callback
+                        .create_threadsafe_function(0, |ctx| Ok(vec![ctx.value]))
+                        .unwrap();
+
+                std::thread::spawn(move || loop {
+                    let (status, progress, total) = update_watch_handle.progress();
+                    let value = UpdateProgress {
+                        status: status.into(),
+                        progress: BigInt::from(progress),
+                        total: BigInt::from(total),
+                    };
+                    progress_callback.call(value, ThreadsafeFunctionCallMode::Blocking);
+                    match status {
+                        steamworks::UpdateStatus::Invalid => break,
+                        steamworks::UpdateStatus::CommittingChanges => break,
+                        _ => (),
+                    }
+                    std::thread::sleep(std::time::Duration::from_millis(
+                        progress_callback_interval_ms.unwrap_or(1000) as u64,
+                    ));
+                });
+            }
+        };
     }
 
     /// Subscribe to a workshop item. It will be downloaded and installed as soon as possible.
