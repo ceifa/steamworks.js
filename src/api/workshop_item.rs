@@ -307,6 +307,41 @@ pub mod workshop {
         }
     }
 
+    #[derive(Debug)]
+    #[napi(object)]
+    pub struct WorkshopPageResult {
+        pub items: Vec<Option<WorkshopItem>>,
+        pub returned_results: u32,
+        pub total_results: u32,
+        pub was_cached: bool,
+    }
+
+    impl WorkshopPageResult {
+        fn from_query_results(query_results: steamworks::QueryResults) -> Self {
+            Self {
+                items: query_results
+                    .iter()
+                    .enumerate()
+                    .map(|(i, query_result)| {
+                        query_result.map(|query_result| {
+                            WorkshopItem::from_query(
+                                query_result,
+                                Some(WorkshopItemAdditionalInformation::from_query_results(
+                                    &query_results,
+                                    i as u32,
+                                )),
+                            )
+                        })
+                    })
+                    .collect(),
+                returned_results: query_results.returned_results(),
+                total_results: query_results.total_results(),
+                was_cached: query_results.was_cached(),
+            }
+        }
+    }
+
+    #[derive(Debug)]
     #[napi(object)]
     pub struct WorkshopItemQueryConfig {
         pub cached_response_max_age: Option<u32>,
@@ -411,7 +446,7 @@ pub mod workshop {
     pub async fn get_items(
         items: Vec<BigInt>,
         query_config: Option<WorkshopItemQueryConfig>,
-    ) -> Result<Vec<Option<WorkshopItem>>, Error> {
+    ) -> Result<WorkshopPageResult, Error> {
         let client = crate::client::get_client();
         let (tx, rx) = oneshot::channel();
 
@@ -429,23 +464,10 @@ pub mod workshop {
             query_handle = handle_query_config(query_handle, query_config);
 
             query_handle.fetch(|fetch_result| {
-                tx.send(fetch_result.map(|query_results| {
-                    query_results
-                        .iter()
-                        .enumerate()
-                        .map(|(i, query_result)| {
-                            query_result.map(|query_result| {
-                                WorkshopItem::from_query(
-                                    query_result,
-                                    Some(WorkshopItemAdditionalInformation::from_query_results(
-                                        &query_results,
-                                        i as u32,
-                                    )),
-                                )
-                            })
-                        })
-                        .collect()
-                }))
+                tx.send(
+                    fetch_result
+                        .map(|query_results| WorkshopPageResult::from_query_results(query_results)),
+                )
                 .unwrap();
             });
         }
@@ -463,7 +485,7 @@ pub mod workshop {
         creator_app_id: u32,
         consumer_app_id: u32,
         query_config: Option<WorkshopItemQueryConfig>,
-    ) -> Result<Vec<Option<WorkshopItem>>, Error> {
+    ) -> Result<WorkshopPageResult, Error> {
         let client = crate::client::get_client();
         let (tx, rx) = oneshot::channel();
 
@@ -485,23 +507,10 @@ pub mod workshop {
             query_handle = handle_query_config(query_handle, query_config);
 
             query_handle.fetch(|fetch_result| {
-                tx.send(fetch_result.map(|query_results| {
-                    query_results
-                        .iter()
-                        .enumerate()
-                        .map(|(i, query_result)| {
-                            query_result.map(|query_result| {
-                                WorkshopItem::from_query(
-                                    query_result,
-                                    Some(WorkshopItemAdditionalInformation::from_query_results(
-                                        &query_results,
-                                        i as u32,
-                                    )),
-                                )
-                            })
-                        })
-                        .collect()
-                }))
+                tx.send(
+                    fetch_result
+                        .map(|query_results| WorkshopPageResult::from_query_results(query_results)),
+                )
                 .unwrap();
             });
         }
@@ -521,7 +530,7 @@ pub mod workshop {
         creator_app_id: u32,
         consumer_app_id: u32,
         query_config: Option<WorkshopItemQueryConfig>,
-    ) -> Result<Vec<Option<WorkshopItem>>, Error> {
+    ) -> Result<WorkshopPageResult, Error> {
         let client = crate::client::get_client();
         let (tx, rx) = oneshot::channel();
 
@@ -545,23 +554,10 @@ pub mod workshop {
             query_handle = handle_query_config(query_handle, query_config);
 
             query_handle.fetch(|fetch_result| {
-                tx.send(fetch_result.map(|query_results| {
-                    query_results
-                        .iter()
-                        .enumerate()
-                        .map(|(i, query_result)| {
-                            query_result.map(|query_result| {
-                                WorkshopItem::from_query(
-                                    query_result,
-                                    Some(WorkshopItemAdditionalInformation::from_query_results(
-                                        &query_results,
-                                        i as u32,
-                                    )),
-                                )
-                            })
-                        })
-                        .collect()
-                }))
+                tx.send(
+                    fetch_result
+                        .map(|query_results| WorkshopPageResult::from_query_results(query_results)),
+                )
                 .unwrap();
             });
         }
