@@ -386,6 +386,12 @@ export namespace workshop {
     numChildren: number
     additional?: WorkshopItemAdditionalInformation
   }
+  export interface WorkshopPageResult {
+    items: Array<WorkshopItem | undefined | null>
+    returnedResults: number
+    totalResults: number
+    wasCached: boolean
+  }
   export interface WorkshopItemQueryConfig {
     cachedResponseMaxAge?: number
     includeMetadata?: boolean
@@ -400,7 +406,7 @@ export namespace workshop {
     searchText?: string
   }
   export function getItem(item: bigint, queryConfig?: WorkshopItemQueryConfig | undefined | null): Promise<WorkshopItem | null>
-  export function getItems(items: Array<bigint>, queryConfig?: WorkshopItemQueryConfig | undefined | null): Promise<Array<WorkshopItem | undefined | null>>
-  export function getAllItems(page: number, queryType: UGCQueryType, itemType: UGCType, creatorAppId: number, consumerAppId: number, queryConfig?: WorkshopItemQueryConfig | undefined | null): Promise<Array<WorkshopItem | undefined | null>>
-  export function getUserItems(page: number, accountId: number, listType: UserListType, itemType: UGCType, sortOrder: UserListOrder, creatorAppId: number, consumerAppId: number, queryConfig?: WorkshopItemQueryConfig | undefined | null): Promise<Array<WorkshopItem | undefined | null>>
+  export function getItems(items: Array<bigint>, queryConfig?: WorkshopItemQueryConfig | undefined | null): Promise<WorkshopPageResult>
+  export function getAllItems(page: number, queryType: UGCQueryType, itemType: UGCType, creatorAppId: number, consumerAppId: number, queryConfig?: WorkshopItemQueryConfig | undefined | null): Promise<WorkshopPageResult>
+  export function getUserItems(page: number, accountId: number, listType: UserListType, itemType: UGCType, sortOrder: UserListOrder, creatorAppId: number, consumerAppId: number, queryConfig?: WorkshopItemQueryConfig | undefined | null): Promise<WorkshopPageResult>
 }
