@@ -355,6 +355,7 @@ pub mod workshop {
         pub required_tags: Option<Vec<String>>,
         pub excluded_tags: Option<Vec<String>>,
         pub search_text: Option<String>,
+        pub ranked_by_trend_days: Option<u32>,
     }
 
     fn handle_query_config<Manager>(
@@ -400,6 +401,9 @@ pub mod workshop {
             }
             if let Some(search_text) = query_config.search_text {
                 query_handle = query_handle.set_search_text(&search_text);
+            }
+            if let Some(ranked_by_trend_days) = query_config.ranked_by_trend_days {
+                query_handle = query_handle.set_ranked_by_trend_days(ranked_by_trend_days);
             }
         }
         return query_handle;
