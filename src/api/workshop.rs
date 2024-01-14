@@ -67,7 +67,7 @@ pub mod workshop {
             }
 
             if let Some(tags) = self.tags {
-                update = update.tags(tags);
+                update = update.tags(tags, false);
             }
 
             if let Some(content_path) = self.content_path {
