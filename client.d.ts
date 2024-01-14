@@ -404,6 +404,7 @@ export namespace workshop {
     requiredTags?: Array<string>
     excludedTags?: Array<string>
     searchText?: string
+    rankedByTrendDays?: number
   }
   export function getItem(item: bigint, queryConfig?: WorkshopItemQueryConfig | undefined | null): Promise<WorkshopItem | null>
   export function getItems(items: Array<bigint>, queryConfig?: WorkshopItemQueryConfig | undefined | null): Promise<WorkshopPageResult>
