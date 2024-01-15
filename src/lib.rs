@@ -2,6 +2,7 @@ use napi::bindgen_prelude::Error;
 use napi_derive::napi;
 use steamworks::AppId;
 use steamworks::Client;
+use steamworks::SteamAPIInitError;
 
 pub mod client;
 
@@ -18,7 +19,11 @@ pub fn init(app_id: Option<u32>) -> Result<(), Error> {
     let (steam_client, steam_single) = app_id
         .map(|app_id| Client::init_app(AppId(app_id)))
         .unwrap_or_else(Client::init)
-        .map_err(|e| Error::from_reason(e.to_string()))?;
+        .map_err(|e| match e {
+            SteamAPIInitError::FailedGeneric(msg)
+            | SteamAPIInitError::NoSteamClient(msg)
+            | SteamAPIInitError::VersionMismatch(msg) => Error::from_reason(msg),
+        })?;
 
     steam_client.user_stats().request_current_stats();
 
