@@ -11,7 +11,7 @@ napi = { version = "2.13.1", features = ["tokio_rt", "napi6", "serde-json"] }
 napi-derive = "2.13.0"
 lazy_static = "1"
 tokio = { version = "1", features = ["sync", "time"] }
-steamworks = { git = "ssh://git@github.com/ai-zen/steamworks-rs.git", branch = "master", features = [
+steamworks = { git = "ssh://git@github.com/ai-zen/steamworks-rs.git", branch = "feature/ugc-result", features = [
     "serde",
 ] }
 serde = "1"

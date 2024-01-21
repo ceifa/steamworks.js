@@ -349,8 +349,7 @@ export namespace workshop {
     VoteScoreDesc = 5,
     ForModeration = 6
   }
-  export interface WorkshopItemAdditionalInformation {
-    previewUrl?: string
+  export interface WorkshopItemStatistic {
     numSubscriptions?: bigint
     numFavorites?: bigint
     numFollowers?: bigint
@@ -376,6 +375,9 @@ export namespace workshop {
     timeCreated: number
     /** Time updated in unix epoch seconds format */
     timeUpdated: number
+    /** Time when the user added the published item to their list (not always applicable), provided in Unix epoch format (time since Jan 1st, 1970). */
+    timeAddedToUserList: number
+    visibility: UgcItemVisibility
     banned: boolean
     acceptedForUse: boolean
     tags: Array<string>
@@ -384,12 +386,17 @@ export namespace workshop {
     numUpvotes: number
     numDownvotes: number
     numChildren: number
-    additional?: WorkshopItemAdditionalInformation
+    previewUrl?: string
+    statistics: WorkshopItemStatistic
   }
-  export interface WorkshopPageResult {
+  export interface WorkshopPaginatedResult {
     items: Array<WorkshopItem | undefined | null>
     returnedResults: number
     totalResults: number
+    wasCached: boolean
+  }
+  export interface WorkshopItemsResult {
+    items: Array<WorkshopItem | undefined | null>
     wasCached: boolean
   }
   export interface WorkshopItemQueryConfig {
@@ -407,7 +414,7 @@ export namespace workshop {
     rankedByTrendDays?: number
   }
   export function getItem(item: bigint, queryConfig?: WorkshopItemQueryConfig | undefined | null): Promise<WorkshopItem | null>
-  export function getItems(items: Array<bigint>, queryConfig?: WorkshopItemQueryConfig | undefined | null): Promise<WorkshopPageResult>
-  export function getAllItems(page: number, queryType: UGCQueryType, itemType: UGCType, creatorAppId: number, consumerAppId: number, queryConfig?: WorkshopItemQueryConfig | undefined | null): Promise<WorkshopPageResult>
-  export function getUserItems(page: number, accountId: number, listType: UserListType, itemType: UGCType, sortOrder: UserListOrder, creatorAppId: number, consumerAppId: number, queryConfig?: WorkshopItemQueryConfig | undefined | null): Promise<WorkshopPageResult>
+  export function getItems(items: Array<bigint>, queryConfig?: WorkshopItemQueryConfig | undefined | null): Promise<WorkshopItemsResult>
+  export function getAllItems(page: number, queryType: UGCQueryType, itemType: UGCType, creatorAppId: number, consumerAppId: number, queryConfig?: WorkshopItemQueryConfig | undefined | null): Promise<WorkshopPaginatedResult>
+  export function getUserItems(page: number, accountId: number, listType: UserListType, itemType: UGCType, sortOrder: UserListOrder, creatorAppId: number, consumerAppId: number, queryConfig?: WorkshopItemQueryConfig | undefined | null): Promise<WorkshopPaginatedResult>
 }

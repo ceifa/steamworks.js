@@ -7,6 +7,7 @@ pub mod workshop {
     use tokio::sync::oneshot;
 
     use crate::api::localplayer::PlayerSteamId;
+    use crate::api::workshop::workshop::UgcItemVisibility;
 
     #[napi]
     pub enum UGCQueryType {
@@ -32,9 +33,9 @@ pub mod workshop {
         RankedByLastUpdatedDate,
     }
 
-    impl From<UGCQueryType> for steamworks::UGCQueryType {
-        fn from(query_type: UGCQueryType) -> Self {
-            match query_type {
+    impl Into<steamworks::UGCQueryType> for UGCQueryType {
+        fn into(self: UGCQueryType) -> steamworks::UGCQueryType {
+            match self {
                 UGCQueryType::RankedByVote => steamworks::UGCQueryType::RankedByVote,
                 UGCQueryType::RankedByPublicationDate => {
                     steamworks::UGCQueryType::RankedByPublicationDate
@@ -107,9 +108,9 @@ pub mod workshop {
         All,
     }
 
-    impl From<UGCType> for steamworks::UGCType {
-        fn from(ugc_type: UGCType) -> Self {
-            match ugc_type {
+    impl Into<steamworks::UGCType> for UGCType {
+        fn into(self) -> steamworks::UGCType {
+            match self {
                 UGCType::Items => steamworks::UGCType::Items,
                 UGCType::ItemsMtx => steamworks::UGCType::ItemsMtx,
                 UGCType::ItemsReadyToUse => steamworks::UGCType::ItemsReadyToUse,
@@ -141,9 +142,9 @@ pub mod workshop {
         Followed,
     }
 
-    impl From<UserListType> for steamworks::UserList {
-        fn from(list_type: UserListType) -> Self {
-            match list_type {
+    impl Into<steamworks::UserList> for UserListType {
+        fn into(self) -> steamworks::UserList {
+            match self {
                 UserListType::Published => steamworks::UserList::Published,
                 UserListType::VotedOn => steamworks::UserList::VotedOn,
                 UserListType::VotedUp => steamworks::UserList::VotedUp,
@@ -168,9 +169,9 @@ pub mod workshop {
         ForModeration,
     }
 
-    impl From<UserListOrder> for steamworks::UserListOrder {
-        fn from(sort_order: UserListOrder) -> Self {
-            match sort_order {
+    impl Into<steamworks::UserListOrder> for UserListOrder {
+        fn into(self: UserListOrder) -> steamworks::UserListOrder {
+            match self {
                 UserListOrder::CreationOrderAsc => steamworks::UserListOrder::CreationOrderAsc,
                 UserListOrder::CreationOrderDesc => steamworks::UserListOrder::CreationOrderDesc,
                 UserListOrder::TitleAsc => steamworks::UserListOrder::TitleAsc,
@@ -186,8 +187,7 @@ pub mod workshop {
 
     #[derive(Debug)]
     #[napi(object)]
-    pub struct WorkshopItemAdditionalInformation {
-        pub preview_url: Option<String>,
+    pub struct WorkshopItemStatistic {
         pub num_subscriptions: Option<BigInt>, //   0	gets the number of subscriptions.
         pub num_favorites: Option<BigInt>,     //   1	gets the number of favorites.
         pub num_followers: Option<BigInt>,     //   2	gets the number of followers.
@@ -203,10 +203,9 @@ pub mod workshop {
         pub num_playtime_sessions_during_time_period: Option<BigInt>, //    12	Gets the number of sessions this item has been used in over the given time period.
     }
 
-    impl WorkshopItemAdditionalInformation {
+    impl WorkshopItemStatistic {
         fn from_query_results(results: &steamworks::QueryResults, index: u32) -> Self {
             Self {
-                preview_url: results.preview_url(index),
                 num_subscriptions: results
                     .statistic(index, steamworks::UGCStatisticType::Subscriptions)
                     .map(|v| BigInt::from(v)),
@@ -269,6 +268,9 @@ pub mod workshop {
         pub time_created: u32,
         /// Time updated in unix epoch seconds format
         pub time_updated: u32,
+        /// Time when the user added the published item to their list (not always applicable), provided in Unix epoch format (time since Jan 1st, 1970).
+        pub time_added_to_user_list: u32,
+        pub visibility: UgcItemVisibility,
         pub banned: bool,
         pub accepted_for_use: bool,
         pub tags: Vec<String>,
@@ -277,65 +279,72 @@ pub mod workshop {
         pub num_upvotes: u32,
         pub num_downvotes: u32,
         pub num_children: u32,
-        pub additional: Option<WorkshopItemAdditionalInformation>,
+        pub preview_url: Option<String>,
+        pub statistics: WorkshopItemStatistic, // Is it necessary to design this as optional?
     }
 
     impl WorkshopItem {
-        fn from_query(
-            result: steamworks::QueryResult,
-            additional: Option<WorkshopItemAdditionalInformation>,
-        ) -> Self {
-            Self {
-                published_file_id: BigInt::from(result.published_file_id.0),
-                creator_app_id: result.creator_app_id.map(|id| id.0),
-                consumer_app_id: result.consumer_app_id.map(|id| id.0),
-                title: result.title,
-                description: result.description,
-                owner: PlayerSteamId::from_steamid(result.owner),
-                time_created: result.time_created,
-                time_updated: result.time_updated,
-                banned: result.banned,
-                accepted_for_use: result.accepted_for_use,
-                tags: result.tags,
-                tags_truncated: result.tags_truncated,
-                url: result.url,
-                num_upvotes: result.num_upvotes,
-                num_downvotes: result.num_downvotes,
-                num_children: result.num_children,
-                additional,
-            }
+        fn from_query_results(results: &steamworks::QueryResults, index: u32) -> Option<Self> {
+            results.get(index).map(|item| Self {
+                published_file_id: BigInt::from(item.published_file_id.0),
+                creator_app_id: item.creator_app_id.map(|id| id.0),
+                consumer_app_id: item.consumer_app_id.map(|id| id.0),
+                title: item.title,
+                description: item.description,
+                owner: PlayerSteamId::from_steamid(item.owner),
+                time_created: item.time_created,
+                time_updated: item.time_updated,
+                time_added_to_user_list: item.time_added_to_user_list,
+                visibility: item.visibility.into(),
+                banned: item.banned,
+                accepted_for_use: item.accepted_for_use,
+                tags: item.tags,
+                tags_truncated: item.tags_truncated,
+                url: item.url,
+                num_upvotes: item.num_upvotes,
+                num_downvotes: item.num_downvotes,
+                num_children: item.num_children,
+                preview_url: results.preview_url(index),
+                statistics: WorkshopItemStatistic::from_query_results(results, index),
+            })
         }
     }
 
     #[derive(Debug)]
     #[napi(object)]
-    pub struct WorkshopPageResult {
+    pub struct WorkshopPaginatedResult {
         pub items: Vec<Option<WorkshopItem>>,
         pub returned_results: u32,
         pub total_results: u32,
         pub was_cached: bool,
     }
 
-    impl WorkshopPageResult {
+    impl WorkshopPaginatedResult {
         fn from_query_results(query_results: steamworks::QueryResults) -> Self {
             Self {
-                items: query_results
-                    .iter()
-                    .enumerate()
-                    .map(|(i, query_result)| {
-                        query_result.map(|query_result| {
-                            WorkshopItem::from_query(
-                                query_result,
-                                Some(WorkshopItemAdditionalInformation::from_query_results(
-                                    &query_results,
-                                    i as u32,
-                                )),
-                            )
-                        })
-                    })
+                items: (0..query_results.returned_results())
+                    .map(|i| WorkshopItem::from_query_results(&query_results, i))
                     .collect(),
                 returned_results: query_results.returned_results(),
                 total_results: query_results.total_results(),
+                was_cached: query_results.was_cached(),
+            }
+        }
+    }
+
+    #[derive(Debug)]
+    #[napi(object)]
+    pub struct WorkshopItemsResult {
+        pub items: Vec<Option<WorkshopItem>>,
+        pub was_cached: bool,
+    }
+
+    impl WorkshopItemsResult {
+        fn from_query_results(query_results: steamworks::QueryResults) -> Self {
+            Self {
+                items: (0..query_results.returned_results())
+                    .map(|i| WorkshopItem::from_query_results(&query_results, i))
+                    .collect(),
                 was_cached: query_results.was_cached(),
             }
         }
@@ -362,7 +371,7 @@ pub mod workshop {
         mut query_handle: steamworks::QueryHandle<Manager>,
         query_config: Option<WorkshopItemQueryConfig>,
     ) -> steamworks::QueryHandle<Manager> {
-        // Apply additional query parameters if provided
+        // Apply statistics query parameters if provided
         if let Some(query_config) = query_config {
             if let Some(cached_response_max_age) = query_config.cached_response_max_age {
                 query_handle = query_handle.set_allow_cached_response(cached_response_max_age);
@@ -426,17 +435,10 @@ pub mod workshop {
             query_handle = handle_query_config(query_handle, query_config);
 
             query_handle.fetch(|fetch_result| {
-                tx.send(fetch_result.map(|query_results| {
-                    query_results.get(0).map(|query_result| {
-                        WorkshopItem::from_query(
-                            query_result,
-                            Some(WorkshopItemAdditionalInformation::from_query_results(
-                                &query_results,
-                                0,
-                            )),
-                        )
-                    })
-                }))
+                tx.send(
+                    fetch_result
+                        .map(|query_results| WorkshopItem::from_query_results(&query_results, 0)),
+                )
                 .unwrap();
             });
         }
@@ -450,7 +452,7 @@ pub mod workshop {
     pub async fn get_items(
         items: Vec<BigInt>,
         query_config: Option<WorkshopItemQueryConfig>,
-    ) -> Result<WorkshopPageResult, Error> {
+    ) -> Result<WorkshopItemsResult, Error> {
         let client = crate::client::get_client();
         let (tx, rx) = oneshot::channel();
 
@@ -469,8 +471,9 @@ pub mod workshop {
 
             query_handle.fetch(|fetch_result| {
                 tx.send(
-                    fetch_result
-                        .map(|query_results| WorkshopPageResult::from_query_results(query_results)),
+                    fetch_result.map(|query_results| {
+                        WorkshopItemsResult::from_query_results(query_results)
+                    }),
                 )
                 .unwrap();
             });
@@ -489,7 +492,7 @@ pub mod workshop {
         creator_app_id: u32,
         consumer_app_id: u32,
         query_config: Option<WorkshopItemQueryConfig>,
-    ) -> Result<WorkshopPageResult, Error> {
+    ) -> Result<WorkshopPaginatedResult, Error> {
         let client = crate::client::get_client();
         let (tx, rx) = oneshot::channel();
 
@@ -511,10 +514,9 @@ pub mod workshop {
             query_handle = handle_query_config(query_handle, query_config);
 
             query_handle.fetch(|fetch_result| {
-                tx.send(
-                    fetch_result
-                        .map(|query_results| WorkshopPageResult::from_query_results(query_results)),
-                )
+                tx.send(fetch_result.map(|query_results| {
+                    WorkshopPaginatedResult::from_query_results(query_results)
+                }))
                 .unwrap();
             });
         }
@@ -534,7 +536,7 @@ pub mod workshop {
         creator_app_id: u32,
         consumer_app_id: u32,
         query_config: Option<WorkshopItemQueryConfig>,
-    ) -> Result<WorkshopPageResult, Error> {
+    ) -> Result<WorkshopPaginatedResult, Error> {
         let client = crate::client::get_client();
         let (tx, rx) = oneshot::channel();
 
@@ -558,10 +560,9 @@ pub mod workshop {
             query_handle = handle_query_config(query_handle, query_config);
 
             query_handle.fetch(|fetch_result| {
-                tx.send(
-                    fetch_result
-                        .map(|query_results| WorkshopPageResult::from_query_results(query_results)),
-                )
+                tx.send(fetch_result.map(|query_results| {
+                    WorkshopPaginatedResult::from_query_results(query_results)
+                }))
                 .unwrap();
             });
         }
