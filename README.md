@@ -47,7 +47,7 @@ To use steamworks.js you don't have to build anything, just install it from npm:
 $: npm i steamworks.js
 ```
 
-For the production build, copy the relevant distro files from `sdk/redistributable_bin/{your_distro}` into the root of your build.
+For the production build, copy the relevant distro files from `sdk/redistributable_bin/{YOUR_DISTRO}` into the root of your build.
 
 ### Electron
 
