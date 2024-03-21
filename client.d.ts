@@ -322,3 +322,11 @@ export namespace workshop {
   export function getItem(item: bigint, query?: WorkshopItemQuery | undefined | null): Promise<WorkshopItem | null>
   export function getItems(items: Array<bigint>, query?: WorkshopItemQuery | undefined | null): Promise<Array<WorkshopItem | undefined | null>>
 }
+export namespace networking_messages {
+  export interface Message {
+    data: Buffer
+    steamId?: PlayerSteamId
+  }
+  export function sendMessageToUser(steamId64: bigint, data: Buffer): void
+  export function receiveMessagesOnChannel(): Array<Message>
+}
