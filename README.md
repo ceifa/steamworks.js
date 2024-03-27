@@ -47,6 +47,8 @@ To use steamworks.js you don't have to build anything, just install it from npm:
 $: npm i steamworks.js
 ```
 
+For the production build, copy the relevant distro files from `sdk/redistributable_bin/{YOUR_DISTRO}` into the root of your build.
+
 ### Electron
 
 Steamworks.js is a native module and cannot be used by default in the renderer process. To enable the usage of native modules on the renderer process, the following configurations should be made on `main.js`:
