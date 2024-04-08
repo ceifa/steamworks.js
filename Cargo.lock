@@ -334,8 +334,9 @@ dependencies = [
 
 [[package]]
 name = "steamworks"
-version = "0.10.0"
-source = "git+https://github.com/Noxime/steamworks-rs.git?rev=f00f30954eaadb96e54b23fb8216649ed53a663f#f00f30954eaadb96e54b23fb8216649ed53a663f"
+version = "0.11.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a79d6f059322f73a4586cc2d0ca595ce1583104b2b1574ae1bb87f2c05bf4c67"
 dependencies = [
  "bitflags 1.3.2",
  "lazy_static",
@@ -346,8 +347,9 @@ dependencies = [
 
 [[package]]
 name = "steamworks-sys"
-version = "0.10.0"
-source = "git+https://github.com/Noxime/steamworks-rs.git?rev=f00f30954eaadb96e54b23fb8216649ed53a663f#f00f30954eaadb96e54b23fb8216649ed53a663f"
+version = "0.11.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7ef6b00f8fe8eaaaff22cb9b70822a48c1a5d772bc682c202a57c0b438175845"
 
 [[package]]
 name = "steamworksjs"
