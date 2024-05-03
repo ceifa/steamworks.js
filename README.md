@@ -64,6 +64,19 @@ const mainWindow = new BrowserWindow({
 })
 ```
 
+
+If you are using Electron-Forge, the following configurations should be made on `forge.config.js`:
+
+```js
+module.exports = {
+   packagerConfig: {
+     asar: {
+       unpackDir: "node_modules/steamworks.js/dist/**/*"
+     }
+   },
+   ...
+```
+
 To make the steam overlay working, call the `electronEnableSteamOverlay` on the end of your `main.js` file:
 
 ```js
