@@ -47,8 +47,6 @@ To use steamworks.js you don't have to build anything, just install it from npm:
 $: npm i steamworks.js
 ```
 
-For the production build, copy the relevant distro files from `sdk/redistributable_bin/{YOUR_DISTRO}` into the root of your build.
-
 ### Electron
 
 Steamworks.js is a native module and cannot be used by default in the renderer process. To enable the usage of native modules on the renderer process, the following configurations should be made on `main.js`:
@@ -64,24 +62,14 @@ const mainWindow = new BrowserWindow({
 })
 ```
 
-
-If you are using Electron-Forge, the following configurations should be made on `forge.config.js`:
-
-```js
-module.exports = {
-   packagerConfig: {
-     asar: {
-       unpackDir: "node_modules/steamworks.js/dist/**/*"
-     }
-   },
-   ...
-```
-
 To make the steam overlay working, call the `electronEnableSteamOverlay` on the end of your `main.js` file:
 
 ```js
 require('steamworks.js').electronEnableSteamOverlay()
 ```
+
+For the production build, copy the relevant distro files from `sdk/redistributable_bin/{YOUR_DISTRO}` into the root of your build. If you are using electron-forge, look for [#75](https://github.com/ceifa/steamworks.js/issues/75).
+
 
 ## How to build
 
