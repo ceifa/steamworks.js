@@ -69,6 +69,11 @@ export namespace cloud {
   export function writeFile(name: string, content: string): boolean
   export function deleteFile(name: string): boolean
   export function fileExists(name: string): boolean
+  export function listFiles(): Array<FileInfo>
+  export class FileInfo {
+    name: string
+    size: bigint
+  }
 }
 export namespace input {
   export interface AnalogActionVector {
