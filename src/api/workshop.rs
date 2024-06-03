@@ -16,6 +16,7 @@ pub mod workshop {
         pub needs_to_accept_agreement: bool,
     }
 
+    #[derive(Debug)]
     #[napi]
     pub enum UgcItemVisibility {
         Public,
@@ -24,9 +25,20 @@ pub mod workshop {
         Unlisted,
     }
 
-    impl From<UgcItemVisibility> for steamworks::PublishedFileVisibility {
-        fn from(visibility: UgcItemVisibility) -> Self {
+    impl From<steamworks::PublishedFileVisibility> for UgcItemVisibility {
+        fn from(visibility: steamworks::PublishedFileVisibility) -> Self {
             match visibility {
+                steamworks::PublishedFileVisibility::Public => UgcItemVisibility::Public,
+                steamworks::PublishedFileVisibility::FriendsOnly => UgcItemVisibility::FriendsOnly,
+                steamworks::PublishedFileVisibility::Private => UgcItemVisibility::Private,
+                steamworks::PublishedFileVisibility::Unlisted => UgcItemVisibility::Unlisted,
+            }
+        }
+    }
+
+    impl Into<steamworks::PublishedFileVisibility> for UgcItemVisibility {
+        fn into(self) -> steamworks::PublishedFileVisibility {
+            match self {
                 UgcItemVisibility::Public => steamworks::PublishedFileVisibility::Public,
                 UgcItemVisibility::FriendsOnly => steamworks::PublishedFileVisibility::FriendsOnly,
                 UgcItemVisibility::Private => steamworks::PublishedFileVisibility::Private,
@@ -96,6 +108,7 @@ pub mod workshop {
         pub total: BigInt,
     }
 
+    #[derive(Debug)]
     #[napi]
     pub enum UpdateStatus {
         Invalid,
