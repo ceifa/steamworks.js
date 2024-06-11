@@ -68,6 +68,17 @@ To make the steam overlay working, call the `electronEnableSteamOverlay` on the 
 require('steamworks.js').electronEnableSteamOverlay()
 ```
 
+
+If you build your Electron application, you may notice that the Steam overlay does not function by default. This is often resolved by enabling GPU processes to run within Electron's main process. To resolve that issue you can run your application like: 
+
+    application.exe --in-process-gpu
+
+If the overlay functions correctly with the argument above you can directly inject the arg:
+
+    const {app} = await import('electron');
+    
+    app.commandLine.appendSwitch('in-process-gpu');
+
 For the production build, copy the relevant distro files from `sdk/redistributable_bin/{YOUR_DISTRO}` into the root of your build. If you are using electron-forge, look for [#75](https://github.com/ceifa/steamworks.js/issues/75).
 
 
