@@ -199,6 +199,24 @@ export namespace utils {
   export function getAppId(): number
   export function getServerRealTime(): number
   export function isSteamRunningOnSteamDeck(): boolean
+  export const enum GamepadTextInputMode {
+    Normal = 0,
+    Password = 1
+  }
+  export const enum GamepadTextInputLineMode {
+    SingleLine = 0,
+    MultipleLines = 1
+  }
+  /** @returns the entered text, or null if cancelled or could not show the input */
+  export function showGamepadTextInput(inputMode: GamepadTextInputMode, inputLineMode: GamepadTextInputLineMode, description: string, maxCharacters: number, existingText?: string | undefined | null): Promise<string | null>
+  export const enum FloatingGamepadTextInputMode {
+    SingleLine = 0,
+    MultipleLines = 1,
+    Email = 2,
+    Numeric = 3
+  }
+  /** @returns true if the floating keyboard was shown, otherwise, false */
+  export function showFloatingGamepadTextInput(keyboardMode: FloatingGamepadTextInputMode, x: number, y: number, width: number, height: number): Promise<boolean>
 }
 export namespace workshop {
   export interface UgcResult {
