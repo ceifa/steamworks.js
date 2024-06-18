@@ -6,6 +6,7 @@ pub mod utils {
     use steamworks::FloatingGamepadTextInputMode as kFloatingGamepadTextInputMode;
     use steamworks::GamepadTextInputLineMode as kGamepadTextInputLineMode;
     use steamworks::GamepadTextInputMode as kGamepadTextInputMode;
+    use tokio::sync::oneshot;
 
     #[napi]
     pub fn get_app_id() -> u32 {
@@ -37,17 +38,21 @@ pub mod utils {
         MultipleLines,
     }
 
+    /// @returns the entered text, or null if cancelled or could not show the input
     #[napi]
-    pub fn show_gamepad_text_input(
+    pub async fn show_gamepad_text_input(
         input_mode: GamepadTextInputMode,
         input_line_mode: GamepadTextInputLineMode,
         description: String,
         max_characters: u32,
         existing_text: Option<String>,
-    ) -> bool {
+    ) -> Option<String> {
         let client = crate::client::get_client();
-        let dismissed_cb = |_| {};
-        client.utils().show_gamepad_text_input(
+
+        let (tx, rx) = oneshot::channel();
+        let mut tx = Some(tx);
+
+        let opened = client.utils().show_gamepad_text_input(
             match input_mode {
                 GamepadTextInputMode::Normal => kGamepadTextInputMode::Normal,
                 GamepadTextInputMode::Password => kGamepadTextInputMode::Password,
@@ -59,8 +64,21 @@ pub mod utils {
             &description,
             max_characters,
             existing_text.as_deref(),
-            dismissed_cb,
-        )
+            move |dismissed_data| {
+                if let Some(tx) = tx.take() {
+                    let text = client
+                        .utils()
+                        .get_entered_gamepad_text_input(&dismissed_data);
+                    tx.send(text).unwrap();
+                }
+            },
+        );
+
+        if opened {
+            rx.await.unwrap()
+        } else {
+            None
+        }
     }
 
     #[napi]
@@ -71,8 +89,9 @@ pub mod utils {
         Numeric,
     }
 
+    /// @returns true if the floating keyboard was shown, otherwise, false
     #[napi]
-    pub fn show_floating_gamepad_text_input(
+    pub async fn show_floating_gamepad_text_input(
         keyboard_mode: FloatingGamepadTextInputMode,
         x: i32,
         y: i32,
@@ -80,8 +99,11 @@ pub mod utils {
         height: i32,
     ) -> bool {
         let client = crate::client::get_client();
-        let dismissed_cb = || {};
-        client.utils().show_floating_gamepad_text_input(
+
+        let (tx, rx) = oneshot::channel();
+        let mut tx = Some(tx);
+
+        let opened = client.utils().show_floating_gamepad_text_input(
             match keyboard_mode {
                 FloatingGamepadTextInputMode::SingleLine => {
                     kFloatingGamepadTextInputMode::SingleLine
@@ -96,7 +118,17 @@ pub mod utils {
             y,
             width,
             height,
-            dismissed_cb,
-        )
+            move || {
+                if let Some(tx) = tx.take() {
+                    tx.send(true).unwrap();
+                }
+            },
+        );
+
+        if opened {
+            rx.await.unwrap()
+        } else {
+            false
+        }
     }
 }

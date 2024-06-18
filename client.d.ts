@@ -193,14 +193,16 @@ export namespace utils {
     SingleLine = 0,
     MultipleLines = 1
   }
-  export function showGamepadTextInput(inputMode: GamepadTextInputMode, inputLineMode: GamepadTextInputLineMode, description: string, maxCharacters: number, existingText?: string | undefined | null): boolean
+  /** @returns the entered text, or null if cancelled or could not show the input */
+  export function showGamepadTextInput(inputMode: GamepadTextInputMode, inputLineMode: GamepadTextInputLineMode, description: string, maxCharacters: number, existingText?: string | undefined | null): Promise<string | null>
   export const enum FloatingGamepadTextInputMode {
     SingleLine = 0,
     MultipleLines = 1,
     Email = 2,
     Numeric = 3
   }
-  export function showFloatingGamepadTextInput(keyboardMode: FloatingGamepadTextInputMode, x: number, y: number, width: number, height: number): boolean
+  /** @returns true if the floating keyboard was shown, otherwise, false */
+  export function showFloatingGamepadTextInput(keyboardMode: FloatingGamepadTextInputMode, x: number, y: number, width: number, height: number): Promise<boolean>
 }
 export namespace workshop {
   export interface UgcResult {
