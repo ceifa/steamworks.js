@@ -1,3 +1,4 @@
+use std::ptr::addr_of_mut;
 use std::sync::Mutex;
 use steamworks::Client;
 use steamworks::SingleClient;
@@ -29,8 +30,8 @@ pub fn drop_client() {
 
 pub fn get_single() -> &'static SingleClient {
     unsafe {
-        match &STEAM_SINGLE {
-            Some(single) => single,
+        match *addr_of_mut!(STEAM_SINGLE) {
+            Some(ref single) => single,
             None => panic!("Steam single not initialized"),
         }
     }

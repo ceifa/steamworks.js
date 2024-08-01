@@ -2,7 +2,7 @@ use napi_derive::napi;
 
 #[napi]
 pub mod workshop {
-    use napi::bindgen_prelude::{BigInt, Error, FromNapiValue, ToNapiValue};
+    use napi::bindgen_prelude::{BigInt, Error};
     use napi::threadsafe_function::ErrorStrategy;
     use napi::threadsafe_function::ThreadsafeFunction;
     use napi::threadsafe_function::ThreadsafeFunctionCallMode;
@@ -36,9 +36,9 @@ pub mod workshop {
         }
     }
 
-    impl Into<steamworks::PublishedFileVisibility> for UgcItemVisibility {
-        fn into(self) -> steamworks::PublishedFileVisibility {
-            match self {
+    impl From<UgcItemVisibility> for steamworks::PublishedFileVisibility {
+        fn from(val: UgcItemVisibility) -> Self {
+            match val {
                 UgcItemVisibility::Public => steamworks::PublishedFileVisibility::Public,
                 UgcItemVisibility::FriendsOnly => steamworks::PublishedFileVisibility::FriendsOnly,
                 UgcItemVisibility::Private => steamworks::PublishedFileVisibility::Private,

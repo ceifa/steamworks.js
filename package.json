@@ -22,14 +22,13 @@
     ],
     "license": "MIT",
     "devDependencies": {
-        "@napi-rs/cli": "2.16.2",
+        "@napi-rs/cli": "2.18.4",
         "electron": "24.2.0",
-        "rimraf": "5.0.7",
-        "typescript": "5.4.5"
+        "rimraf": "6.0.1",
+        "typescript": "5.5.3"
     },
     "dependencies": {
-        "@types/node": "*",
-        "format": "^0.2.2"
+        "@types/node": "*"
     },
     "engines": {
         "node": ">= 14"

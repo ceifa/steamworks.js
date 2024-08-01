@@ -2,7 +2,7 @@ use napi_derive::napi;
 
 #[napi]
 pub mod overlay {
-    use napi::bindgen_prelude::{BigInt, FromNapiValue, ToNapiValue};
+    use napi::bindgen_prelude::BigInt;
     use std::fmt;
     use steamworks::OverlayToStoreFlag;
 

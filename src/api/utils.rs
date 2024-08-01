@@ -2,7 +2,6 @@ use napi_derive::napi;
 
 #[napi]
 pub mod utils {
-    use napi::bindgen_prelude::{FromNapiValue, ToNapiValue};
     use steamworks::FloatingGamepadTextInputMode as kFloatingGamepadTextInputMode;
     use steamworks::GamepadTextInputLineMode as kGamepadTextInputLineMode;
     use steamworks::GamepadTextInputMode as kGamepadTextInputMode;

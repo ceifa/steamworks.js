@@ -2,7 +2,7 @@ use napi_derive::napi;
 
 #[napi]
 pub mod workshop {
-    use napi::bindgen_prelude::{BigInt, Error, FromNapiValue, ToNapiValue};
+    use napi::bindgen_prelude::{BigInt, Error};
     use steamworks::{AccountId, PublishedFileId};
     use tokio::sync::oneshot;
 
@@ -33,9 +33,9 @@ pub mod workshop {
         RankedByLastUpdatedDate,
     }
 
-    impl Into<steamworks::UGCQueryType> for UGCQueryType {
-        fn into(self: UGCQueryType) -> steamworks::UGCQueryType {
-            match self {
+    impl From<UGCQueryType> for steamworks::UGCQueryType {
+        fn from(val: UGCQueryType) -> Self {
+            match val {
                 UGCQueryType::RankedByVote => steamworks::UGCQueryType::RankedByVote,
                 UGCQueryType::RankedByPublicationDate => {
                     steamworks::UGCQueryType::RankedByPublicationDate
@@ -108,9 +108,9 @@ pub mod workshop {
         All,
     }
 
-    impl Into<steamworks::UGCType> for UGCType {
-        fn into(self) -> steamworks::UGCType {
-            match self {
+    impl From<UGCType> for steamworks::UGCType {
+        fn from(val: UGCType) -> Self {
+            match val {
                 UGCType::Items => steamworks::UGCType::Items,
                 UGCType::ItemsMtx => steamworks::UGCType::ItemsMtx,
                 UGCType::ItemsReadyToUse => steamworks::UGCType::ItemsReadyToUse,
@@ -142,9 +142,9 @@ pub mod workshop {
         Followed,
     }
 
-    impl Into<steamworks::UserList> for UserListType {
-        fn into(self) -> steamworks::UserList {
-            match self {
+    impl From<UserListType> for steamworks::UserList {
+        fn from(val: UserListType) -> Self {
+            match val {
                 UserListType::Published => steamworks::UserList::Published,
                 UserListType::VotedOn => steamworks::UserList::VotedOn,
                 UserListType::VotedUp => steamworks::UserList::VotedUp,
@@ -169,9 +169,9 @@ pub mod workshop {
         ForModeration,
     }
 
-    impl Into<steamworks::UserListOrder> for UserListOrder {
-        fn into(self: UserListOrder) -> steamworks::UserListOrder {
-            match self {
+    impl From<UserListOrder> for steamworks::UserListOrder {
+        fn from(val: UserListOrder) -> Self {
+            match val {
                 UserListOrder::CreationOrderAsc => steamworks::UserListOrder::CreationOrderAsc,
                 UserListOrder::CreationOrderDesc => steamworks::UserListOrder::CreationOrderDesc,
                 UserListOrder::TitleAsc => steamworks::UserListOrder::TitleAsc,
@@ -208,49 +208,49 @@ pub mod workshop {
             Self {
                 num_subscriptions: results
                     .statistic(index, steamworks::UGCStatisticType::Subscriptions)
-                    .map(|v| BigInt::from(v)),
+                    .map(BigInt::from),
                 num_favorites: results
                     .statistic(index, steamworks::UGCStatisticType::Favorites)
-                    .map(|v| BigInt::from(v)),
+                    .map(BigInt::from),
                 num_followers: results
                     .statistic(index, steamworks::UGCStatisticType::Followers)
-                    .map(|v| BigInt::from(v)),
+                    .map(BigInt::from),
                 num_unique_subscriptions: results
                     .statistic(index, steamworks::UGCStatisticType::UniqueSubscriptions)
-                    .map(|v| BigInt::from(v)),
+                    .map(BigInt::from),
                 num_unique_favorites: results
                     .statistic(index, steamworks::UGCStatisticType::UniqueFavorites)
-                    .map(|v| BigInt::from(v)),
+                    .map(BigInt::from),
                 num_unique_followers: results
                     .statistic(index, steamworks::UGCStatisticType::UniqueFollowers)
-                    .map(|v| BigInt::from(v)),
+                    .map(BigInt::from),
                 num_unique_website_views: results
                     .statistic(index, steamworks::UGCStatisticType::UniqueWebsiteViews)
-                    .map(|v| BigInt::from(v)),
+                    .map(BigInt::from),
                 report_score: results
                     .statistic(index, steamworks::UGCStatisticType::Reports)
-                    .map(|v| BigInt::from(v)),
+                    .map(BigInt::from),
                 num_seconds_played: results
                     .statistic(index, steamworks::UGCStatisticType::SecondsPlayed)
-                    .map(|v| BigInt::from(v)),
+                    .map(BigInt::from),
                 num_playtime_sessions: results
                     .statistic(index, steamworks::UGCStatisticType::PlaytimeSessions)
-                    .map(|v| BigInt::from(v)),
+                    .map(BigInt::from),
                 num_comments: results
                     .statistic(index, steamworks::UGCStatisticType::Comments)
-                    .map(|v| BigInt::from(v)),
+                    .map(BigInt::from),
                 num_seconds_played_during_time_period: results
                     .statistic(
                         index,
                         steamworks::UGCStatisticType::SecondsPlayedDuringTimePeriod,
                     )
-                    .map(|v| BigInt::from(v)),
+                    .map(BigInt::from),
                 num_playtime_sessions_during_time_period: results
                     .statistic(
                         index,
                         steamworks::UGCStatisticType::PlaytimeSessionsDuringTimePeriod,
                     )
-                    .map(|v| BigInt::from(v)),
+                    .map(BigInt::from),
             }
         }
     }
@@ -367,6 +367,13 @@ pub mod workshop {
         pub ranked_by_trend_days: Option<u32>,
     }
 
+    #[derive(Debug)]
+    #[napi(object)]
+    pub struct AppIDs {
+        pub creator: Option<u32>,
+        pub consumer: Option<u32>,
+    }
+
     fn handle_query_config<Manager>(
         mut query_handle: steamworks::QueryHandle<Manager>,
         query_config: Option<WorkshopItemQueryConfig>,
@@ -415,7 +422,7 @@ pub mod workshop {
                 query_handle = query_handle.set_ranked_by_trend_days(ranked_by_trend_days);
             }
         }
-        return query_handle;
+        query_handle
     }
 
     #[napi]
@@ -533,8 +540,7 @@ pub mod workshop {
         list_type: UserListType,
         item_type: UGCType,
         sort_order: UserListOrder,
-        creator_app_id: u32,
-        consumer_app_id: u32,
+        app_ids: AppIDs,
         query_config: Option<WorkshopItemQueryConfig>,
     ) -> Result<WorkshopPaginatedResult, Error> {
         let client = crate::client::get_client();
@@ -550,8 +556,8 @@ pub mod workshop {
                     item_type.into(),
                     sort_order.into(),
                     steamworks::AppIDs::Both {
-                        creator: steamworks::AppId(creator_app_id),
-                        consumer: steamworks::AppId(consumer_app_id),
+                        creator: steamworks::AppId(app_ids.creator.unwrap_or(0)),
+                        consumer: steamworks::AppId(app_ids.consumer.unwrap_or(0)),
                     },
                     page,
                 )

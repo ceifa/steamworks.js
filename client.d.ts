@@ -1,17 +1,17 @@
-export function init(appId?: number | undefined | null): void
-export function restartAppIfNecessary(appId: number): boolean
-export function runCallbacks(): void
+export declare function init(appId?: number | undefined | null): void
+export declare function restartAppIfNecessary(appId: number): boolean
+export declare function runCallbacks(): void
 export interface PlayerSteamId {
   steamId64: bigint
   steamId32: string
   accountId: number
 }
-export namespace achievement {
+export declare namespace achievement {
   export function activate(achievement: string): boolean
   export function isActivated(achievement: string): boolean
   export function clear(achievement: string): boolean
 }
-export namespace apps {
+export declare namespace apps {
   export function isSubscribedApp(appId: number): boolean
   export function isAppInstalled(appId: number): boolean
   export function isDlcInstalled(appId: number): boolean
@@ -27,7 +27,7 @@ export namespace apps {
   export function currentGameLanguage(): string
   export function currentBetaName(): string | null
 }
-export namespace auth {
+export declare namespace auth {
   /**
    * @param steamId64 - The user steam id or game server steam id. Use as NetworkIdentity of the remote system that will authenticate the ticket. If it is peer-to-peer then the user steam ID. If it is a game server, then the game server steam ID may be used if it was obtained from a trusted 3rd party
    * @param timeoutSeconds - The number of seconds to wait for the ticket to be validated. Default value is 10 seconds.
@@ -44,7 +44,7 @@ export namespace auth {
     getBytes(): Buffer
   }
 }
-export namespace callback {
+export declare namespace callback {
   export const enum SteamCallback {
     PersonaStateChange = 0,
     SteamServersConnected = 1,
@@ -62,7 +62,7 @@ export namespace callback {
     disconnect(): void
   }
 }
-export namespace cloud {
+export declare namespace cloud {
   export function isEnabledForAccount(): boolean
   export function isEnabledForApp(): boolean
   export function readFile(name: string): string
@@ -75,7 +75,24 @@ export namespace cloud {
     size: bigint
   }
 }
-export namespace input {
+export declare namespace input {
+  export const enum InputType {
+    Unknown = 'Unknown',
+    SteamController = 'SteamController',
+    XBox360Controller = 'XBox360Controller',
+    XBoxOneController = 'XBoxOneController',
+    GenericGamepad = 'GenericGamepad',
+    PS4Controller = 'PS4Controller',
+    AppleMFiController = 'AppleMFiController',
+    AndroidController = 'AndroidController',
+    SwitchJoyConPair = 'SwitchJoyConPair',
+    SwitchJoyConSingle = 'SwitchJoyConSingle',
+    SwitchProController = 'SwitchProController',
+    MobileTouch = 'MobileTouch',
+    PS3Controller = 'PS3Controller',
+    PS5Controller = 'PS5Controller',
+    SteamDeckController = 'SteamDeckController'
+  }
   export interface AnalogActionVector {
     x: number
     y: number
@@ -90,9 +107,10 @@ export namespace input {
     activateActionSet(actionSetHandle: bigint): void
     isDigitalActionPressed(actionHandle: bigint): boolean
     getAnalogActionVector(actionHandle: bigint): AnalogActionVector
+    getType(): InputType
   }
 }
-export namespace localplayer {
+export declare namespace localplayer {
   export function getSteamId(): PlayerSteamId
   export function getName(): string
   export function getLevel(): number
@@ -100,7 +118,7 @@ export namespace localplayer {
   export function getIpCountry(): string
   export function setRichPresence(key: string, value?: string | undefined | null): void
 }
-export namespace matchmaking {
+export declare namespace matchmaking {
   export const enum LobbyType {
     Private = 0,
     FriendsOnly = 1,
@@ -132,7 +150,7 @@ export namespace matchmaking {
     mergeFullData(data: Record<string, string>): boolean
   }
 }
-export namespace networking {
+export declare namespace networking {
   export interface P2PPacket {
     data: Buffer
     size: number
@@ -168,7 +186,7 @@ export namespace networking {
   export function readP2PPacket(size: number): P2PPacket
   export function acceptP2PSession(steamId64: bigint): void
 }
-export namespace overlay {
+export declare namespace overlay {
   export const enum Dialog {
     Friends = 0,
     Community = 1,
@@ -189,13 +207,13 @@ export namespace overlay {
   export function activateToWebPage(url: string): void
   export function activateToStore(appId: number, flag: StoreFlag): void
 }
-export namespace stats {
+export declare namespace stats {
   export function getInt(name: string): number | null
   export function setInt(name: string, value: number): boolean
   export function store(): boolean
   export function resetAll(achievementsToo: boolean): boolean
 }
-export namespace utils {
+export declare namespace utils {
   export function getAppId(): number
   export function getServerRealTime(): number
   export function isSteamRunningOnSteamDeck(): boolean
@@ -218,7 +236,7 @@ export namespace utils {
   /** @returns true if the floating keyboard was shown, otherwise, false */
   export function showFloatingGamepadTextInput(keyboardMode: FloatingGamepadTextInputMode, x: number, y: number, width: number, height: number): Promise<boolean>
 }
-export namespace workshop {
+export declare namespace workshop {
   export interface UgcResult {
     itemId: bigint
     needsToAcceptAgreement: boolean
