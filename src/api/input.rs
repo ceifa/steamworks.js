@@ -89,6 +89,11 @@ pub mod input {
                 .get_input_type_for_handle(self.handle.get_u64().1)
                 .into()
         }
+
+        #[napi]
+        pub fn get_handle(&self) -> BigInt {
+            self.handle.clone()
+        }
     }
 
     #[napi(object)]

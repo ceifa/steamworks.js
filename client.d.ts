@@ -108,6 +108,7 @@ export declare namespace input {
     isDigitalActionPressed(actionHandle: bigint): boolean
     getAnalogActionVector(actionHandle: bigint): AnalogActionVector
     getType(): InputType
+    getHandle(): bigint
   }
 }
 export declare namespace localplayer {
