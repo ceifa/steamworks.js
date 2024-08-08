@@ -26,6 +26,7 @@ export declare namespace apps {
   export function availableGameLanguages(): Array<string>
   export function currentGameLanguage(): string
   export function currentBetaName(): string | null
+  export function achievements(): Array<string>
 }
 export declare namespace auth {
   /**

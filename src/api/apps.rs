@@ -89,4 +89,13 @@ pub mod apps {
         let client = crate::client::get_client();
         client.apps().current_beta_name()
     }
+
+    #[napi]
+    pub fn achievements() -> Vec<String> {
+        let client = crate::client::get_client();
+        client
+            .user_stats()
+            .get_achievement_names()
+            .expect("Failed to get achievement names")
+    }
 }
