@@ -26,7 +26,7 @@ let runCallbacksInterval = undefined
  * @returns {Omit<Client, 'init' | 'runCallbacks'>}
 */
 module.exports.init = (appId) => {
-    const { init: internalInit, runCallbacks, restartAppIfNecessary, ...api } = nativeBinding
+    const { init: internalInit, runCallbacks, ...api } = nativeBinding
 
     internalInit(appId)
 
