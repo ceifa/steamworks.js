@@ -33,4 +33,13 @@ pub mod achievement {
             .and_then(|_| client.user_stats().store_stats())
             .is_ok()
     }
+
+    #[napi]
+    pub fn names() -> Vec<String> {
+        let client = crate::client::get_client();
+        client
+            .user_stats()
+            .get_achievement_names()
+            .expect("Failed to get achievement names")
+    }
 }
