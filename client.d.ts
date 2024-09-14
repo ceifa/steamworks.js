@@ -65,6 +65,7 @@ export declare namespace callback {
 export declare namespace cloud {
   export function isEnabledForAccount(): boolean
   export function isEnabledForApp(): boolean
+  export function setEnabledForApp(enabled: boolean): void
   export function readFile(name: string): string
   export function writeFile(name: string, content: string): boolean
   export function deleteFile(name: string): boolean

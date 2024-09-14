@@ -25,6 +25,12 @@ pub mod cloud {
     }
 
     #[napi]
+    pub fn set_enabled_for_app(enabled: bool) {
+        let client = crate::client::get_client();
+        client.remote_storage().set_cloud_enabled_for_app(enabled)
+    }
+
+    #[napi]
     pub fn read_file(name: String) -> Result<String, Error> {
         let client = crate::client::get_client();
         let mut buf: String = String::new();
