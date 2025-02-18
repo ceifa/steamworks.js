@@ -82,6 +82,44 @@ pub mod input {
         }
 
         #[napi]
+        pub fn get_analog_action_binds(
+            &self,
+            action_set_handle: BigInt,
+            action_handle: BigInt,
+        ) -> Vec<String> {
+            let client = crate::client::get_client();
+            client
+                .input()
+                .get_analog_action_origins(
+                    self.handle.get_u64().1,
+                    action_set_handle.get_u64().1,
+                    action_handle.get_u64().1,
+                )
+                .into_iter()
+                .map(|origin| format!("{:?}", origin)) // Convert each enum variant to its string representation
+                .collect()
+        }
+
+        #[napi]
+        pub fn get_digital_action_binds(
+            &self,
+            action_set_handle: BigInt,
+            action_handle: BigInt,
+        ) -> Vec<String> {
+            let client = crate::client::get_client();
+            client
+                .input()
+                .get_digital_action_origins(
+                    self.handle.get_u64().1,
+                    action_set_handle.get_u64().1,
+                    action_handle.get_u64().1,
+                )
+                .into_iter()
+                .map(|origin| format!("{:?}", origin)) // Convert each enum variant to its string representation
+                .collect()
+        }
+
+        #[napi]
         pub fn get_type(&self) -> InputType {
             let client = crate::client::get_client();
             client

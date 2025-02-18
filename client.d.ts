@@ -108,6 +108,8 @@ export declare namespace input {
     activateActionSet(actionSetHandle: bigint): void
     isDigitalActionPressed(actionHandle: bigint): boolean
     getAnalogActionVector(actionHandle: bigint): AnalogActionVector
+    getAnalogActionBinds(actionSetHandle: bigint, actionHandle: bigint): Array<string>
+    getDigitalActionBinds(actionSetHandle: bigint, actionHandle: bigint): Array<string>
     getType(): InputType
     getHandle(): bigint
   }
