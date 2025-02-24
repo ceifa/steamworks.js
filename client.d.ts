@@ -188,6 +188,9 @@ export declare namespace networking {
   export function readP2PPacket(size: number): P2PPacket
   export function acceptP2PSession(steamId64: bigint): void
 }
+export declare namespace networking_sockets {
+  export function createListenSocketIp(localAddress: number): boolean
+}
 export declare namespace overlay {
   export const enum Dialog {
     Friends = 0,
