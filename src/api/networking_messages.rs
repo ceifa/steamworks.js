@@ -1,5 +1,7 @@
 use napi_derive::napi;
 
+// some credit here goes to https://github.com/apxapob as this was heavily inspired by his work
+
 #[napi]
 pub mod networking_messages {
     use napi::{
