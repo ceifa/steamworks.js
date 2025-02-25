@@ -97,18 +97,4 @@ pub mod networking_messages {
           }
         }).collect()
     }
-
-    #[napi]
-    pub fn allow_join_request(state: bool) {
-      let client = crate::client::get_client();
-      let msgs = client.networking_messages();
-      // from steamworks-rs -- /// Calling this function more than once will replace the previous callback.
-      msgs.session_request_callback(move |req| {
-        if state {
-          req.accept();
-        } else {
-          req.reject();
-        }
-      });
-    }
 }

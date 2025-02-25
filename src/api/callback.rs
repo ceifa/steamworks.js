@@ -32,8 +32,6 @@ pub mod callback {
         LobbyChatUpdate,
         P2PSessionRequest,
         P2PSessionConnectFail,
-        // NetworkingMessagesSessionRequest,
-        //NetworkingMessagesSessionFailed,
         GameLobbyJoinRequested,
         MicroTxnAuthorizationResponse,
     }
@@ -73,19 +71,6 @@ pub mod callback {
             SteamCallback::P2PSessionConnectFail => {
                 register_callback::<steamworks::P2PSessionConnectFail>(threadsafe_handler)
             }
-            // this one fails because the request can't leave the rust context or it auto denies
-            // not serializable at the crate level
-            /*
-            SteamCallback::NetworkingMessagesSessionRequest => {
-                register_callback::<steamworks::networking_messages::NetworkingMessagesSessionRequest>(threadsafe_handler)
-            }
-            */
-            // This is still a private struct in the steamworks crate
-            /*
-            SteamCallback::NetworkingMessagesSessionFailed => {
-                register_callback::<steamworks::networking_messages::NetworkingMessagesSessionFailed>(threadsafe_handler)
-            }
-            */
             SteamCallback::GameLobbyJoinRequested => {
                 register_callback::<steamworks::GameLobbyJoinRequested>(threadsafe_handler)
             }

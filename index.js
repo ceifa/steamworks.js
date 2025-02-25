@@ -23,12 +23,13 @@ let runCallbacksInterval = undefined
 /**
  * Initialize the steam client or throw an error if it fails
  * @param {number} [appId] - App ID of the game to load, if undefined, will search for a steam_appid.txt file
+ * @param {boolean} [networking] - Enable networking
  * @returns {Omit<Client, 'init' | 'runCallbacks'>}
 */
-module.exports.init = (appId) => {
+module.exports.init = (appId, networking) => {
     const { init: internalInit, runCallbacks, restartAppIfNecessary, ...api } = nativeBinding
 
-    internalInit(appId)
+    internalInit(appId, networking)
 
     clearInterval(runCallbacksInterval)
     runCallbacksInterval = setInterval(runCallbacks, 1000 / 30)
