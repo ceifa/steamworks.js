@@ -188,8 +188,38 @@ export declare namespace networking {
   export function readP2PPacket(size: number): P2PPacket
   export function acceptP2PSession(steamId64: bigint): void
 }
-export declare namespace networking_sockets {
-  export function createListenSocketIp(localAddress: number): boolean
+export declare namespace networking_messages {
+  /** The method used to send a packet */
+  export const enum SendType {
+    /**
+     * Send the packet directly over udp.
+     *
+     * Can't be larger than 1200 bytes
+     */
+    Unreliable = 0,
+    /**
+     * Like `Unreliable` but doesn't buffer packets
+     * sent before the connection has started.
+     */
+    UnreliableNoDelay = 1,
+    /**
+     * Reliable packet sending.
+     *
+     * Can't be larger than 1 megabyte.
+     */
+    Reliable = 2,
+    /**
+     * Like `Reliable` but applies the nagle
+     * algorithm to packets being sent
+     */
+    ReliableWithBuffering = 3
+  }
+  export function sendMessageToUser(steamId64: bigint, sendType: SendType, data: Buffer, channel?: number | undefined | null): void
+  export interface Message {
+    data: Buffer
+    steamId?: PlayerSteamId
+  }
+  export function receiveMessagesOnChannel(channel: number, batchSize?: number | undefined | null): Array<Message>
 }
 export declare namespace overlay {
   export const enum Dialog {
