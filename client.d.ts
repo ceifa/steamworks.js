@@ -220,6 +220,7 @@ export declare namespace networking_messages {
     steamId?: PlayerSteamId
   }
   export function receiveMessagesOnChannel(channel: number, batchSize?: number | undefined | null): Array<Message>
+  export function allowJoinRequest(state: boolean): void
 }
 export declare namespace overlay {
   export const enum Dialog {
