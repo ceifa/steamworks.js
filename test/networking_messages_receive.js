@@ -6,7 +6,9 @@ const client = init(480)
 
 client.networking_utils.initRelayNetworkAccess();
 
-const mySteamId = client.localplayer.getSteamId().steamId64;
+setInterval(() => {
+  console.log(client.networking_utils.detailedRelayNetworkStatus())
+}, 1000)
 
 setInterval(() => {
   let messages = []
@@ -19,7 +21,7 @@ setInterval(() => {
       console.log(message?.steamId)
       console.log(message?.data.toString());
 
-      client.networking_messages.sendMessageToUser(message.steamId.steamId64, 1, Buffer.from("Hello, world!"), 0);
+      // client.networking_messages.sendMessageToUser(message.steamId.steamId64, 1, Buffer.from("Hello, world!"), 0);
       console.log("Sent message")
     }
 
@@ -29,6 +31,6 @@ setInterval(() => {
 }, 1000 / 60)
 
 //client.networking_messages.sendMessageToUser(mySteamId, 0, Buffer.from("Hello, world!"), 0);
-client.networking_messages.sendMessageToUser(mySteamId, 1, Buffer.from("Hello, from client!"), 0);
+// client.networking_messages.sendMessageToUser(mySteamId, 1, Buffer.from("Hello, from client!"), 0);
 // client.networking_messages.sendMessageToUser(mySteamId, 1, Buffer.from("Hello, world!"), 0);
 //client.networking_messages.sendMessageToUser(mySteamId, 3, Buffer.from("Hello, world!"), 0);
