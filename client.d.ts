@@ -221,6 +221,10 @@ export declare namespace networking_messages {
   }
   export function receiveMessagesOnChannel(channel: number, batchSize?: number | undefined | null): Array<Message>
 }
+export declare namespace networking_utils {
+  export function initRelayNetworkAccess(): void
+  export function detailedRelayNetworkStatus(): string
+}
 export declare namespace overlay {
   export const enum Dialog {
     Friends = 0,

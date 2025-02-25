@@ -32,14 +32,15 @@ pub fn init(app_id: Option<u32>, networking: Option<bool>) -> Result<(), Error> 
 
     steam_client.networking_messages().session_request_callback(move |req| {
       println!("Accepting session request from {:?}", req.remote());
-      req.accept();
       // assert!(req.accept());
+      req.accept();
       // mimicing the assert! causes it to crash
     });
 
     steam_client.networking_messages().session_failed_callback(|info| {
       println!("Session failed: {:?}", info);
     });
+    
 
     client::set_client(steam_client);
     Ok(())
