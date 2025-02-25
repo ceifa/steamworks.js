@@ -32,7 +32,6 @@ pub fn init(app_id: Option<u32>, networking: Option<bool>) -> Result<(), Error> 
     // networking message acceptance is handled differently than regular callbacks and it cannot be serialized
     // at most we allow you to control accepting or rejecting a session request at the rust level
 
-    /*
     steam_client.networking_messages().session_request_callback(move |req| {
       println!("Accepting session request from {:?}", req.remote());
       // assert!(req.accept());
@@ -43,7 +42,6 @@ pub fn init(app_id: Option<u32>, networking: Option<bool>) -> Result<(), Error> 
     steam_client.networking_messages().session_failed_callback(|info| {
       println!("Session failed: {:?}", info);
     });
-    */
 
     client::set_client(steam_client);
     Ok(())
@@ -57,6 +55,7 @@ pub fn restart_app_if_necessary(app_id: u32) -> bool {
 #[napi]
 pub fn run_callbacks() {
     let c = client::get_client();
+    /*
     println!("running callbacks in thread {}", std::process::id());
     c.networking_messages().session_request_callback(move |req| {
       
@@ -69,6 +68,7 @@ pub fn run_callbacks() {
     c.networking_messages().session_failed_callback(|info| {
       println!("Session failed: {:?}", info);
     });
+    */
     c.run_callbacks();
 }
 
