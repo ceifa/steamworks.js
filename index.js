@@ -47,8 +47,10 @@ module.exports.init = (appId, networking) => {
 
     internalInit(appId, networking)
 
+    /*
     clearInterval(runCallbacksInterval)
     runCallbacksInterval = setInterval(runCallbacks, 1000 / 30)
+    */
 
     return api
 }

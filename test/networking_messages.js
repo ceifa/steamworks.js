@@ -11,22 +11,24 @@ const mySteamId = client.localplayer.getSteamId().steamId64;
 setInterval(() => {
   let messages = []
   try {
-    do {
-      messages = client.networking_messages.receiveMessagesOnChannel(0);
+    messages = client.networking_messages.receiveMessagesOnChannel(0);
 
-      while(messages.length > 0){
-        const message = messages.shift();
-        console.log("Received message")
-        console.log(message?.steamId)
-        console.log(message?.data.toString());
-      }
-    } while(messages.length > 0)
-  } catch (e) { 
-    if(messages.length > 0){
-      console.error("Error receiving messages")
-      console.error(e)
+    while(messages.length > 0){
+      const message = messages.shift();
+      console.log("Received message")
+      console.log(message?.steamId)
+      console.log(message?.data.toString());
+
+      client.networking_messages.sendMessageToUser(message.steamId.steamId64, 1, Buffer.from("Hello, world!"), 0);
+      console.log("Sent message")
     }
+
+  } catch (e) { 
+    console.error(e)
   }
 }, 1000 / 60)
 
-client.networking_messages.sendMessageToUser(mySteamId, 0, Buffer.from("Hello, world!"), 0);
+//client.networking_messages.sendMessageToUser(mySteamId, 0, Buffer.from("Hello, world!"), 0);
+client.networking_messages.sendMessageToUser(mySteamId, 1, Buffer.from("Hello, from client!"), 0);
+// client.networking_messages.sendMessageToUser(mySteamId, 1, Buffer.from("Hello, world!"), 0);
+//client.networking_messages.sendMessageToUser(mySteamId, 3, Buffer.from("Hello, world!"), 0);
