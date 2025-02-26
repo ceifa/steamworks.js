@@ -2,7 +2,7 @@ process.env.IS_TESTING = true
 
 const { init } = require('../index.js')
 
-const client = init(480)
+const client = init(480, false)
 
 client.networking_utils.initRelayNetworkAccess();
 
@@ -12,12 +12,14 @@ setInterval(() => {
 
 
 const mySteamId = client.localplayer.getSteamId().steamId64;
+console.log(mySteamId)
 setTimeout(() => {
   setInterval(() => {
     client.networking_messages.sendMessageToUser(mySteamId, 1, Buffer.from("Hello, from client!"), 1);
   }, 1000)
 }, 5000)
 
+/*
 setInterval(() => {
   let messages = []
   try {
@@ -37,6 +39,7 @@ setInterval(() => {
     console.error(e)
   }
 }, 1000 / 60)
+*/
 
 
 //client.networking_messages.sendMessageToUser(mySteamId, 0, Buffer.from("Hello, world!"), 0);

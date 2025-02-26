@@ -2,7 +2,7 @@ process.env.IS_TESTING = true
 
 const { init } = require('../index.js')
 
-const client = init(480)
+const client = init(480, true)
 
 client.networking_utils.initRelayNetworkAccess();
 
@@ -23,37 +23,11 @@ setInterval(() => {
       console.log(message?.steamId)
       console.log(message?.data.toString());
 
-      client.networking_messages.sendMessageToUser(mySteamId, 1, Buffer.from("Hello from server!"), 0);
-      console.log("Sent message")
+      // client.networking_messages.sendMessageToUser(mySteamId, 1, Buffer.from("Hello from server!"), 0);
+      // console.log("Sent message")
     }
 
   } catch (e) { 
     console.error(e)
   }
 }, 1000 / 60)
-
-
-setInterval(() => {
-  let messages = []
-  try {
-    messages = client.networking_messages.receiveMessagesOnChannel(0);
-
-    while(messages.length > 0){
-      const message = messages.shift();
-      console.log("Received message")
-      console.log(message?.steamId)
-      console.log(message?.data.toString());
-
-      client.networking_messages.sendMessageToUser(mySteamId, 1, Buffer.from("Hello, from client!"), 1);
-      console.log("Sent message")
-    }
-
-  } catch (e) { 
-    console.error(e)
-  }
-}, 1000 / 60)
-
-
-setTimeout(() => {
-  client.networking_messages.sendMessageToUser(mySteamId, 1, Buffer.from("Hello, from client!"), 1);
-}, 5000)

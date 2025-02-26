@@ -1,5 +1,4 @@
 use napi_derive::napi;
-use std::process;
 // some credit here goes to https://github.com/apxapob as this was heavily inspired by his work
 
 #[napi]
@@ -59,8 +58,6 @@ pub mod networking_messages {
       let steam_id = SteamId::from_raw(steam_id64.get_u64().1);
       let identity = NetworkingIdentity::new_steam_id(steam_id);
 
-      println!("sending message in thread {}", std::process::id());
-
       client.networking_messages().send_message_to_user(
         identity,
         match send_type {
@@ -86,8 +83,6 @@ pub mod networking_messages {
       batch_size: Option<u32>
     ) -> Vec<Message> {
       let client = crate::client::get_client();
-
-      println!("receiving messages in thread {}", std::process::id());
 
       client
         .networking_messages()

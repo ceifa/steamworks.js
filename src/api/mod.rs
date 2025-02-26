@@ -8,6 +8,7 @@ pub mod localplayer;
 pub mod matchmaking;
 pub mod networking;
 pub mod networking_messages;
+pub mod networking_sockets;
 pub mod networking_utils;
 pub mod overlay;
 pub mod stats;

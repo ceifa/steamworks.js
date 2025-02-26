@@ -221,6 +221,43 @@ export declare namespace networking_messages {
   }
   export function receiveMessagesOnChannel(channel: number, batchSize?: number | undefined | null): Array<Message>
 }
+export declare namespace networking_sockets {
+  export function createListenSocketP2P(localVirtualPort?: number | undefined | null): boolean
+  export function setAcceptNewP2PRequests(accept: boolean): void
+  export function connectP2P(steamId64: bigint, remoteVirtualPort: number): boolean
+  export function processListenP2PEvents(): void
+  export interface P2PPacket {
+    data: Buffer
+    steamId: bigint
+  }
+  export function receiveP2PMessages(batchSize?: number | undefined | null): Array<P2PPacket>
+  /** The method used to send a packet */
+  export const enum SendType {
+    /**
+     * Send the packet directly over udp.
+     *
+     * Can't be larger than 1200 bytes
+     */
+    Unreliable = 0,
+    /**
+     * Like `Unreliable` but doesn't buffer packets
+     * sent before the connection has started.
+     */
+    UnreliableNoDelay = 1,
+    /**
+     * Reliable packet sending.
+     *
+     * Can't be larger than 1 megabyte.
+     */
+    Reliable = 2,
+    /**
+     * Like `Reliable` but applies the nagle
+     * algorithm to packets being sent
+     */
+    ReliableWithBuffering = 3
+  }
+  export function sendP2PMessage(steamId64: bigint, data: Buffer, sendType: SendType): boolean
+}
 export declare namespace networking_utils {
   export function initRelayNetworkAccess(): void
   export function detailedRelayNetworkStatus(): string
