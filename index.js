@@ -5,14 +5,14 @@ const { platform, arch } = process
 let nativeBinding = undefined
 
 if (platform === 'win32' && arch === 'x64') {
-    nativeBinding = require('steamworks.js/dist/win64/steamworksjs.win32-x64-msvc.node')
+    nativeBinding = require('./dist/win64/steamworksjs.win32-x64-msvc.node')
 } else if (platform === 'linux' && arch === 'x64') {
-    nativeBinding = require('steamworks.js/dist/linux64/steamworksjs.linux-x64-gnu.node')
+    nativeBinding = require('./dist/linux64/steamworksjs.linux-x64-gnu.node')
 } else if (platform === 'darwin') {
     if (arch === 'x64') {
-        nativeBinding = require('steamworks.js/dist/osx/steamworksjs.darwin-x64.node')
+        nativeBinding = require('./dist/osx/steamworksjs.darwin-x64.node')
     } else if (arch === 'arm64') {
-        nativeBinding = require('steamworks.js/dist/osx/steamworksjs.darwin-arm64.node')
+        nativeBinding = require('./dist/osx/steamworksjs.darwin-arm64.node')
     }
 } else {
     throw new Error(`Unsupported OS: ${platform}, architecture: ${arch}`)
