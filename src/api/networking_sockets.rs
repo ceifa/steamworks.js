@@ -5,6 +5,9 @@ pub mod networking_sockets {
     use napi::{bindgen_prelude::{BigInt, Buffer}, Error};
     use std::collections::HashMap;
     use std::sync::Mutex;
+    use std::net::{
+      Ipv4Addr, SocketAddr
+    };
     use steamworks::{
         ClientManager as Manager,
         SteamId,
@@ -17,11 +20,14 @@ pub mod networking_sockets {
           ListenSocket, NetConnection,
         },
     };
+    use crate::api::localplayer::PlayerSteamId;
 
     lazy_static! {
         static ref LISTEN_P2P: Mutex<Option<ListenSocket<Manager>>> = Mutex::new(None);
+        static ref LISTEN_IP: Mutex<Option<ListenSocket<Manager>>> = Mutex::new(None);
         static ref CONNECTIONS: Mutex<HashMap<SteamId, NetConnection<Manager>>> = Mutex::new(HashMap::new());
         static ref ACCEPT_NEW_REQUESTS: Mutex<bool> = Mutex::new(true);
+        static ref AM_I_SERVER: Mutex<bool> = Mutex::new(false);
     }
 
     // used to wait for new connections
@@ -29,6 +35,7 @@ pub mod networking_sockets {
     pub fn create_listen_socket_p2p(local_virtual_port: Option<i32>) -> Result<bool, Error> {
         let client = crate::client::get_client();
         let port = local_virtual_port.unwrap_or(0);
+
         let handle = client.networking_sockets().create_listen_socket_p2p(port, None);
         
         match handle {
@@ -41,6 +48,33 @@ pub mod networking_sockets {
         }
     }
 
+    // allow for ip as well -- we need this for the local client loopback
+    #[napi]
+    pub fn create_listen_socket_ip(local_virtual_port: Option<i32>) -> Result<bool, Error> {
+        let client = crate::client::get_client();
+        let port = local_virtual_port.unwrap_or(0);
+
+        let handle = client.networking_sockets().create_listen_socket_ip(
+          SocketAddr::new(Ipv4Addr::new(0, 0, 0, 0).into(), port.try_into().unwrap()),
+          vec![],
+        );
+
+        match handle {
+          Ok(socket) => {
+              let mut listen_ip = LISTEN_IP.lock().unwrap();
+              *listen_ip = Some(socket);
+              Ok(true)
+          }
+          Err(_) => Err(Error::from_reason("Failed to create listen socket")),
+        }
+    }
+
+    // used to toggle whether locally it is server functionality
+    #[napi]
+    pub fn set_am_i_server(is_server: bool) {
+        *AM_I_SERVER.lock().unwrap() = is_server;
+    }
+
     // used to allow or reject new connections
     #[napi]
     pub fn set_accept_new_p2p_requests(accept: bool) {
@@ -50,8 +84,32 @@ pub mod networking_sockets {
     // used to initiate connection
     #[napi]
     pub fn connect_p2p(steam_id64: BigInt, remote_virtual_port: i32) -> Result<bool, Error> {
+        // first check if I am server and does the steam_id64 belong to me
+        // if it does, we can just skip this step and return true
         let client = crate::client::get_client();
         let steam_id = SteamId::from_raw(steam_id64.get_u64().1);
+        
+        let local_steam_id = PlayerSteamId::from_steamid(client.user().steam_id());
+        if local_steam_id.steam_id64.get_u64().1 == steam_id64.get_u64().1 {
+          // then we need to actually hijack and hit the local server via ip
+
+          let handle = client.networking_sockets().connect_by_ip_address(
+            SocketAddr::new(Ipv4Addr::new(127, 0, 0, 1).into(), remote_virtual_port.try_into().unwrap()),
+            None
+          );
+
+          match handle {
+            Ok(connection) => {
+                CONNECTIONS.lock().unwrap().insert(steam_id, connection);
+                return Ok(true)
+            }
+            Err(e) => {
+              eprintln!("Failed to connect P2P(by IP): {:?}", e);
+              return Err(Error::from_reason("Failed to connect P2P(by IP)"))
+            }
+          }
+        }
+        
         let identity = NetworkingIdentity::new_steam_id(steam_id);
         let handle = client.networking_sockets().connect_p2p(identity, remote_virtual_port, None);
         match handle {
@@ -102,6 +160,42 @@ pub mod networking_sockets {
       }
     }
 
+    // have to accept the connection from own ip, gross but whatever
+    #[napi]
+    pub fn process_listen_ip_events() {
+        // Get the socket if it exists
+        let guard = LISTEN_IP.lock().unwrap();
+        let socket = if let Some(socket) = guard.as_ref() {
+            socket
+        } else {
+            return;
+        };
+
+        // Process all available events for this socket
+        while let Some(event) = socket.try_receive_event() {
+          match event {
+              ListenSocketEvent::Connecting(request) => {
+                  // Check if we should accept the connection request
+                  if *ACCEPT_NEW_REQUESTS.lock().unwrap() {
+                      // Attempt to accept the connection request
+                      if let Err(e) = request.accept() {
+                          eprintln!("Failed to accept connection: {:?}", e);
+                      }
+                  }
+              }
+              ListenSocketEvent::Connected(connected) => {
+                  // Grab the steam id of the connected user
+                  let steam_id = connected.remote().steam_id().unwrap();
+                  // Insert the connection into the CONNECTIONS map
+                  CONNECTIONS.lock().unwrap().insert(steam_id, connected.take_connection());
+              }
+              _ => {
+                  // Ignore other event types for now
+              }
+          }
+        }
+    }
+
     // now we need a way to receive all mesages
     #[napi(object)]
     pub struct P2PPacket {
@@ -126,6 +220,7 @@ pub mod networking_sockets {
           }
         }
       }
+
       messages
     }
 
@@ -156,6 +251,7 @@ pub mod networking_sockets {
       send_type: SendType
     ) -> Result<bool, Error> {
       let steam_id = SteamId::from_raw(steam_id64.get_u64().1);
+
       let mut connections = CONNECTIONS.lock().unwrap();
       if let Some(connection) = connections.get_mut(&steam_id) {
         let result = connection.send_message(

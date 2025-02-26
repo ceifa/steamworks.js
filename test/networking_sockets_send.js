@@ -6,8 +6,6 @@ const client = init(480, true)
 
 client.networking_utils.initRelayNetworkAccess();
 
-const socket = 96;
-
 // we shouldn't need to listen for p2p requests since we're sending it
 
 const mySteamId = client.localplayer.getSteamId().steamId64;
