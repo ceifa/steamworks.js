@@ -1,3 +1,5 @@
+process.env.IS_TESTING = true
+
 const { init, SteamCallback } = require('../index.js')
 
 const client = init(480);
