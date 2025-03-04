@@ -10,6 +10,7 @@ export declare namespace achievement {
   export function activate(achievement: string): boolean
   export function isActivated(achievement: string): boolean
   export function clear(achievement: string): boolean
+  export function names(): Array<string>
 }
 export declare namespace apps {
   export function isSubscribedApp(appId: number): boolean
