@@ -185,8 +185,11 @@ export declare namespace networking {
     ReliableWithBuffering = 3
   }
   export function sendP2PPacket(steamId64: bigint, sendType: SendType, data: Buffer): boolean
+  export function sendP2PPacketOnChannel(steamId64: bigint, sendType: SendType, data: Buffer, channel: number): boolean
   export function isP2PPacketAvailable(): number
+  export function isP2PPacketAvailableOnChannel(channel: number): number
   export function readP2PPacket(size: number): P2PPacket
+  export function readP2PPacketFromChannel(size: number, channel: number): P2PPacket
   export function acceptP2PSession(steamId64: bigint): void
 }
 export declare namespace overlay {
