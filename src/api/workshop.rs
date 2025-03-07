@@ -403,4 +403,24 @@ pub mod workshop {
             .map(|item| BigInt::from(item.0))
             .collect::<Vec<_>>()
     }
+
+    // Deletes an item
+    // @returns true or false
+    #[napi]
+    pub async fn delete_item(item_id: BigInt) -> Result<(), Error> {
+        let client = crate::client::get_client();
+        let (tx, rx) = oneshot::channel();
+    
+        client
+            .ugc()
+            .delete_item(PublishedFileId(item_id.get_u64().1), |result| {
+                tx.send(result).unwrap();
+            });
+    
+        let result = rx.await.unwrap();
+        match result {
+            Ok(()) => Ok(()),
+            Err(e) => Err(Error::from_reason(e.to_string())),
+        }
+    }
 }
