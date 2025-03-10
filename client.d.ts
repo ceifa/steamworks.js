@@ -466,3 +466,11 @@ export declare namespace workshop {
   export function getAllItems(page: number, queryType: UGCQueryType, itemType: UGCType, creatorAppId: number, consumerAppId: number, queryConfig?: WorkshopItemQueryConfig | undefined | null): Promise<WorkshopPaginatedResult>
   export function getUserItems(page: number, accountId: number, listType: UserListType, itemType: UGCType, sortOrder: UserListOrder, appIds: AppIDs, queryConfig?: WorkshopItemQueryConfig | undefined | null): Promise<WorkshopPaginatedResult>
 }
+export namespace networking_messages {
+  export interface Message {
+    data: Buffer
+    steamId?: PlayerSteamId
+  }
+  export function sendMessageToUser(steamId64: bigint, data: Buffer): void
+  export function receiveMessagesOnChannel(): Array<Message>
+}
