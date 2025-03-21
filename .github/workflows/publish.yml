@@ -14,7 +14,7 @@ jobs:
         runs-on: ubuntu-latest
 
         steps:
-            - uses: actions/checkout@v3
+            - uses: actions/checkout@v4
 
             - name: Setup Rust
               uses: dtolnay/rust-toolchain@stable
@@ -31,7 +31,7 @@ jobs:
         runs-on: ubuntu-latest
 
         steps:
-            - uses: actions/checkout@v3
+            - uses: actions/checkout@v4
 
             - name: Setup Node
               uses: actions/setup-node@v3
@@ -58,7 +58,7 @@ jobs:
               run: npm run build -- --target x86_64-pc-windows-msvc
 
             - name: Upload artifact
-              uses: actions/upload-artifact@v3
+              uses: actions/upload-artifact@v4
               with:
                   name: OS specific binaries
                   path: dist
@@ -68,7 +68,7 @@ jobs:
         runs-on: macos-latest
 
         steps:
-            - uses: actions/checkout@v3
+            - uses: actions/checkout@v4
 
             - name: Setup Node
               uses: actions/setup-node@v3
@@ -93,7 +93,7 @@ jobs:
               run: npm run build -- --target aarch64-apple-darwin
 
             - name: Upload artifact
-              uses: actions/upload-artifact@v3
+              uses: actions/upload-artifact@v4
               with:
                   name: OS specific binaries
                   path: dist
