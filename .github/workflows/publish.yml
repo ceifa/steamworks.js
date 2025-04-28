@@ -11,10 +11,10 @@ env:
 
 jobs:
     check:
-        runs-on: ubuntu-20.04
+        runs-on: ubuntu-latest
 
         steps:
-            - uses: actions/checkout@v3
+            - uses: actions/checkout@v4
 
             - name: Setup Rust
               uses: dtolnay/rust-toolchain@stable
@@ -28,15 +28,22 @@ jobs:
               run: cargo clippy
 
     build:
-        runs-on: ubuntu-20.04
+        runs-on: ubuntu-latest
+
+        # Run in ubuntu:20.04 container to avoid the issue with glibc version
+        container:
+            image: ubuntu:20.04
 
         steps:
-            - uses: actions/checkout@v3
+            - uses: actions/checkout@v4
 
             - name: Setup Node
-              uses: actions/setup-node@v3
+              uses: actions/setup-node@v4
               with:
-                  node-version: 18.x
+                  node-version: 22.x
+
+            # ubuntu:20.04 does not have curl and gcc/g++ installed by default
+            - run: apt-get update && apt-get install -y curl build-essential
 
             - name: Setup Rust
               uses: dtolnay/rust-toolchain@stable
@@ -58,9 +65,9 @@ jobs:
               run: npm run build -- --target x86_64-pc-windows-msvc
 
             - name: Upload artifact
-              uses: actions/upload-artifact@v3
+              uses: actions/upload-artifact@v4
               with:
-                  name: OS specific binaries
+                  name: binaries-windows-linux
                   path: dist
                   if-no-files-found: error
 
@@ -68,12 +75,12 @@ jobs:
         runs-on: macos-latest
 
         steps:
-            - uses: actions/checkout@v3
+            - uses: actions/checkout@v4
 
             - name: Setup Node
-              uses: actions/setup-node@v3
+              uses: actions/setup-node@v4
               with:
-                  node-version: 18.x
+                  node-version: 22.x
 
             - name: Setup Rust
               uses: dtolnay/rust-toolchain@stable
@@ -93,9 +100,9 @@ jobs:
               run: npm run build -- --target aarch64-apple-darwin
 
             - name: Upload artifact
-              uses: actions/upload-artifact@v3
+              uses: actions/upload-artifact@v4
               with:
-                  name: OS specific binaries
+                  name: binaries-macos
                   path: dist
                   if-no-files-found: error
 
@@ -107,13 +114,14 @@ jobs:
         needs: [build, build-mac]
 
         steps:
-            - uses: actions/checkout@v3
+            - uses: actions/checkout@v4
 
             - name: Download build
-              uses: actions/download-artifact@v3
+              uses: actions/download-artifact@v4
               with:
-                  name: OS specific binaries
                   path: dist/
+                  pattern: binaries-*
+                  merge-multiple: true
 
             - name: Log files
               run: |
