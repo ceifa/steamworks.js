@@ -130,4 +130,10 @@ pub mod utils {
             false
         }
     }
+
+    #[napi]
+    pub fn is_overlay_opened() -> bool {
+        let client = crate::client::get_client();
+        client.utils().is_overlay_enabled()
+    }
 }
