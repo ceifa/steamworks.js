@@ -79,6 +79,7 @@ export declare namespace cloud {
 }
 export declare namespace friends {
   export function getPersonaName(who: bigint): string
+  export function requestUserInformation(who: bigint): void
 }
 export declare namespace input {
   export const enum InputType {
