@@ -281,7 +281,25 @@ export declare namespace workshop {
     progress: bigint
     total: bigint
   }
-  export function createItem(appId?: number | undefined | null): Promise<UgcResult>
+  export const enum FileType {
+    Community = 0,
+    Microtransaction = 1,
+    Collection = 2,
+    Art = 3,
+    Video = 4,
+    Screenshot = 5,
+    Game = 6,
+    Software = 7,
+    Concept = 8,
+    WebGuide = 9,
+    IntegratedGuide = 10,
+    Merch = 11,
+    ControllerBinding = 12,
+    SteamworksAccessInvite = 13,
+    SteamVideo = 14,
+    GameManagedItem = 15
+  }
+  export function createItem(appId?: number | undefined | null, fileType?: FileType | undefined | null): Promise<UgcResult>
   export function updateItem(itemId: bigint, updateDetails: UgcUpdate, appId?: number | undefined | null): Promise<UgcResult>
   export function updateItemWithCallback(itemId: bigint, updateDetails: UgcUpdate, appId: number | undefined | null, successCallback: (data: UgcResult) => void, errorCallback: (err: any) => void, progressCallback?: (data: UpdateProgress) => void, progressCallbackIntervalMs?: number | undefined | null): void
   /**

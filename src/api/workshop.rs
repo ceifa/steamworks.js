@@ -7,7 +7,7 @@ pub mod workshop {
     use napi::threadsafe_function::ThreadsafeFunction;
     use napi::threadsafe_function::ThreadsafeFunctionCallMode;
     use std::path::Path;
-    use steamworks::{ClientManager, FileType, PublishedFileId, UpdateHandle};
+    use steamworks::{ClientManager, PublishedFileId, UpdateHandle};
     use tokio::sync::oneshot;
 
     #[napi(object)]
@@ -142,17 +142,64 @@ pub mod workshop {
     }
 
     #[napi]
-    pub async fn create_item(app_id: Option<u32>) -> Result<UgcResult, Error> {
+    pub enum FileType {
+        Community,
+        Microtransaction,
+        Collection,
+        Art,
+        Video,
+        Screenshot,
+        Game,
+        Software,
+        Concept,
+        WebGuide,
+        IntegratedGuide,
+        Merch,
+        ControllerBinding,
+        SteamworksAccessInvite,
+        SteamVideo,
+        GameManagedItem,
+    }
+
+    impl From<FileType> for steamworks::FileType {
+        fn from(file_type: FileType) -> steamworks::FileType {
+            match file_type {
+                FileType::Community => steamworks::FileType::Community,
+                FileType::Microtransaction => steamworks::FileType::Microtransaction,
+                FileType::Collection => steamworks::FileType::Collection,
+                FileType::Art => steamworks::FileType::Art,
+                FileType::Video => steamworks::FileType::Video,
+                FileType::Screenshot => steamworks::FileType::Screenshot,
+                FileType::Game => steamworks::FileType::Game,
+                FileType::Software => steamworks::FileType::Software,
+                FileType::Concept => steamworks::FileType::Concept,
+                FileType::WebGuide => steamworks::FileType::WebGuide,
+                FileType::IntegratedGuide => steamworks::FileType::IntegratedGuide,
+                FileType::Merch => steamworks::FileType::Merch,
+                FileType::ControllerBinding => steamworks::FileType::ControllerBinding,
+                FileType::SteamworksAccessInvite => steamworks::FileType::SteamworksAccessInvite,
+                FileType::SteamVideo => steamworks::FileType::SteamVideo,
+                FileType::GameManagedItem => steamworks::FileType::GameManagedItem,
+            }
+        }
+    }
+
+    #[napi]
+    pub async fn create_item(
+        app_id: Option<u32>,
+        file_type: Option<FileType>,
+    ) -> Result<UgcResult, Error> {
         let client = crate::client::get_client();
         let app_id = app_id
             .map(steamworks::AppId)
             .unwrap_or_else(|| client.utils().app_id());
+        let file_type = file_type.unwrap_or(FileType::Community);
 
         let (tx, rx) = oneshot::channel();
 
         client
             .ugc()
-            .create_item(app_id, FileType::Community, |result| {
+            .create_item(app_id, file_type.into(), |result| {
                 tx.send(result).unwrap();
             });
 
