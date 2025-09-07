@@ -113,6 +113,47 @@ export declare namespace input {
     getHandle(): bigint
   }
 }
+export declare namespace leaderboards {
+  export interface LeaderboardEntry {
+    globalRank: number
+    score: number
+    steamId: bigint
+    details: Array<number>
+  }
+  
+  export const enum SortMethod {
+    Ascending = 0,
+    Descending = 1
+  }
+  
+  export const enum DisplayType {
+    Numeric = 0,
+    TimeSeconds = 1,
+    TimeMilliSeconds = 2
+  }
+  
+  export const enum DataRequest {
+    Global = 0,
+    GlobalAroundUser = 1,
+    Friends = 2
+  }
+  
+  export const enum UploadScoreMethod {
+    KeepBest = 0,
+    ForceUpdate = 1
+  }
+
+  export function findLeaderboard(name: string): Promise<string | null>
+  export function findOrCreateLeaderboard(name: string, sortMethod: SortMethod, displayType: DisplayType): Promise<string | null>
+  export function uploadScore(leaderboardName: string, score: number, uploadMethod: UploadScoreMethod, details?: Array<number>): Promise<LeaderboardEntry | null>
+  export function downloadScores(leaderboardName: string, dataRequest: DataRequest, rangeStart: number, rangeEnd: number): Promise<Array<LeaderboardEntry>>
+  export function getLeaderboardName(leaderboardName: string): string | null
+  export function getLeaderboardEntryCount(leaderboardName: string): number | null
+  export function getLeaderboardSortMethod(leaderboardName: string): SortMethod | null
+  export function getLeaderboardDisplayType(leaderboardName: string): DisplayType | null
+  export function clearLeaderboardHandle(leaderboardName: string): boolean
+  export function getCachedLeaderboardNames(): Array<string>
+}
 export declare namespace localplayer {
   export function getSteamId(): PlayerSteamId
   export function getName(): string
