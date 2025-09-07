@@ -24,8 +24,6 @@ pub fn init(app_id: Option<u32>) -> Result<(), Error> {
             | SteamAPIInitError::VersionMismatch(msg) => Error::from_reason(msg),
         })?;
 
-    steam_client.user_stats().request_current_stats();
-
     client::set_client(steam_client);
     Ok(())
 }

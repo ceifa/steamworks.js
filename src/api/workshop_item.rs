@@ -374,10 +374,10 @@ pub mod workshop {
         pub consumer: Option<u32>,
     }
 
-    fn handle_query_config<Manager>(
-        mut query_handle: steamworks::QueryHandle<Manager>,
+    fn handle_query_config(
+        mut query_handle: steamworks::QueryHandle,
         query_config: Option<WorkshopItemQueryConfig>,
-    ) -> steamworks::QueryHandle<Manager> {
+    ) -> steamworks::QueryHandle {
         // Apply statistics query parameters if provided
         if let Some(query_config) = query_config {
             if let Some(cached_response_max_age) = query_config.cached_response_max_age {

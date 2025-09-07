@@ -7,7 +7,7 @@ pub mod workshop {
     use napi::threadsafe_function::ThreadsafeFunction;
     use napi::threadsafe_function::ThreadsafeFunctionCallMode;
     use std::path::Path;
-    use steamworks::{ClientManager, FileType, PublishedFileId, UpdateHandle};
+    use steamworks::{FileType, PublishedFileId, UpdateHandle};
     use tokio::sync::oneshot;
 
     #[napi(object)]
@@ -61,11 +61,11 @@ pub mod workshop {
     impl UgcUpdate {
         pub fn submit(
             self,
-            mut update: UpdateHandle<ClientManager>,
+            mut update: UpdateHandle,
             callback: impl FnOnce(Result<(PublishedFileId, bool), steamworks::SteamError>)
                 + Send
                 + 'static,
-        ) -> steamworks::UpdateWatchHandle<ClientManager> {
+        ) -> steamworks::UpdateWatchHandle {
             if let Some(title) = self.title {
                 update = update.title(title.as_str());
             }
@@ -394,9 +394,9 @@ pub mod workshop {
     /// Get all subscribed workshop items.
     /// @returns an array of subscribed workshop item ids
     #[napi]
-    pub fn get_subscribed_items() -> Vec<BigInt> {
+    pub fn get_subscribed_items(include_locally_disabled: bool) -> Vec<BigInt> {
         let client = crate::client::get_client();
-        let result = client.ugc().subscribed_items();
+        let result = client.ugc().subscribed_items(include_locally_disabled);
 
         result
             .iter()

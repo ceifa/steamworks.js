@@ -11,7 +11,7 @@ napi = { version = "2.16.8", features = ["tokio_rt", "napi6", "serde-json"] }
 napi-derive = "2.16.9"
 lazy_static = "1"
 tokio = { version = "1", features = ["sync", "time"] }
-steamworks = { git = "https://github.com/Noxime/steamworks-rs/", rev = "fbb79635b06b4feea8261e5ca3e8ea3ef42facf9", features = ["serde"] }
+steamworks = { git = "https://github.com/Noxime/steamworks-rs/", rev = "40a457a61f5ef714d93804e51e0c5e3d405145a3", features = ["serde"] }
 serde = "1"
 serde_json = "1"
 

@@ -43,15 +43,12 @@ dependencies = [
 
 [[package]]
 name = "bitflags"
-version = "1.3.2"
+version = "2.9.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bef38d45163c2f1dde094a7dfd33ccf595c92905c8f8f4fdc18d06fb1037718a"
-
-[[package]]
-name = "bitflags"
-version = "2.6.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b048fb63fd8b5923fc5aa7b340d8e156aec7ec02f0c78fa8a6ddc2613f6f71de"
+checksum = "1b8e56985ec62d17e9c1001dc89c88ecd7dc08e47eba5ec7c29c7b5eeecde967"
+dependencies = [
+ "serde",
+]
 
 [[package]]
 name = "cc"
@@ -139,7 +136,7 @@ version = "2.16.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a1bd081bbaef43600fd2c5dd4c525b8ecea7dfdacf40ebc674e87851dce6559e"
 dependencies = [
- "bitflags 2.6.0",
+ "bitflags",
  "ctor",
  "napi-derive",
  "napi-sys",
@@ -222,9 +219,9 @@ checksum = "bda66fc9667c18cb2758a2ac84d1167245054bcf85d5d1aaa6923f45801bdd02"
 
 [[package]]
 name = "proc-macro2"
-version = "1.0.86"
+version = "1.0.95"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5e719e8df665df0d1c8fbfd238015744736151d4445ec0836b8e628aae103b77"
+checksum = "02b3e5e68a3a1a02aad3ec490a98007cbc13c37cbe84a3cd7b8e406d76e7f778"
 dependencies = [
  "unicode-ident",
 ]
@@ -319,11 +316,10 @@ dependencies = [
 
 [[package]]
 name = "steamworks"
-version = "0.11.0"
-source = "git+https://github.com/Noxime/steamworks-rs/?rev=fbb79635b06b4feea8261e5ca3e8ea3ef42facf9#fbb79635b06b4feea8261e5ca3e8ea3ef42facf9"
+version = "0.12.1"
+source = "git+https://github.com/Noxime/steamworks-rs/?rev=40a457a61f5ef714d93804e51e0c5e3d405145a3#40a457a61f5ef714d93804e51e0c5e3d405145a3"
 dependencies = [
- "bitflags 1.3.2",
- "lazy_static",
+ "bitflags",
  "paste",
  "serde",
  "steamworks-sys",
@@ -332,8 +328,8 @@ dependencies = [
 
 [[package]]
 name = "steamworks-sys"
-version = "0.11.0"
-source = "git+https://github.com/Noxime/steamworks-rs/?rev=fbb79635b06b4feea8261e5ca3e8ea3ef42facf9#fbb79635b06b4feea8261e5ca3e8ea3ef42facf9"
+version = "0.12.0"
+source = "git+https://github.com/Noxime/steamworks-rs/?rev=40a457a61f5ef714d93804e51e0c5e3d405145a3#40a457a61f5ef714d93804e51e0c5e3d405145a3"
 
 [[package]]
 name = "steamworksjs"
@@ -351,9 +347,9 @@ dependencies = [
 
 [[package]]
 name = "syn"
-version = "2.0.72"
+version = "2.0.104"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dc4b9b9bf2add8093d3f2c0204471e951b2285580335de42f9d2534f3ae7a8af"
+checksum = "17b6f705963418cdb9927482fa304bc562ece2fdd4f616084c50b7023b435a40"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -362,18 +358,18 @@ dependencies = [
 
 [[package]]
 name = "thiserror"
-version = "1.0.63"
+version = "2.0.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c0342370b38b6a11b6cc11d6a805569958d54cfa061a29969c3b5ce2ea405724"
+checksum = "567b8a2dae586314f7be2a752ec7474332959c6460e02bde30d702a66d488708"
 dependencies = [
  "thiserror-impl",
 ]
 
 [[package]]
 name = "thiserror-impl"
-version = "1.0.63"
+version = "2.0.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a4558b58466b9ad7ca0f102865eccc95938dca1a74a856f2b57b6629050da261"
+checksum = "7f7cf42b4507d8ea322120659672cf1b9dbb93f8f2d4ecfd6e51350ff5b17a1d"
 dependencies = [
  "proc-macro2",
  "quote",
