@@ -36,6 +36,7 @@
     "scripts": {
         "build": "npm run types && node build --release",
         "build:debug": "node build",
+        "prepare": "npm run build",
         "prune": "rimraf dist target client.d.ts",
         "format": "cargo clippy --fix --allow-staged && cargo fmt",
         "types": "tsc index.js --allowJs --declaration --emitDeclarationOnly"
