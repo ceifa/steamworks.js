@@ -1,0 +1,24 @@
+{
+    "name": "steamworks.js-electron-test",
+    "author": "(author and version fields required for electron-builder)",
+    "version": "0.0.1",
+    "private": true,
+    "dependencies": {
+        "steamworks.js": "../.."
+    },
+    "devDependencies": {
+        "electron": "24.2.0",
+        "electron-builder": "24.6.3"
+    },
+    "main": "main.js",
+    "scripts": {
+        "start": "electron .",
+        "pack": "electron-builder --dir",
+        "dist": "electron-builder -m"
+    },
+    "build": {
+        "mac": {
+            "target": "zip"
+        }
+    }
+}
