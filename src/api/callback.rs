@@ -34,6 +34,7 @@ pub mod callback {
         P2PSessionConnectFail,
         GameLobbyJoinRequested,
         MicroTxnAuthorizationResponse,
+        GameOverlayActivated,
     }
 
     #[napi(ts_generic_types = "C extends keyof import('./callbacks').CallbackReturns")]
@@ -76,6 +77,9 @@ pub mod callback {
             }
             SteamCallback::MicroTxnAuthorizationResponse => {
                 register_callback::<steamworks::MicroTxnAuthorizationResponse>(threadsafe_handler)
+            }
+            SteamCallback::GameOverlayActivated => {
+                register_callback::<steamworks::GameOverlayActivated>(threadsafe_handler)
             }
         };
 
