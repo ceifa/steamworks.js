@@ -1,6 +1,7 @@
 export declare function init(appId?: number | undefined | null): void
 export declare function restartAppIfNecessary(appId: number): boolean
 export declare function runCallbacks(): void
+export declare function isOverlayEnabled(): boolean
 export interface PlayerSteamId {
   steamId64: bigint
   steamId32: string
@@ -336,6 +337,7 @@ export declare namespace workshop {
    * @returns an array of subscribed workshop item ids
    */
   export function getSubscribedItems(): Array<bigint>
+  export function deleteItem(itemId: bigint): Promise<void>
   export const enum UGCQueryType {
     RankedByVote = 0,
     RankedByPublicationDate = 1,

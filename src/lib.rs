@@ -40,4 +40,9 @@ pub fn run_callbacks() {
     client::get_client().run_callbacks();
 }
 
+#[napi]
+pub fn is_overlay_enabled() -> bool {
+    client::is_overlay_enabled()
+}
+
 pub mod api;

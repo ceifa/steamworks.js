@@ -23,3 +23,7 @@ pub fn drop_client() {
     let mut client_ref = STEAM_CLIENT.lock().unwrap();
     *client_ref = None;
 }
+
+pub fn is_overlay_enabled() -> bool {
+    get_client().utils().is_overlay_enabled()
+}
