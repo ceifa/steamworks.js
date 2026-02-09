@@ -53,4 +53,7 @@ export interface CallbackReturns {
         order_id: number | bigint
         authorized: boolean
     }
+    [client.callback.SteamCallback.GameOverlayActivated]: {
+        active: boolean
+    }
 }
