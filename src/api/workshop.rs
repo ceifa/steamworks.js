@@ -410,13 +410,13 @@ pub mod workshop {
     pub async fn delete_item(item_id: BigInt) -> Result<(), Error> {
         let client = crate::client::get_client();
         let (tx, rx) = oneshot::channel();
-    
+
         client
             .ugc()
             .delete_item(PublishedFileId(item_id.get_u64().1), |result| {
                 tx.send(result).unwrap();
             });
-    
+
         let result = rx.await.unwrap();
         match result {
             Ok(()) => Ok(()),

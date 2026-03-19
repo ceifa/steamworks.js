@@ -71,6 +71,8 @@ export declare namespace cloud {
   export function writeFile(name: string, content: string): boolean
   export function deleteFile(name: string): boolean
   export function fileExists(name: string): boolean
+  export function isFilePersisted(name: string): boolean
+  export function fileTimestamp(name: string): number
   export function listFiles(): Array<FileInfo>
   export class FileInfo {
     name: string
@@ -336,6 +338,7 @@ export declare namespace workshop {
    * @returns an array of subscribed workshop item ids
    */
   export function getSubscribedItems(): Array<bigint>
+  export function deleteItem(itemId: bigint): Promise<void>
   export const enum UGCQueryType {
     RankedByVote = 0,
     RankedByPublicationDate = 1,

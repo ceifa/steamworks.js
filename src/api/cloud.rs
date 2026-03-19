@@ -72,6 +72,22 @@ pub mod cloud {
     }
 
     #[napi]
+    pub fn is_file_persisted(name: String) -> bool {
+        let client = crate::client::get_client();
+        let file = client.remote_storage().file(&name);
+
+        file.is_persisted()
+    }
+
+    #[napi]
+    pub fn file_timestamp(name: String) -> i64 {
+        let client = crate::client::get_client();
+        let file = client.remote_storage().file(&name);
+
+        file.timestamp()
+    }
+
+    #[napi]
     pub fn list_files() -> Vec<FileInfo> {
         let client = crate::client::get_client();
         client
