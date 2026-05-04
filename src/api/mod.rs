@@ -4,6 +4,7 @@ pub mod auth;
 pub mod callback;
 pub mod cloud;
 pub mod input;
+pub mod leaderboards;
 pub mod localplayer;
 pub mod matchmaking;
 pub mod networking;
