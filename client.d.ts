@@ -113,6 +113,68 @@ export declare namespace input {
     getHandle(): bigint
   }
 }
+export declare namespace leaderboards {
+  export const enum LeaderboardSortMethod {
+    Ascending = 0,
+    Descending = 1
+  }
+  export const enum LeaderboardDisplayType {
+    Numeric = 0,
+    TimeSeconds = 1,
+    TimeMilliSeconds = 2
+  }
+  export const enum LeaderboardDataRequest {
+    Global = 0,
+    GlobalAroundUser = 1,
+    Friends = 2
+  }
+  export const enum UploadScoreMethod {
+    KeepBest = 0,
+    ForceUpdate = 1
+  }
+  export interface LeaderboardEntry {
+    /** SteamId64 of the entry's owner. */
+    steamId: bigint
+    /** 1-indexed global rank. */
+    globalRank: number
+    score: number
+    /** Game-defined metadata attached at upload (up to 64 i32s). */
+    details: Array<number>
+  }
+  export interface LeaderboardScoreUploaded {
+    score: number
+    scoreChanged: boolean
+    globalRankNew: number
+    globalRankPrevious: number
+  }
+  /**
+   * Find an existing leaderboard or create one with the supplied config.
+   * The handle is cached internally; subsequent calls by the same name
+   * reuse the cached handle without round-tripping to Steam.
+   */
+  export function findOrCreateLeaderboard(name: string, sortMethod: LeaderboardSortMethod, displayType: LeaderboardDisplayType): Promise<boolean>
+  /**
+   * Find an existing leaderboard. Resolves to `false` if it doesn't exist.
+   * Use `findOrCreateLeaderboard` if creation-on-miss is desired.
+   */
+  export function findLeaderboard(name: string): Promise<boolean>
+  /**
+   * Upload a score. The leaderboard is found-or-created with the supplied
+   * config (idempotent after the first call). `details` is up to 64 i32s
+   * of arbitrary game-defined metadata returned with each entry on download.
+   */
+  export function uploadLeaderboardScore(name: string, sortMethod: LeaderboardSortMethod, displayType: LeaderboardDisplayType, method: UploadScoreMethod, score: number, details?: Array<number> | undefined | null): Promise<LeaderboardScoreUploaded>
+  /**
+   * Download leaderboard entries in the given range. The leaderboard must
+   * already exist (call `findOrCreateLeaderboard` first if needed).
+   */
+  export function downloadLeaderboardEntries(name: string, request: LeaderboardDataRequest, rangeStart: number, rangeEnd: number, maxDetails?: number | undefined | null): Promise<Array<LeaderboardEntry>>
+  /**
+   * Total entry count for the leaderboard. The leaderboard must already
+   * exist (call `findOrCreateLeaderboard` first if needed).
+   */
+  export function getLeaderboardEntryCount(name: string): Promise<number>
+}
 export declare namespace localplayer {
   export function getSteamId(): PlayerSteamId
   export function getName(): string
@@ -336,6 +398,7 @@ export declare namespace workshop {
    * @returns an array of subscribed workshop item ids
    */
   export function getSubscribedItems(): Array<bigint>
+  export function deleteItem(itemId: bigint): Promise<void>
   export const enum UGCQueryType {
     RankedByVote = 0,
     RankedByPublicationDate = 1,
