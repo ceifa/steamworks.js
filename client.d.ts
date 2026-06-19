@@ -194,8 +194,45 @@ export declare namespace networking_messages {
     data: Buffer
     steamId?: PlayerSteamId
   }
+  export interface ConnectionInfo {
+    steamId?: PlayerSteamId
+    userData: bigint
+    listenSocket?: number
+    state: number
+    stateName: string
+    endReason?: number
+    endDebug: string
+    connectionDescription: string
+    flags: number
+  }
+  export interface ConnectionQuickStatus {
+    state: number
+    stateName: string
+    ping: number
+    connectionQualityLocal: number
+    connectionQualityRemote: number
+    outPacketsPerSecond: number
+    outBytesPerSecond: number
+    inPacketsPerSecond: number
+    inBytesPerSecond: number
+    sendRateBytesPerSecond: number
+    pendingUnreliable: number
+    pendingReliable: number
+    sentUnackedReliable: number
+    queueTimeMicroseconds: bigint
+  }
+  export interface SessionConnectionInfo {
+    state: number
+    stateName: string
+    connectionInfo: ConnectionInfo
+    quickStatus: ConnectionQuickStatus
+  }
   export function sendMessageToUser(steamId64: bigint, data: Buffer, channel?: number | undefined | null): void
   export function receiveMessagesOnChannel(channel?: number | undefined | null, maxMessages?: number | undefined | null): Array<Message>
+  export function acceptSessionWithUser(steamId64: bigint): boolean
+  export function closeSessionWithUser(steamId64: bigint): boolean
+  export function closeChannelWithUser(steamId64: bigint, channel?: number | undefined | null): boolean
+  export function getSessionConnectionInfo(steamId64: bigint): SessionConnectionInfo
 }
 export declare namespace overlay {
   export const enum Dialog {

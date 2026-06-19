@@ -2,10 +2,12 @@ use napi_derive::napi;
 
 #[napi]
 pub mod networking_messages {
+    use std::{ffi::CStr, os::raw::c_char};
+
     use napi::bindgen_prelude::{BigInt, Buffer, Error};
     use steamworks::{
         networking_types::{NetworkingIdentity, SendFlags},
-        SteamId,
+        sys, SteamId,
     };
 
     use crate::api::localplayer::PlayerSteamId;
@@ -19,6 +21,152 @@ pub mod networking_messages {
         pub steam_id: Option<PlayerSteamId>,
     }
 
+    #[napi(object)]
+    pub struct ConnectionInfo {
+        pub steam_id: Option<PlayerSteamId>,
+        pub user_data: BigInt,
+        pub listen_socket: Option<u32>,
+        pub state: i32,
+        pub state_name: String,
+        pub end_reason: Option<i32>,
+        pub end_debug: String,
+        pub connection_description: String,
+        pub flags: i32,
+    }
+
+    #[napi(object)]
+    pub struct ConnectionQuickStatus {
+        pub state: i32,
+        pub state_name: String,
+        pub ping: i32,
+        pub connection_quality_local: f64,
+        pub connection_quality_remote: f64,
+        pub out_packets_per_second: f64,
+        pub out_bytes_per_second: f64,
+        pub in_packets_per_second: f64,
+        pub in_bytes_per_second: f64,
+        pub send_rate_bytes_per_second: i32,
+        pub pending_unreliable: i32,
+        pub pending_reliable: i32,
+        pub sent_unacked_reliable: i32,
+        pub queue_time_microseconds: BigInt,
+    }
+
+    #[napi(object)]
+    pub struct SessionConnectionInfo {
+        pub state: i32,
+        pub state_name: String,
+        pub connection_info: ConnectionInfo,
+        pub quick_status: ConnectionQuickStatus,
+    }
+
+    fn networking_identity_from_steam_id64(steam_id64: BigInt) -> NetworkingIdentity {
+        NetworkingIdentity::new_steam_id(SteamId::from_raw(steam_id64.get_u64().1))
+    }
+
+    fn raw_networking_identity_from_steam_id64(steam_id64: BigInt) -> sys::SteamNetworkingIdentity {
+        let mut identity = unsafe { std::mem::zeroed() };
+        unsafe {
+            sys::SteamAPI_SteamNetworkingIdentity_Clear(&mut identity);
+            sys::SteamAPI_SteamNetworkingIdentity_SetSteamID64(
+                &mut identity,
+                steam_id64.get_u64().1,
+            );
+        }
+        identity
+    }
+
+    fn networking_messages_ptr() -> *mut sys::ISteamNetworkingMessages {
+        let _client = crate::client::get_client();
+        unsafe { sys::SteamAPI_SteamNetworkingMessages_SteamAPI_v002() }
+    }
+
+    fn connection_state_name(state: sys::ESteamNetworkingConnectionState) -> String {
+        match state {
+            sys::ESteamNetworkingConnectionState::k_ESteamNetworkingConnectionState_None => "None",
+            sys::ESteamNetworkingConnectionState::k_ESteamNetworkingConnectionState_Connecting => {
+                "Connecting"
+            }
+            sys::ESteamNetworkingConnectionState::k_ESteamNetworkingConnectionState_FindingRoute => {
+                "FindingRoute"
+            }
+            sys::ESteamNetworkingConnectionState::k_ESteamNetworkingConnectionState_Connected => {
+                "Connected"
+            }
+            sys::ESteamNetworkingConnectionState::k_ESteamNetworkingConnectionState_ClosedByPeer => {
+                "ClosedByPeer"
+            }
+            sys::ESteamNetworkingConnectionState::k_ESteamNetworkingConnectionState_ProblemDetectedLocally => {
+                "ProblemDetectedLocally"
+            }
+            sys::ESteamNetworkingConnectionState::k_ESteamNetworkingConnectionState_FinWait => {
+                "FinWait"
+            }
+            sys::ESteamNetworkingConnectionState::k_ESteamNetworkingConnectionState_Linger => {
+                "Linger"
+            }
+            sys::ESteamNetworkingConnectionState::k_ESteamNetworkingConnectionState_Dead => "Dead",
+            sys::ESteamNetworkingConnectionState::k_ESteamNetworkingConnectionState__Force32Bit => {
+                "Force32Bit"
+            }
+            _ => "Unknown",
+        }
+        .to_string()
+    }
+
+    fn c_char_array_to_string(data: &[c_char]) -> String {
+        unsafe { CStr::from_ptr(data.as_ptr()).to_string_lossy().into_owned() }
+    }
+
+    fn connection_info_from_raw(info: sys::SteamNetConnectionInfo_t) -> ConnectionInfo {
+        let identity = NetworkingIdentity::from(info.m_identityRemote);
+        let listen_socket = if info.m_hListenSocket == sys::k_HSteamListenSocket_Invalid {
+            None
+        } else {
+            Some(info.m_hListenSocket)
+        };
+        let end_reason = if info.m_eEndReason
+            == sys::ESteamNetConnectionEnd::k_ESteamNetConnectionEnd_Invalid as i32
+        {
+            None
+        } else {
+            Some(info.m_eEndReason)
+        };
+
+        ConnectionInfo {
+            steam_id: identity.steam_id().map(PlayerSteamId::from_steamid),
+            user_data: BigInt::from(info.m_nUserData),
+            listen_socket,
+            state: info.m_eState as i32,
+            state_name: connection_state_name(info.m_eState),
+            end_reason,
+            end_debug: c_char_array_to_string(&info.m_szEndDebug),
+            connection_description: c_char_array_to_string(&info.m_szConnectionDescription),
+            flags: info.m_nFlags,
+        }
+    }
+
+    fn quick_status_from_raw(
+        status: sys::SteamNetConnectionRealTimeStatus_t,
+    ) -> ConnectionQuickStatus {
+        ConnectionQuickStatus {
+            state: status.m_eState as i32,
+            state_name: connection_state_name(status.m_eState),
+            ping: status.m_nPing,
+            connection_quality_local: f64::from(status.m_flConnectionQualityLocal),
+            connection_quality_remote: f64::from(status.m_flConnectionQualityRemote),
+            out_packets_per_second: f64::from(status.m_flOutPacketsPerSec),
+            out_bytes_per_second: f64::from(status.m_flOutBytesPerSec),
+            in_packets_per_second: f64::from(status.m_flInPacketsPerSec),
+            in_bytes_per_second: f64::from(status.m_flInBytesPerSec),
+            send_rate_bytes_per_second: status.m_nSendRateBytesPerSecond,
+            pending_unreliable: status.m_cbPendingUnreliable,
+            pending_reliable: status.m_cbPendingReliable,
+            sent_unacked_reliable: status.m_cbSentUnackedReliable,
+            queue_time_microseconds: BigInt::from(status.m_usecQueueTime),
+        }
+    }
+
     #[napi]
     pub fn send_message_to_user(
         steam_id64: BigInt,
@@ -26,8 +174,7 @@ pub mod networking_messages {
         channel: Option<u32>,
     ) -> Result<(), Error> {
         let client = crate::client::get_client();
-        let steam_id = SteamId::from_raw(steam_id64.get_u64().1);
-        let identity = NetworkingIdentity::new_steam_id(steam_id);
+        let identity = networking_identity_from_steam_id64(steam_id64);
 
         client
             .networking_messages()
@@ -62,5 +209,83 @@ pub mod networking_messages {
                     .map(PlayerSteamId::from_steamid),
             })
             .collect()
+    }
+
+    #[napi]
+    pub fn accept_session_with_user(steam_id64: BigInt) -> bool {
+        let identity = raw_networking_identity_from_steam_id64(steam_id64);
+        let networking_messages = networking_messages_ptr();
+        if networking_messages.is_null() {
+            return false;
+        }
+
+        unsafe {
+            sys::SteamAPI_ISteamNetworkingMessages_AcceptSessionWithUser(
+                networking_messages,
+                &identity,
+            )
+        }
+    }
+
+    #[napi]
+    pub fn close_session_with_user(steam_id64: BigInt) -> bool {
+        let identity = raw_networking_identity_from_steam_id64(steam_id64);
+        let networking_messages = networking_messages_ptr();
+        if networking_messages.is_null() {
+            return false;
+        }
+
+        unsafe {
+            sys::SteamAPI_ISteamNetworkingMessages_CloseSessionWithUser(
+                networking_messages,
+                &identity,
+            )
+        }
+    }
+
+    #[napi]
+    pub fn close_channel_with_user(steam_id64: BigInt, channel: Option<u32>) -> bool {
+        let identity = raw_networking_identity_from_steam_id64(steam_id64);
+        let networking_messages = networking_messages_ptr();
+        if networking_messages.is_null() {
+            return false;
+        }
+
+        unsafe {
+            sys::SteamAPI_ISteamNetworkingMessages_CloseChannelWithUser(
+                networking_messages,
+                &identity,
+                channel.unwrap_or(DEFAULT_CHANNEL) as i32,
+            )
+        }
+    }
+
+    #[napi]
+    pub fn get_session_connection_info(steam_id64: BigInt) -> Result<SessionConnectionInfo, Error> {
+        let identity = raw_networking_identity_from_steam_id64(steam_id64);
+        let networking_messages = networking_messages_ptr();
+        if networking_messages.is_null() {
+            return Err(Error::from_reason(
+                "SteamNetworkingMessages interface is unavailable",
+            ));
+        }
+
+        let mut connection_info = unsafe { std::mem::zeroed() };
+        let mut quick_status = unsafe { std::mem::zeroed() };
+        let state = unsafe {
+            sys::SteamAPI_ISteamNetworkingMessages_GetSessionConnectionInfo(
+                networking_messages,
+                &identity,
+                &mut connection_info,
+                &mut quick_status,
+            )
+        };
+
+        Ok(SessionConnectionInfo {
+            state: state as i32,
+            state_name: connection_state_name(state),
+            connection_info: connection_info_from_raw(connection_info),
+            quick_status: quick_status_from_raw(quick_status),
+        })
     }
 }
