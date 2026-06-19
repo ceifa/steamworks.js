@@ -68,6 +68,9 @@ To make the steam overlay working, call the `electronEnableSteamOverlay` on the 
 require('steamworks.js').electronEnableSteamOverlay()
 ```
 
+For the production build, copy the relevant distro files from `sdk/redistributable_bin/{YOUR_DISTRO}` into the root of your build. If you are using electron-forge, look for [#75](https://github.com/ceifa/steamworks.js/issues/75).
+
+
 ## How to build
 
 > You **only** need to build if you are going to change something on steamworks.js code, if you are looking to just consume the library or use it in your game, refer to the [installation section](#installation).

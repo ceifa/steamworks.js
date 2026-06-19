@@ -19,6 +19,7 @@ setInterval(() => {
         controller.activateActionSet(actionset)
 
         console.log('============')
+        console.log('Handle: ' + controller.getHandle())
         console.log('Affirm: ' + controller.isDigitalActionPressed(affirm))
         console.log('Cancel: ' + controller.isDigitalActionPressed(cancel))
         console.log('Control: ' + JSON.stringify(controller.getAnalogActionVector(control)))

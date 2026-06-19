@@ -2,9 +2,15 @@ use napi_derive::napi;
 
 #[napi]
 pub mod cloud {
-    use napi::bindgen_prelude::Error;
+    use napi::bindgen_prelude::{BigInt, Error};
     use std::io::Read;
     use std::io::Write;
+
+    #[napi]
+    pub struct FileInfo {
+        pub name: String,
+        pub size: BigInt,
+    }
 
     #[napi]
     pub fn is_enabled_for_account() -> bool {
@@ -16,6 +22,12 @@ pub mod cloud {
     pub fn is_enabled_for_app() -> bool {
         let client = crate::client::get_client();
         client.remote_storage().is_cloud_enabled_for_app()
+    }
+
+    #[napi]
+    pub fn set_enabled_for_app(enabled: bool) {
+        let client = crate::client::get_client();
+        client.remote_storage().set_cloud_enabled_for_app(enabled)
     }
 
     #[napi]
@@ -57,5 +69,19 @@ pub mod cloud {
         let file = client.remote_storage().file(&name);
 
         file.exists()
+    }
+
+    #[napi]
+    pub fn list_files() -> Vec<FileInfo> {
+        let client = crate::client::get_client();
+        client
+            .remote_storage()
+            .files()
+            .into_iter()
+            .map(|identity| FileInfo {
+                name: identity.name,
+                size: BigInt::from(identity.size),
+            })
+            .collect()
     }
 }

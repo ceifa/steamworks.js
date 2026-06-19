@@ -2,7 +2,7 @@ use napi_derive::napi;
 
 #[napi]
 pub mod workshop {
-    use napi::bindgen_prelude::{BigInt, Error, FromNapiValue, ToNapiValue};
+    use napi::bindgen_prelude::{BigInt, Error};
     use napi::threadsafe_function::ErrorStrategy;
     use napi::threadsafe_function::ThreadsafeFunction;
     use napi::threadsafe_function::ThreadsafeFunctionCallMode;
@@ -16,6 +16,7 @@ pub mod workshop {
         pub needs_to_accept_agreement: bool,
     }
 
+    #[derive(Debug)]
     #[napi]
     pub enum UgcItemVisibility {
         Public,
@@ -24,9 +25,20 @@ pub mod workshop {
         Unlisted,
     }
 
-    impl From<UgcItemVisibility> for steamworks::PublishedFileVisibility {
-        fn from(visibility: UgcItemVisibility) -> Self {
+    impl From<steamworks::PublishedFileVisibility> for UgcItemVisibility {
+        fn from(visibility: steamworks::PublishedFileVisibility) -> Self {
             match visibility {
+                steamworks::PublishedFileVisibility::Public => UgcItemVisibility::Public,
+                steamworks::PublishedFileVisibility::FriendsOnly => UgcItemVisibility::FriendsOnly,
+                steamworks::PublishedFileVisibility::Private => UgcItemVisibility::Private,
+                steamworks::PublishedFileVisibility::Unlisted => UgcItemVisibility::Unlisted,
+            }
+        }
+    }
+
+    impl From<UgcItemVisibility> for steamworks::PublishedFileVisibility {
+        fn from(val: UgcItemVisibility) -> Self {
+            match val {
                 UgcItemVisibility::Public => steamworks::PublishedFileVisibility::Public,
                 UgcItemVisibility::FriendsOnly => steamworks::PublishedFileVisibility::FriendsOnly,
                 UgcItemVisibility::Private => steamworks::PublishedFileVisibility::Private,
@@ -96,6 +108,7 @@ pub mod workshop {
         pub total: BigInt,
     }
 
+    #[derive(Debug)]
     #[napi]
     pub enum UpdateStatus {
         Invalid,
@@ -389,5 +402,25 @@ pub mod workshop {
             .iter()
             .map(|item| BigInt::from(item.0))
             .collect::<Vec<_>>()
+    }
+
+    // Deletes an item
+    // @returns true or false
+    #[napi]
+    pub async fn delete_item(item_id: BigInt) -> Result<(), Error> {
+        let client = crate::client::get_client();
+        let (tx, rx) = oneshot::channel();
+    
+        client
+            .ugc()
+            .delete_item(PublishedFileId(item_id.get_u64().1), |result| {
+                tx.send(result).unwrap();
+            });
+    
+        let result = rx.await.unwrap();
+        match result {
+            Ok(()) => Ok(()),
+            Err(e) => Err(Error::from_reason(e.to_string())),
+        }
     }
 }

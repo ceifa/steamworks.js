@@ -1,6 +1,6 @@
 {
     "name": "steamworks.js",
-    "version": "0.3.1",
+    "version": "0.4.0",
     "main": "index.js",
     "types": "index.d.ts",
     "napi": {
@@ -22,10 +22,10 @@
     ],
     "license": "MIT",
     "devDependencies": {
-        "@napi-rs/cli": "2.16.2",
-        "rimraf": "5.0.1",
-        "typescript": "5.1.6",
-        "electron": "24.2.0"
+        "@napi-rs/cli": "2.18.4",
+        "electron": "24.2.0",
+        "rimraf": "6.0.1",
+        "typescript": "5.5.3"
     },
     "dependencies": {
         "@types/node": "*"

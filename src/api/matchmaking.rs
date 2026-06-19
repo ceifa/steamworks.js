@@ -3,7 +3,7 @@ use napi_derive::napi;
 #[napi]
 pub mod matchmaking {
     use crate::api::localplayer::PlayerSteamId;
-    use napi::bindgen_prelude::{BigInt, Error, FromNapiValue, ToNapiValue};
+    use napi::bindgen_prelude::{BigInt, Error};
     use std::collections::HashMap;
     use steamworks::LobbyId;
     use tokio::sync::oneshot;
