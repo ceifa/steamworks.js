@@ -189,6 +189,14 @@ export declare namespace networking {
   export function readP2PPacket(size: number): P2PPacket
   export function acceptP2PSession(steamId64: bigint): void
 }
+export declare namespace networking_messages {
+  export interface Message {
+    data: Buffer
+    steamId?: PlayerSteamId
+  }
+  export function sendMessageToUser(steamId64: bigint, data: Buffer, channel?: number | undefined | null): void
+  export function receiveMessagesOnChannel(channel?: number | undefined | null, maxMessages?: number | undefined | null): Array<Message>
+}
 export declare namespace overlay {
   export const enum Dialog {
     Friends = 0,
@@ -336,6 +344,7 @@ export declare namespace workshop {
    * @returns an array of subscribed workshop item ids
    */
   export function getSubscribedItems(): Array<bigint>
+  export function deleteItem(itemId: bigint): Promise<void>
   export const enum UGCQueryType {
     RankedByVote = 0,
     RankedByPublicationDate = 1,
@@ -465,12 +474,4 @@ export declare namespace workshop {
   export function getItems(items: Array<bigint>, queryConfig?: WorkshopItemQueryConfig | undefined | null): Promise<WorkshopItemsResult>
   export function getAllItems(page: number, queryType: UGCQueryType, itemType: UGCType, creatorAppId: number, consumerAppId: number, queryConfig?: WorkshopItemQueryConfig | undefined | null): Promise<WorkshopPaginatedResult>
   export function getUserItems(page: number, accountId: number, listType: UserListType, itemType: UGCType, sortOrder: UserListOrder, appIds: AppIDs, queryConfig?: WorkshopItemQueryConfig | undefined | null): Promise<WorkshopPaginatedResult>
-}
-export namespace networking_messages {
-  export interface Message {
-    data: Buffer
-    steamId?: PlayerSteamId
-  }
-  export function sendMessageToUser(steamId64: bigint, data: Buffer): void
-  export function receiveMessagesOnChannel(): Array<Message>
 }
