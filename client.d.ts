@@ -248,6 +248,15 @@ export declare namespace networking_messages {
     disconnect(): void
   }
 }
+export declare namespace networking_sockets {
+  export interface AuthenticationStatus {
+    availability: number
+    availabilityName: string
+    debug: string
+  }
+  export function initAuthentication(): AuthenticationStatus
+  export function getAuthenticationStatus(): AuthenticationStatus
+}
 export declare namespace overlay {
   export const enum Dialog {
     Friends = 0,
