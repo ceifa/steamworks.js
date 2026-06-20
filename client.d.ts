@@ -227,12 +227,19 @@ export declare namespace networking_messages {
     connectionInfo: ConnectionInfo
     quickStatus: ConnectionQuickStatus
   }
+  export interface SessionRequest {
+    steamId?: PlayerSteamId
+  }
   export function sendMessageToUser(steamId64: bigint, data: Buffer, channel?: number | undefined | null): void
   export function receiveMessagesOnChannel(channel?: number | undefined | null, maxMessages?: number | undefined | null): Array<Message>
+  export function registerSessionRequestCallback(handler: (request: SessionRequest) => void): SessionRequestCallbackHandle
   export function acceptSessionWithUser(steamId64: bigint): boolean
   export function closeSessionWithUser(steamId64: bigint): boolean
   export function closeChannelWithUser(steamId64: bigint, channel?: number | undefined | null): boolean
   export function getSessionConnectionInfo(steamId64: bigint): SessionConnectionInfo
+  export class SessionRequestCallbackHandle {
+    disconnect(): void
+  }
 }
 export declare namespace overlay {
   export const enum Dialog {

@@ -2,12 +2,19 @@ use napi_derive::napi;
 
 #[napi]
 pub mod networking_messages {
-    use std::{ffi::CStr, os::raw::c_char};
+    use std::{
+        ffi::{c_void, CStr},
+        os::raw::c_char,
+    };
 
-    use napi::bindgen_prelude::{BigInt, Buffer, Error};
+    use napi::{
+        bindgen_prelude::{BigInt, Buffer, Error},
+        threadsafe_function::{ErrorStrategy, ThreadsafeFunction, ThreadsafeFunctionCallMode},
+        JsFunction,
+    };
     use steamworks::{
         networking_types::{NetworkingIdentity, SendFlags},
-        sys, SteamId,
+        sys, Callback, CallbackHandle, SteamId,
     };
 
     use crate::api::localplayer::PlayerSteamId;
@@ -58,6 +65,42 @@ pub mod networking_messages {
         pub state_name: String,
         pub connection_info: ConnectionInfo,
         pub quick_status: ConnectionQuickStatus,
+    }
+
+    #[napi(object)]
+    pub struct SessionRequest {
+        pub steam_id: Option<PlayerSteamId>,
+    }
+
+    #[napi]
+    pub struct SessionRequestCallbackHandle {
+        handle: Option<CallbackHandle>,
+    }
+
+    #[napi]
+    impl SessionRequestCallbackHandle {
+        #[napi]
+        pub fn disconnect(&mut self) {
+            if let Some(handle) = self.handle.take() {
+                handle.disconnect();
+            }
+        }
+    }
+
+    struct NetworkingMessagesSessionRequest {
+        remote: NetworkingIdentity,
+    }
+
+    unsafe impl Callback for NetworkingMessagesSessionRequest {
+        const ID: i32 = sys::SteamNetworkingMessagesSessionRequest_t_k_iCallback as _;
+        const SIZE: i32 = std::mem::size_of::<sys::SteamNetworkingMessagesSessionRequest_t>() as _;
+
+        unsafe fn from_raw(raw: *mut c_void) -> Self {
+            let request = *(raw as *mut sys::SteamNetworkingMessagesSessionRequest_t);
+            Self {
+                remote: request.m_identityRemote.into(),
+            }
+        }
     }
 
     fn networking_identity_from_steam_id64(steam_id64: BigInt) -> NetworkingIdentity {
@@ -209,6 +252,34 @@ pub mod networking_messages {
                     .map(PlayerSteamId::from_steamid),
             })
             .collect()
+    }
+
+    #[napi]
+    pub fn register_session_request_callback(
+        #[napi(ts_arg_type = "(request: SessionRequest) => void")]
+        handler: JsFunction,
+    ) -> Result<SessionRequestCallbackHandle, Error> {
+        let threadsafe_handler: ThreadsafeFunction<SessionRequest, ErrorStrategy::Fatal> = handler
+            .create_threadsafe_function(0, |ctx| Ok(vec![ctx.value]))
+            .map_err(|error| {
+                Error::from_reason(format!(
+                    "Failed to create session request callback: {}",
+                    error
+                ))
+            })?;
+        let client = crate::client::get_client();
+        let handle = client.register_callback(move |request: NetworkingMessagesSessionRequest| {
+            threadsafe_handler.call(
+                SessionRequest {
+                    steam_id: request.remote.steam_id().map(PlayerSteamId::from_steamid),
+                },
+                ThreadsafeFunctionCallMode::Blocking,
+            );
+        });
+
+        Ok(SessionRequestCallbackHandle {
+            handle: Some(handle),
+        })
     }
 
     #[napi]
