@@ -189,6 +189,88 @@ export declare namespace networking {
   export function readP2PPacket(size: number): P2PPacket
   export function acceptP2PSession(steamId64: bigint): void
 }
+export declare namespace networking_messages {
+  export interface Message {
+    data: Buffer
+    steamId?: PlayerSteamId
+  }
+  export interface ConnectionInfo {
+    steamId?: PlayerSteamId
+    userData: bigint
+    listenSocket?: number
+    state: number
+    stateName: string
+    endReason?: number
+    endDebug: string
+    connectionDescription: string
+    flags: number
+  }
+  export interface ConnectionQuickStatus {
+    state: number
+    stateName: string
+    ping: number
+    connectionQualityLocal: number
+    connectionQualityRemote: number
+    outPacketsPerSecond: number
+    outBytesPerSecond: number
+    inPacketsPerSecond: number
+    inBytesPerSecond: number
+    sendRateBytesPerSecond: number
+    pendingUnreliable: number
+    pendingReliable: number
+    sentUnackedReliable: number
+    queueTimeMicroseconds: bigint
+  }
+  export interface SessionConnectionInfo {
+    state: number
+    stateName: string
+    connectionInfo: ConnectionInfo
+    quickStatus: ConnectionQuickStatus
+  }
+  export interface SessionRequest {
+    steamId?: PlayerSteamId
+  }
+  export interface SessionFailed {
+    connectionInfo: ConnectionInfo
+  }
+  export function sendMessageToUser(steamId64: bigint, data: Buffer, channel?: number | undefined | null): void
+  export function receiveMessagesOnChannel(channel?: number | undefined | null, maxMessages?: number | undefined | null): Array<Message>
+  export function registerSessionRequestCallback(handler: (request: SessionRequest) => void): SessionRequestCallbackHandle
+  export function registerSessionFailedCallback(handler: (failed: SessionFailed) => void): SessionFailedCallbackHandle
+  export function acceptSessionWithUser(steamId64: bigint): boolean
+  export function closeSessionWithUser(steamId64: bigint): boolean
+  export function closeChannelWithUser(steamId64: bigint, channel?: number | undefined | null): boolean
+  export function getSessionConnectionInfo(steamId64: bigint): SessionConnectionInfo
+  export class SessionRequestCallbackHandle {
+    disconnect(): void
+  }
+  export class SessionFailedCallbackHandle {
+    disconnect(): void
+  }
+}
+export declare namespace networking_sockets {
+  export interface AuthenticationStatus {
+    availability: number
+    availabilityName: string
+    debug: string
+  }
+  export function initAuthentication(): AuthenticationStatus
+  export function getAuthenticationStatus(): AuthenticationStatus
+}
+export declare namespace networking_utils {
+  export interface RelayNetworkStatus {
+    availability: number
+    availabilityName: string
+    pingMeasurementInProgress: boolean
+    networkConfig: number
+    networkConfigName: string
+    anyRelay: number
+    anyRelayName: string
+    debug: string
+  }
+  export function initRelayNetworkAccess(): RelayNetworkStatus
+  export function getRelayNetworkStatus(): RelayNetworkStatus
+}
 export declare namespace overlay {
   export const enum Dialog {
     Friends = 0,
@@ -336,6 +418,7 @@ export declare namespace workshop {
    * @returns an array of subscribed workshop item ids
    */
   export function getSubscribedItems(): Array<bigint>
+  export function deleteItem(itemId: bigint): Promise<void>
   export const enum UGCQueryType {
     RankedByVote = 0,
     RankedByPublicationDate = 1,
