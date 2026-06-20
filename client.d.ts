@@ -257,6 +257,20 @@ export declare namespace networking_sockets {
   export function initAuthentication(): AuthenticationStatus
   export function getAuthenticationStatus(): AuthenticationStatus
 }
+export declare namespace networking_utils {
+  export interface RelayNetworkStatus {
+    availability: number
+    availabilityName: string
+    pingMeasurementInProgress: boolean
+    networkConfig: number
+    networkConfigName: string
+    anyRelay: number
+    anyRelayName: string
+    debug: string
+  }
+  export function initRelayNetworkAccess(): RelayNetworkStatus
+  export function getRelayNetworkStatus(): RelayNetworkStatus
+}
 export declare namespace overlay {
   export const enum Dialog {
     Friends = 0,
