@@ -72,6 +72,11 @@ pub mod networking_messages {
         pub steam_id: Option<PlayerSteamId>,
     }
 
+    #[napi(object)]
+    pub struct SessionFailed {
+        pub connection_info: ConnectionInfo,
+    }
+
     #[napi]
     pub struct SessionRequestCallbackHandle {
         handle: Option<CallbackHandle>,
@@ -87,8 +92,27 @@ pub mod networking_messages {
         }
     }
 
+    #[napi]
+    pub struct SessionFailedCallbackHandle {
+        handle: Option<CallbackHandle>,
+    }
+
+    #[napi]
+    impl SessionFailedCallbackHandle {
+        #[napi]
+        pub fn disconnect(&mut self) {
+            if let Some(handle) = self.handle.take() {
+                handle.disconnect();
+            }
+        }
+    }
+
     struct NetworkingMessagesSessionRequest {
         remote: NetworkingIdentity,
+    }
+
+    struct NetworkingMessagesSessionFailed {
+        connection_info: ConnectionInfo,
     }
 
     unsafe impl Callback for NetworkingMessagesSessionRequest {
@@ -99,6 +123,18 @@ pub mod networking_messages {
             let request = *(raw as *mut sys::SteamNetworkingMessagesSessionRequest_t);
             Self {
                 remote: request.m_identityRemote.into(),
+            }
+        }
+    }
+
+    unsafe impl Callback for NetworkingMessagesSessionFailed {
+        const ID: i32 = sys::SteamNetworkingMessagesSessionFailed_t_k_iCallback as _;
+        const SIZE: i32 = std::mem::size_of::<sys::SteamNetworkingMessagesSessionFailed_t>() as _;
+
+        unsafe fn from_raw(raw: *mut c_void) -> Self {
+            let failed = *(raw as *mut sys::SteamNetworkingMessagesSessionFailed_t);
+            Self {
+                connection_info: connection_info_from_raw(failed.m_info),
             }
         }
     }
@@ -278,6 +314,34 @@ pub mod networking_messages {
         });
 
         Ok(SessionRequestCallbackHandle {
+            handle: Some(handle),
+        })
+    }
+
+    #[napi]
+    pub fn register_session_failed_callback(
+        #[napi(ts_arg_type = "(failed: SessionFailed) => void")]
+        handler: JsFunction,
+    ) -> Result<SessionFailedCallbackHandle, Error> {
+        let threadsafe_handler: ThreadsafeFunction<SessionFailed, ErrorStrategy::Fatal> = handler
+            .create_threadsafe_function(0, |ctx| Ok(vec![ctx.value]))
+            .map_err(|error| {
+                Error::from_reason(format!(
+                    "Failed to create session failed callback: {}",
+                    error
+                ))
+            })?;
+        let client = crate::client::get_client();
+        let handle = client.register_callback(move |failed: NetworkingMessagesSessionFailed| {
+            threadsafe_handler.call(
+                SessionFailed {
+                    connection_info: failed.connection_info,
+                },
+                ThreadsafeFunctionCallMode::Blocking,
+            );
+        });
+
+        Ok(SessionFailedCallbackHandle {
             handle: Some(handle),
         })
     }

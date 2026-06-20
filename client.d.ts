@@ -230,14 +230,21 @@ export declare namespace networking_messages {
   export interface SessionRequest {
     steamId?: PlayerSteamId
   }
+  export interface SessionFailed {
+    connectionInfo: ConnectionInfo
+  }
   export function sendMessageToUser(steamId64: bigint, data: Buffer, channel?: number | undefined | null): void
   export function receiveMessagesOnChannel(channel?: number | undefined | null, maxMessages?: number | undefined | null): Array<Message>
   export function registerSessionRequestCallback(handler: (request: SessionRequest) => void): SessionRequestCallbackHandle
+  export function registerSessionFailedCallback(handler: (failed: SessionFailed) => void): SessionFailedCallbackHandle
   export function acceptSessionWithUser(steamId64: bigint): boolean
   export function closeSessionWithUser(steamId64: bigint): boolean
   export function closeChannelWithUser(steamId64: bigint, channel?: number | undefined | null): boolean
   export function getSessionConnectionInfo(steamId64: bigint): SessionConnectionInfo
   export class SessionRequestCallbackHandle {
+    disconnect(): void
+  }
+  export class SessionFailedCallbackHandle {
     disconnect(): void
   }
 }
