@@ -3,7 +3,7 @@ use napi_derive::napi;
 #[napi]
 pub mod matchmaking {
     use crate::api::localplayer::PlayerSteamId;
-    use napi::bindgen_prelude::{BigInt, Error};
+    use napi::bindgen_prelude::{BigInt, Buffer, Error};
     use std::collections::HashMap;
     use steamworks::LobbyId;
     use tokio::sync::oneshot;
@@ -129,7 +129,38 @@ pub mod matchmaking {
                 .map(|(key, value)| matchmaking.set_lobby_data(self.lobby_id, key, value))
                 .all(|x| x)
         }
+
+        /// Send a chat message to every member of the lobby, including yourself.
+        /// Steam relays it and every member receives a `LobbyChatMsg` callback
+        /// carrying a `chat_id`; read the bytes back with `getChatEntry`.
+        /// Messages are capped at 4 KB by Steam.
+        /// {@link https://partner.steamgames.com/doc/api/ISteamMatchmaking#SendLobbyChatMsg}
+        #[napi]
+        pub fn send_chat_message(&self, message: Buffer) -> Result<(), Error> {
+            let client = crate::client::get_client();
+            client
+                .matchmaking()
+                .send_lobby_chat_message(self.lobby_id, &message[..])
+                .map_err(|e| Error::from_reason(e.to_string()))
+        }
+
+        /// Read a chat entry delivered by a `LobbyChatMsg` callback.
+        /// @returns the message bytes; empty when the entry does not exist
+        /// {@link https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetLobbyChatEntry}
+        #[napi]
+        pub fn get_chat_entry(&self, chat_id: i32) -> Buffer {
+            let client = crate::client::get_client();
+            let mut buffer = vec![0u8; LOBBY_CHAT_MSG_MAX];
+            let bytes =
+                client
+                    .matchmaking()
+                    .get_lobby_chat_entry(self.lobby_id, chat_id, &mut buffer);
+            bytes.to_vec().into()
+        }
     }
+
+    /// Steam's `k_cchLobbyChatMsgMax`: the largest lobby chat message it will relay.
+    const LOBBY_CHAT_MSG_MAX: usize = 4096;
 
     #[napi]
     pub async fn create_lobby(lobby_type: LobbyType, max_members: u32) -> Result<Lobby, Error> {

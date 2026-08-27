@@ -56,7 +56,8 @@ export declare namespace callback {
     P2PSessionRequest = 6,
     P2PSessionConnectFail = 7,
     GameLobbyJoinRequested = 8,
-    MicroTxnAuthorizationResponse = 9
+    MicroTxnAuthorizationResponse = 9,
+    LobbyChatMsg = 10
   }
   export function register<C extends keyof import('./callbacks').CallbackReturns>(steamCallback: C, handler: (value: import('./callbacks').CallbackReturns[C]) => void): Handle
   export class Handle {
@@ -151,6 +152,20 @@ export declare namespace matchmaking {
      * @returns true if all data was set successfully
      */
     mergeFullData(data: Record<string, string>): boolean
+    /**
+     * Send a chat message to every member of the lobby, including yourself.
+     * Steam relays it and every member receives a `LobbyChatMsg` callback
+     * carrying a `chat_id`; read the bytes back with `getChatEntry`.
+     * Messages are capped at 4 KB by Steam.
+     * {@link https://partner.steamgames.com/doc/api/ISteamMatchmaking#SendLobbyChatMsg}
+     */
+    sendChatMessage(message: Buffer): void
+    /**
+     * Read a chat entry delivered by a `LobbyChatMsg` callback.
+     * @returns the message bytes; empty when the entry does not exist
+     * {@link https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetLobbyChatEntry}
+     */
+    getChatEntry(chatId: number): Buffer
   }
 }
 export declare namespace networking {
