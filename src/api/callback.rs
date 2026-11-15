@@ -16,9 +16,9 @@ pub mod callback {
     impl Handle {
         #[napi]
         pub fn disconnect(&mut self) {
-            if let Some(handle) = self.handle.take() {
-                handle.disconnect();
-            }
+            // Dropping the handle removes the callback (0.13 replaced
+            // CallbackHandle::disconnect with a Drop impl).
+            drop(self.handle.take());
         }
     }
 
@@ -34,6 +34,8 @@ pub mod callback {
         P2PSessionConnectFail,
         GameLobbyJoinRequested,
         MicroTxnAuthorizationResponse,
+        SteamInventoryDefinitionUpdate,
+        SteamInventoryFullUpdate,
     }
 
     #[napi(ts_generic_types = "C extends keyof import('./callbacks').CallbackReturns")]
@@ -76,6 +78,12 @@ pub mod callback {
             }
             SteamCallback::MicroTxnAuthorizationResponse => {
                 register_callback::<steamworks::MicroTxnAuthorizationResponse>(threadsafe_handler)
+            }
+            SteamCallback::SteamInventoryDefinitionUpdate => {
+                register_callback::<steamworks::InventoryDefinitionUpdate>(threadsafe_handler)
+            }
+            SteamCallback::SteamInventoryFullUpdate => {
+                register_callback::<steamworks::InventoryFullUpdate>(threadsafe_handler)
             }
         };
 
