@@ -53,4 +53,10 @@ export interface CallbackReturns {
         order_id: number | bigint
         authorized: boolean
     }
+    /** Item definitions finished loading after `inventory.loadItemDefinitions()`. */
+    [client.callback.SteamCallback.SteamInventoryDefinitionUpdate]: null
+    /** A full inventory update arrived; `handle` is the raw Steam result handle. */
+    [client.callback.SteamCallback.SteamInventoryFullUpdate]: {
+        handle: number
+    }
 }

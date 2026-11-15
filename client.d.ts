@@ -56,7 +56,9 @@ export declare namespace callback {
     P2PSessionRequest = 6,
     P2PSessionConnectFail = 7,
     GameLobbyJoinRequested = 8,
-    MicroTxnAuthorizationResponse = 9
+    MicroTxnAuthorizationResponse = 9,
+    SteamInventoryDefinitionUpdate = 10,
+    SteamInventoryFullUpdate = 11
   }
   export function register<C extends keyof import('./callbacks').CallbackReturns>(steamCallback: C, handler: (value: import('./callbacks').CallbackReturns[C]) => void): Handle
   export class Handle {
@@ -112,6 +114,189 @@ export declare namespace input {
     getType(): InputType
     getHandle(): bigint
   }
+}
+export declare namespace inventory {
+  export interface InventoryItem {
+    /** The instance id of the item stack. */
+    itemId: bigint
+    /** The item definition id. */
+    definition: number
+    /**
+     * `SteamItemDetails_t.m_unQuantity`, a uint16. Steam does not cap a stack
+     * at 65,535, so past that the read wraps mod 65,536 (90,001 reads 24,465),
+     * through `getAllItems`, a write's result and a serialized result alike.
+     * The `quantity` property from `getItemProperties` is the true figure.
+     */
+    quantity: number
+    /** `ESteamItemFlags` bits: 1 no-trade, 256 removed, 512 consumed. */
+    flags: number
+  }
+  export interface InventoryResult {
+    /** Server time the result was generated, unix seconds. */
+    timestamp: number
+    items: Array<InventoryItem>
+  }
+  /** A result signed by Steam, for another player to verify. */
+  export interface SerializedResult {
+    /** Server time the result was generated, unix seconds. */
+    timestamp: number
+    items: Array<InventoryItem>
+    /** The signed bytes to hand to another player's `deserializeResult`. */
+    buffer: Buffer
+  }
+  /** Another player's serialized result, verified by Steam. */
+  export interface VerifiedResult {
+    /** Server time the result was generated, unix seconds. */
+    timestamp: number
+    items: Array<InventoryItem>
+    /**
+     * The signature verified, but the set is over an hour old
+     * (`k_EResultExpired`): an item in it may since have been traded or consumed.
+     */
+    expired: boolean
+    /**
+     * `CheckResultSteamID` against the id the caller named. False means
+     * the sender handed over somebody else's inventory.
+     */
+    belongsTo: boolean
+    /**
+     * Every item of the verified set with its `GetResultItemProperty`
+     * properties, as `getItemProperties` reads them: the `quantity`
+     * property is the stack's true size past the uint16 read in `items`.
+     */
+    properties: Array<ItemProperties>
+  }
+  export interface DefinitionQuantity {
+    definition: number
+    quantity: number
+  }
+  export interface InstanceQuantity {
+    itemId: bigint
+    quantity: number
+  }
+  /** One item of a result with every dynamic property Steam reports for it. */
+  export interface ItemProperties {
+    /** The instance id of the item stack. */
+    itemId: bigint
+    /** The item definition id. */
+    definition: number
+    /** `SteamItemDetails_t.m_unQuantity`, a uint16: a stack past 65,535 reads wrapped. */
+    quantity: number
+    /**
+     * Every property `GetResultItemProperty` names for the item (a null
+     * name lists them), each with its value.
+     */
+    properties: Record<string, string>
+  }
+  /**
+   * Answered from the client's cache: a write's new instances appear seconds
+   * later, while the write's own result is current.
+   * {@link https://partner.steamgames.com/doc/api/ISteamInventory#GetAllItems}
+   */
+  export function getAllItems(): Promise<InventoryResult>
+  /**
+   * Lags a write similarly (about 15 s for a freshly made item).
+   * {@link https://partner.steamgames.com/doc/api/ISteamInventory#GetItemsByID}
+   */
+  export function getItemsById(itemIds: Array<bigint>): Promise<InventoryResult>
+  /**
+   * `GetItemsByID`, then `GetResultItemProperty` on each item: first with a
+   * null name for the comma-separated property names, then each name's value.
+   * The `quantity` property is the true stack size. Right after a write it can
+   * be missing for the write's own rows.
+   * {@link https://partner.steamgames.com/doc/api/ISteamInventory#GetResultItemProperty}
+   */
+  export function getItemProperties(itemIds: Array<bigint>): Promise<Array<ItemProperties>>
+  /**
+   * `GetAllItems`, then every item's properties as `getItemProperties` reads them.
+   * {@link https://partner.steamgames.com/doc/api/ISteamInventory#GetResultItemProperty}
+   */
+  export function getAllItemProperties(): Promise<Array<ItemProperties>>
+  /**
+   * `GetItemsByID` on the local user's items, then `SerializeResult`: a
+   * minimal signed set another player can verify with `deserializeResult`.
+   * It expires an hour after `timestamp`.
+   * {@link https://partner.steamgames.com/doc/api/ISteamInventory#SerializeResult}
+   */
+  export function serializeItemsById(itemIds: Array<bigint>): Promise<SerializedResult>
+  /**
+   * `DeserializeResult` on bytes another player serialized, then
+   * `CheckResultSteamID` against the player who sent them, and each item's
+   * `GetResultItemProperty` properties. Rejects with the
+   * `EResult` name when the signature does not verify; an expired set
+   * resolves with `expired: true`.
+   * {@link https://partner.steamgames.com/doc/api/ISteamInventory#DeserializeResult}
+   */
+  export function deserializeResult(buffer: Buffer, steamId64: bigint): Promise<VerifiedResult>
+  /**
+   * `quantity` is a u32 and acts on the real quantity.
+   * {@link https://partner.steamgames.com/doc/api/ISteamInventory#ConsumeItem}
+   */
+  export function consumeItem(itemId: bigint, quantity: number): Promise<InventoryResult>
+  /**
+   * `generate` must be exactly one item at quantity 1. An exchange's bundle is
+   * not capped. Writes are queued, not rejected: about 7 per second per client,
+   * shared with `generateItems`; past that latency rises and Steam never
+   * answers with a rate-limit error.
+   * {@link https://partner.steamgames.com/doc/api/ISteamInventory#ExchangeItems}
+   */
+  export function exchangeItems(generate: Array<DefinitionQuantity>, destroy: Array<InstanceQuantity>): Promise<InventoryResult>
+  /**
+   * `ConsumeItem`, then `SerializeResult` on that request's own result: a
+   * proof of the spend another player can verify with `deserializeResult`,
+   * with no `GetItemsByID` read between the write and the signature. The
+   * emptied row is signed at quantity 0 with the consumed flag; a proof still
+   * verifies after its item is consumed.
+   * {@link https://partner.steamgames.com/doc/api/ISteamInventory#SerializeResult}
+   */
+  export function consumeItemSerialized(itemId: bigint, quantity: number): Promise<SerializedResult>
+  /**
+   * `ExchangeItems`, then `SerializeResult` on that request's own result:
+   * what the exchange spent and made, signed, as `consumeItemSerialized`.
+   * {@link https://partner.steamgames.com/doc/api/ISteamInventory#SerializeResult}
+   */
+  export function exchangeItemsSerialized(generate: Array<DefinitionQuantity>, destroy: Array<InstanceQuantity>): Promise<SerializedResult>
+  /**
+   * Developer-only. One call is capped somewhere between 100 and 1,000 units
+   * (1,000 fails with `k_EResultFail`). With `auto_stack`, every grant lands
+   * in the oldest stack (lowest instance id) of that definition.
+   * {@link https://partner.steamgames.com/doc/api/ISteamInventory#GenerateItems}
+   */
+  export function generateItems(items: Array<DefinitionQuantity>): Promise<InventoryResult>
+  /**
+   * `quantity` is a u32 and acts on the real quantity. With no `dest` the
+   * units split into a new instance that stays separate. Asking for more than
+   * the stack holds fails with `k_EResultFail` and moves nothing.
+   * {@link https://partner.steamgames.com/doc/api/ISteamInventory#TransferItemQuantity}
+   */
+  export function transferItemQuantity(source: bigint, quantity: number, dest?: bigint | undefined | null): Promise<InventoryResult>
+  /** {@link https://partner.steamgames.com/doc/api/ISteamInventory#TriggerItemDrop} */
+  export function triggerItemDrop(definition: number): Promise<InventoryResult>
+  /** {@link https://partner.steamgames.com/doc/api/ISteamInventory#GrantPromoItems} */
+  export function grantPromoItems(): Promise<InventoryResult>
+  /** {@link https://partner.steamgames.com/doc/api/ISteamInventory#AddPromoItems} */
+  export function addPromoItems(definitions: Array<number>): Promise<InventoryResult>
+  /** {@link https://partner.steamgames.com/doc/api/ISteamInventory#SendItemDropHeartbeat} */
+  export function sendItemDropHeartbeat(): void
+  /**
+   * Starts loading the item definitions; the `SteamInventoryDefinitionUpdate`
+   * callback fires when they are available.
+   * {@link https://partner.steamgames.com/doc/api/ISteamInventory#LoadItemDefinitions}
+   */
+  export function loadItemDefinitions(): boolean
+  /**
+   * The ids of every loaded item definition, or `null` before they load.
+   * Lists only `item` definitions, never bundles or generators (their
+   * properties read null).
+   * {@link https://partner.steamgames.com/doc/api/ISteamInventory#GetItemDefinitionIDs}
+   */
+  export function getItemDefinitionIds(): Array<number> | null
+  /**
+   * A property of a loaded definition; with no name, the comma-separated
+   * property names.
+   * {@link https://partner.steamgames.com/doc/api/ISteamInventory#GetItemDefinitionProperty}
+   */
+  export function getItemDefinitionProperty(definition: number, name?: string | undefined | null): string | null
 }
 export declare namespace localplayer {
   export function getSteamId(): PlayerSteamId
@@ -336,6 +521,7 @@ export declare namespace workshop {
    * @returns an array of subscribed workshop item ids
    */
   export function getSubscribedItems(): Array<bigint>
+  export function deleteItem(itemId: bigint): Promise<void>
   export const enum UGCQueryType {
     RankedByVote = 0,
     RankedByPublicationDate = 1,
