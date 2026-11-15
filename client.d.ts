@@ -77,6 +77,32 @@ export declare namespace cloud {
     size: bigint
   }
 }
+export declare namespace friends {
+  export interface Persona {
+    name: string
+    /**
+     * `offline`, `online`, `invisible`, `busy`, `away`, `snooze`,
+     * `lookingToTrade` or `lookingToPlay`.
+     */
+    state: string
+    /**
+     * The 64x64 avatar as RGBA bytes, or `null` while Steam has not
+     * delivered it yet (a `PersonaStateChange` follows when it does).
+     */
+    mediumAvatar?: Buffer
+  }
+  /**
+   * What Steam holds for a user: their name, state and avatar.
+   * {@link https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendPersonaName}
+   */
+  export function getPersona(steamId64: bigint): Persona
+  /**
+   * Asks Steam for a user's persona. True when it is being fetched and a
+   * `PersonaStateChange` will follow; false when it is already held.
+   * {@link https://partner.steamgames.com/doc/api/ISteamFriends#RequestUserInformation}
+   */
+  export function requestUserInformation(steamId64: bigint, nameOnly: boolean): boolean
+}
 export declare namespace input {
   export const enum InputType {
     Unknown = 'Unknown',
