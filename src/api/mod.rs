@@ -3,6 +3,7 @@ pub mod apps;
 pub mod auth;
 pub mod callback;
 pub mod cloud;
+pub mod friends;
 pub mod input;
 pub mod localplayer;
 pub mod matchmaking;
