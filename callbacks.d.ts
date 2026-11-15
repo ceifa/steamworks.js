@@ -13,6 +13,25 @@ export const enum ChatMemberStateChange {
     Banned,
 }
 
+/**
+ * The kind of a lobby chat entry, as serialized from `steamworks::ChatEntryType`
+ * (a serde unit variant, so it arrives as the variant's name).
+ * {@link https://partner.steamgames.com/doc/api/steam_api#EChatEntryType}
+ */
+export type ChatEntryType =
+    | 'Invalid'
+    | 'ChatMsg'
+    | 'Typing'
+    | 'InviteGame'
+    | 'Emote'
+    | 'LeftConversation'
+    | 'Entered'
+    | 'WasKicked'
+    | 'WasBanned'
+    | 'Disconnected'
+    | 'HistoricalChat'
+    | 'LinkBlocked'
+
 export interface CallbackReturns {
     [client.callback.SteamCallback.PersonaStateChange]: {
         steam_id: bigint
@@ -36,6 +55,13 @@ export interface CallbackReturns {
         user_changed: bigint
         making_change: bigint
         member_state_change: ChatMemberStateChange
+    }
+    /** A chat message arrived in a lobby you are a member of; read it with `Lobby.getChatEntry(chat_id)`. */
+    [client.callback.SteamCallback.LobbyChatMsg]: {
+        lobby: bigint
+        user: bigint
+        chat_entry_type: ChatEntryType
+        chat_id: number
     }
     [client.callback.SteamCallback.P2PSessionRequest]: {
         remote: bigint

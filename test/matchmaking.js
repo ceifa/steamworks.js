@@ -9,9 +9,18 @@ const callback2 = client.callback.register(SteamCallback.LobbyChatUpdate, (data)
     console.log('LobbyChatUpdate', data)
 });
 
+let chatLobby = undefined
+const callback3 = client.callback.register(SteamCallback.LobbyChatMsg, (data) => {
+    const text = chatLobby
+        ? chatLobby.getChatEntry(data.chat_id).toString('utf8')
+        : '(lobby not held)'
+    console.log('LobbyChatMsg', data, text)
+});
+
 setTimeout(() => {
     callback1.disconnect()
     callback2.disconnect()
+    callback3.disconnect()
 }, 5000);
 
 (async () => {
@@ -27,6 +36,12 @@ setTimeout(() => {
 
     console.log("=====")
     console.log(lobby.getData('batata'))
+
+    // A message you send is relayed back to you as a LobbyChatMsg callback.
+    chatLobby = lobby
+    lobby.sendChatMessage(Buffer.from('hello lobby', 'utf8'))
+    await new Promise(resolve => setTimeout(resolve, 1000))
+    chatLobby = undefined
 
     lobby.leave();
 

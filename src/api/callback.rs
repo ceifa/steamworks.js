@@ -34,6 +34,8 @@ pub mod callback {
         P2PSessionConnectFail,
         GameLobbyJoinRequested,
         MicroTxnAuthorizationResponse,
+        /// Appended last so the numbering of the callbacks above never moves.
+        LobbyChatMsg,
     }
 
     #[napi(ts_generic_types = "C extends keyof import('./callbacks').CallbackReturns")]
@@ -64,6 +66,9 @@ pub mod callback {
             }
             SteamCallback::LobbyChatUpdate => {
                 register_callback::<steamworks::LobbyChatUpdate>(threadsafe_handler)
+            }
+            SteamCallback::LobbyChatMsg => {
+                register_callback::<steamworks::LobbyChatMsg>(threadsafe_handler)
             }
             SteamCallback::P2PSessionRequest => {
                 register_callback::<steamworks::P2PSessionRequest>(threadsafe_handler)
