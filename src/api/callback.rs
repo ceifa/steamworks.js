@@ -16,9 +16,9 @@ pub mod callback {
     impl Handle {
         #[napi]
         pub fn disconnect(&mut self) {
-            if let Some(handle) = self.handle.take() {
-                handle.disconnect();
-            }
+            // Dropping the handle removes the callback (0.13 replaced
+            // CallbackHandle::disconnect with a Drop impl).
+            drop(self.handle.take());
         }
     }
 

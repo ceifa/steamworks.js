@@ -7,7 +7,7 @@ pub mod workshop {
     use napi::threadsafe_function::ThreadsafeFunction;
     use napi::threadsafe_function::ThreadsafeFunctionCallMode;
     use std::path::Path;
-    use steamworks::{ClientManager, FileType, PublishedFileId, UpdateHandle};
+    use steamworks::{FileType, PublishedFileId, UpdateHandle};
     use tokio::sync::oneshot;
 
     #[napi(object)]
@@ -61,11 +61,11 @@ pub mod workshop {
     impl UgcUpdate {
         pub fn submit(
             self,
-            mut update: UpdateHandle<ClientManager>,
+            mut update: UpdateHandle,
             callback: impl FnOnce(Result<(PublishedFileId, bool), steamworks::SteamError>)
                 + Send
                 + 'static,
-        ) -> steamworks::UpdateWatchHandle<ClientManager> {
+        ) -> steamworks::UpdateWatchHandle {
             if let Some(title) = self.title {
                 update = update.title(title.as_str());
             }
@@ -396,7 +396,7 @@ pub mod workshop {
     #[napi]
     pub fn get_subscribed_items() -> Vec<BigInt> {
         let client = crate::client::get_client();
-        let result = client.ugc().subscribed_items();
+        let result = client.ugc().subscribed_items(false);
 
         result
             .iter()
@@ -410,13 +410,13 @@ pub mod workshop {
     pub async fn delete_item(item_id: BigInt) -> Result<(), Error> {
         let client = crate::client::get_client();
         let (tx, rx) = oneshot::channel();
-    
+
         client
             .ugc()
             .delete_item(PublishedFileId(item_id.get_u64().1), |result| {
                 tx.send(result).unwrap();
             });
-    
+
         let result = rx.await.unwrap();
         match result {
             Ok(()) => Ok(()),
